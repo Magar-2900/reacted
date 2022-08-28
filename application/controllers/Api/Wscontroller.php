@@ -18,7 +18,7 @@ class Wscontroller extends REST_Controller
 		$result = $this->WsModels->getAllRecords();		
 		if(!empty($result))
 		{
-			$ret_arr = SUCCESS(1,'Data found successfully.',$result);
+			$ret_arr = SUCCESS(1,'Data found successfully.',$result,'','','');
 			$this->response($ret_arr); 
 		}
 		else
@@ -40,7 +40,7 @@ class Wscontroller extends REST_Controller
 			$result = $this->WsModels->insertRecord($data);
 			if(!empty($result))
 			{
-				$ret_arr = SUCCESS(1,'User registered successfully.',$data);
+				$ret_arr = SUCCESS(1,'User registered successfully.',$data,'','','');
 				$this->response($ret_arr); 
 			}
 			else
@@ -75,7 +75,7 @@ class Wscontroller extends REST_Controller
 				$enc_token = $this->authorization_token->generateToken($token);
 				$this->WsModels->updateToken($enc_token,$token['user_id']);
 				$user_details = $this->WsModels->getRecord($token['user_id']);
-				$ret_arr = SUCCESS(1,'You have logged in successfully.',$user_details);
+				$ret_arr = SUCCESS(1,'You have logged in successfully.',$user_details,'','','');
 			} 
 			else 
 			{
@@ -109,7 +109,7 @@ class Wscontroller extends REST_Controller
 			{
 				$record = json_decode(json_encode($token['data']), true);
 				$user_details = $this->WsModels->getRecord($record['user_id']);
-				$ret_arr = SUCCESS(1,'Details found successfully.',$user_details);
+				$ret_arr = SUCCESS(1,'Details found successfully.',$user_details,'','','');
 			}
 			else
 			{
