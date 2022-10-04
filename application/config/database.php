@@ -75,10 +75,6 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	=> '',
-	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => '',
-	'database' => 'reacted',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
 	'pconnect' => FALSE,
@@ -94,3 +90,18 @@ $db['default'] = array(
 	'failover' => array(),
 	'save_queries' => TRUE
 );
+
+if (strstr($_SERVER['HTTP_HOST'], 'reacted-api.purecss.co.in')) 
+{
+    $db['default']['hostname'] = 'localhost';
+    $db['default']['username'] = 'u306688222_reacted_dev';
+    $db['default']['password'] = 'u306688222_reacted_api';   
+    $db['default']['database'] = 'u306688222_reacted_api';    
+    $db['default']['port'] = '3306';
+}else{
+    $db['default']['hostname'] = 'localhost';
+    $db['default']['username'] = 'root';
+    $db['default']['password'] = '';   
+    $db['default']['database'] = 'reacted';    
+    $db['default']['port'] = '3306';    
+}
