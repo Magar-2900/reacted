@@ -40,7 +40,7 @@ defined('BASEPATH') || exit('No direct script access allowed');
 
  
   $config['protocol'] = 'smtp';
-  $config['smtp_host'] = 'smtp.hostinger.com';
+  $config['smtp_host'] = 'ssl://smtp.hostinger.com';
   $config['smtp_port'] = '465';
   $config['smtp_timeout'] = '7';
   $config['smtp_user'] = 'noreply@purecss.co.in';
