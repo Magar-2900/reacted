@@ -68,7 +68,7 @@ Class General
 
 
             if ($this->CI->config->item('email_sending_library') == 'phpmailer') {
-                require_once($this->CI->config->item('third_party') . 'phpmailer/vendor/autoload.php');
+                require_once($this->CI->config->item('third_party') . '\phpmailer\vendor\autoload.php');
                 $mail = new PHPMailer(true);
 
                 $mail->SMTPDebug = 0;
@@ -107,6 +107,7 @@ Class General
                 $success = $mail->send();
             } else {
                 $this->CI->load->library('email');
+                
                 $this->CI->email->from($from_email, $from_name);
                 if (isset($reply_to['reply_name']) && isset($reply_to['reply_email'])) {
                     $this->CI->email->reply_to($reply_to['reply_email'], $reply_to['reply_name']);
@@ -144,7 +145,10 @@ Class General
         } catch (Exception $e) {
             $message = $e->getMessage();
             $this->_notify_error = $message;
+            print_r($message);die;
+
         }
+        print_r($success);die;
         return $success;
     }
     

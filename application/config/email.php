@@ -40,16 +40,15 @@ defined('BASEPATH') || exit('No direct script access allowed');
 
  
   $config['protocol'] = 'smtp';
-  $config['smtp_host'] = '';
-  $config['smtp_port'] = '';
+  $config['smtp_host'] = 'smtp.hostinger.com';
+  $config['smtp_port'] = '465';
   $config['smtp_timeout'] = '7';
-  $config['smtp_user'] = '';
-  $config['smtp_pass'] = '';
+  $config['smtp_user'] = 'noreply@purecss.co.in';
+  $config['smtp_pass'] = 'No-reply@123!@#';
   $config['charset'] = 'utf-8';
   $config['newline'] = "\r\n";
   $config['mailtype'] = 'html'; // or html
   $config['validation'] = TRUE; // bool whether to validate email or not
-
 
 /* End of file email.php */
 /* Location: ./application/config/email.php */

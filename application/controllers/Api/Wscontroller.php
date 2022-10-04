@@ -380,7 +380,7 @@ class Wscontroller extends REST_Controller
 			$data['iEmailVerifyOtp'] = $ret_arr[0]['reset_code'];
 
 			$this->UserModel->update_user_otp($email,$data);
-			// $this->general->CISendMail($to = $email, $subject = 'Forgot Password', $body = "This is test.", $from_email = 'abhirpotdar@gmail.com', $from_name = 'Test', $cc = '', $bcc = '', $attach = array(), $params = array(), $reply_to = array());
+			$this->general->CISendMail($to = $email, $subject = 'Forgot Password', $body = "This is test.", $from_email = 'noreply@purecss.co.in', $from_name = 'Test', $cc = '', $bcc = '', $attach = array(), $params = array(), $reply_to = array());
 			if(!empty($ret_arr))
 			{
 				$data = SUCCESS( 1, 'Email sent successfully to your email please check your inbox.',$ret_arr);
