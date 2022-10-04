@@ -6,11 +6,7 @@ class Authentication extends CI_Controller
 	public function __construct()
     {
         parent::__construct();
+        $this->load->model('UserModel');
     }
 
-
-	public function index()
-	{
-		echo '<h1>Welcome to Reacted</h1>';die;
-	}
 }

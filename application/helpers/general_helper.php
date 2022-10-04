@@ -1,6 +1,6 @@
 <?php
 
-function SUCCESS($code,$message,$data,$count,$total_page,$currnt_page)
+function SUCCESS($code = '',$message = '',$data = '',$count = '',$total_page = '',$currnt_page = '')
 {
     $res['success'] = $code;
     $res['message'] = $message;
@@ -23,25 +23,10 @@ function SUCCESS($code,$message,$data,$count,$total_page,$currnt_page)
     return $res;
 }
 
-function ERROR($code,$message)
+function ERROR($code = '' ,$message = '')
 {        
     $res['success'] = $code;
     $res['message'] = $message;
     $res['data'] = [];   
     return $res;
-}
-
-function validateAccessToken($headers)
-{
-    
-    $CI =& get_instance();
-    try
-    {
-        $decodedToken = $CI->authorization_token->validateToken($headers['Authorization']);    
-        return $decodedToken;
-    }
-    catch(Exception $e)
-    {
-        return $e->getMessage();
-    }
 }
