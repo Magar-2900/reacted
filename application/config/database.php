@@ -95,7 +95,7 @@ if (strstr($_SERVER['HTTP_HOST'], 'reacted-api.purecss.co.in'))
 {
     $db['default']['hostname'] = 'localhost';
     $db['default']['username'] = 'u306688222_reacted_dev';
-    $db['default']['password'] = 'u306688222_reacted_api';   
+    $db['default']['password'] = 'O5yDb[L5w&';   
     $db['default']['database'] = 'u306688222_reacted_api';    
     $db['default']['port'] = '3306';
 }
