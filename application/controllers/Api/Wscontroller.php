@@ -259,7 +259,7 @@ class Wscontroller extends REST_Controller
 	public function get_roles_get()
 	{
 		try{
-			echo 'Hello Abhishek';die;
+			
 			$roles = $this->UserModel->user_roles();
 
 			if(!empty($roles))
