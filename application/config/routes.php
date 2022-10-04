@@ -54,5 +54,6 @@ $route['default_controller'] = 'Authentication';
 $route['WS'] = "Api/Wscontroller/index";
 $route['WS/(:any)'] = "Api/wscontroller/$1";
 $route['WS/(:any)/(:any)'] = "Api/wscontroller/$1/$2";
+$route['reset-password.html'] = "Authentication/reset_password";
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

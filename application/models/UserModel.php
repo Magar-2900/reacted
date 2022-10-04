@@ -72,4 +72,39 @@ class UserModel extends CI_Model
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
 		return $result;
 	}
+
+	public function check_password($user_id)
+    {
+		$this->db->select('iUsersId as user_id,vName as name,vEmail as email,vPassword as password');
+		$this->db->from('users');
+		$this->db->where('iUsersId',$user_id);
+		$query_obj = $this->db->get();  
+		$result = is_object($query_obj) ? $query_obj->result_array() : array();
+		return $result;
+    }
+
+    public function update_user_otp($email, $data)
+	{
+		$this->db->where('vEmail', $email);
+		$result = $this->db->update('users', $data);
+		return $result;
+	}
+
+	public function check_security_code($email,$security_code)
+	{
+		$this->db->select('iUsersId as user_id,vName as name,vEmail as email,vPassword as password');
+		$this->db->from('users');
+		$this->db->where('vEmail',$email);
+		$this->db->where('iEmailVerifyOtp',$security_code);
+		$query_obj = $this->db->get();  
+		$result = is_object($query_obj) ? $query_obj->result_array() : array();
+		return $result;
+	}
+
+	public function update_password($email,$data)
+	{
+		$this->db->where('vEmail', $email);
+		$result = $this->db->update('users', $data);
+		return $result;
+	}
 }

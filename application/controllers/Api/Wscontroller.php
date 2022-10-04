@@ -277,4 +277,177 @@ class Wscontroller extends REST_Controller
 			$this->response($data);
 		}
 	}
+
+	public function change_password_post()
+	{
+		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);			
+			$user_id = $token['user_id'];
+
+			$current_password = $this->input->post('current_password');
+	        $new_password 	  = $this->input->post('new_password');
+	        $confirm_password = $this->input->post('confirm_password');
+
+	        if(empty($current_password)){
+	            $data = array('status' => 0, 'msg' => 'Please enter your current_password');
+	            $this->response($data);
+	        }
+	        $record = $this->UserModel->check_password($user_id);
+
+			if(!empty($record))
+			{
+				if (!password_verify($current_password, $record[0]['password'])) 
+				{
+					$data = array('status' => 0, 'msg' => 'Your current password is wrong. Please check your current password');
+	            	$this->response($data);
+				}
+			}
+
+	        if(empty($new_password)){
+	            $data = array('status' => 0, 'msg' => 'Please enter your new_password');
+	            $this->response($data);
+	        }
+
+	        if(empty($confirm_password)){
+	            $data = array('status' => 0, 'msg' => 'Please enter your confirm_password');
+	            $this->response($data);
+	        }
+	        
+	        if($confirm_password !== $new_password){
+	            $data = array('status' => 0, 'msg' => 'Your new_password & confirm_password does not match');
+	            $this->response($data);
+	        }
+
+	        $user_data['vPassword'] = password_hash($new_password, PASSWORD_DEFAULT);
+	        $user = $this->UserModel->update_user($user_id,$user_data);
+	        if(!empty($user))
+			{
+				$data = SUCCESS( 1, 'Password updated successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Password not updated.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function forgot_password_post()
+	{
+		try{
+			$email = $this->input->post('email');
+
+			if(empty($email)){
+				$data = ERROR( 0, 'Please enter the email.');
+				$this->response($data);
+			}
+
+			if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+				$data = ERROR( 0, 'Please enter valid email');
+			  	$this->response($data);
+			}
+
+			$is_exist = $this->UserModel->email_exist($email);
+
+			if(empty($is_exist)){
+				$data = ERROR( 0, 'User not exist with this email address.');
+				$this->response($data);
+			}
+
+			$numeric = range(1, 9);
+			$length = count($numeric) - 1;
+			$results = array();
+			for ($i = 0; $i < 6;) {
+				$num = $numeric[mt_rand(0, $length)];
+				if (!in_array($num, $results)) {
+					$results[] = $num;
+					$i++;
+				}
+			}
+			$reset_code = implode("", $results);
+
+			$reset_param = base64_encode($email);
+			$reset_url = $this->config->item("base_url") . "reset-password.html?rsp=" . $reset_param;
+
+			$ret_arr = array();
+			$ret_arr[0]['reset_link'] = $reset_url;
+			$ret_arr[0]['reset_code'] = $reset_code;
+			$data['iEmailVerifyOtp'] = $ret_arr[0]['reset_code'];
+
+			$this->UserModel->update_user_otp($email,$data);
+			// $this->general->CISendMail($to = $email, $subject = 'Forgot Password', $body = "This is test.", $from_email = 'abhirpotdar@gmail.com', $from_name = 'Test', $cc = '', $bcc = '', $attach = array(), $params = array(), $reply_to = array());
+			if(!empty($ret_arr))
+			{
+				$data = SUCCESS( 1, 'Email sent successfully to your email please check your inbox.',$ret_arr);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong.');
+				$this->response($data);
+			}
+
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function reset_password_post()
+	{
+		try{
+			$email 				= base64_decode($this->input->post('rsp'));
+			$security_code 		= $this->input->post('security_code');
+			$new_password 		= $this->input->post('new_password');
+			$confirm_password 	= $this->input->post('confirm_password');
+
+
+			if(empty($email)){
+	            $data = array('status' => 0, 'msg' => 'Please enter your rsp');
+	            $this->response($data);
+	        }
+
+			if(empty($security_code)){
+	            $data = array('status' => 0, 'msg' => 'Please enter your security_code');
+	            $this->response($data);
+	        }
+
+	        if(empty($new_password)){
+	            $data = array('status' => 0, 'msg' => 'Please enter your new_password');
+	            $this->response($data);
+	        }
+
+	        if(empty($confirm_password)){
+	            $data = array('status' => 0, 'msg' => 'Please enter your confirm_password');
+	            $this->response($data);
+	        }
+	        
+	        if($confirm_password !== $new_password){
+	            $data = array('status' => 0, 'msg' => 'Your new_password & confirm_password does not match');
+	            $this->response($data);
+	        }
+
+	        $is_exist = $this->UserModel->check_security_code($email,$security_code);
+	        $data1['vPassword'] = password_hash($confirm_password, PASSWORD_DEFAULT);
+
+	        if(!empty($is_exist)){
+	        	$data1['iEmailVerifyOtp'] ='';	
+				$res = $this->UserModel->update_password($email,$data1);
+				$data = array('status' => 1, 'meassage' => 'Password chnaged successfully.');
+				echo json_encode($data);die;
+			}else{
+				$data = array('status' => 0, 'meassage' => 'Security code does not match.'); 
+				echo json_encode($data);die;
+			}
+
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
 }
