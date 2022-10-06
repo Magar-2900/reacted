@@ -534,5 +534,5 @@ $site_url = (is_https()) ? 'https' : 'http';
 $site_url .= '://' . $_SERVER['HTTP_HOST'];
 $site_url .= str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
 $config['site_url'] = $site_url;
-$config['email_sending_library'] = 'phpmailer';//phpmailer
+$config['email_sending_library'] = 'system';//phpmailer
 $config['third_party'] = APPPATH . 'third_party/';
