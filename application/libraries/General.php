@@ -68,7 +68,8 @@ Class General
 
 
             if ($this->CI->config->item('email_sending_library') == 'phpmailer') {
-                require_once($this->CI->config->item('third_party') . '\phpmailer\vendor\autoload.php');
+
+                require_once($this->CI->config->item('third_party') . 'phpmailer/vendor/autoload.php');
                 $mail = new PHPMailer(true);
 
                 $mail->SMTPDebug = 0;
