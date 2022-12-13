@@ -39,7 +39,7 @@
 defined('BASEPATH') || exit('No direct script access allowed');
 
  
-  $config['protocol'] = 'smtp';
+  $config['protocol'] = 'mail';
   $config['smtp_host'] = 'smtp.hostinger.com';
   $config['smtp_port'] = '465';
   $config['smtp_timeout'] = '7';
