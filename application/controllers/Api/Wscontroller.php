@@ -125,13 +125,9 @@ class Wscontroller extends REST_Controller
 
 	public function login_post()
 	{
-		echo 'GET ';
-		print_r($_GET);
-		echo 'POST ';
-		print_r($_POST);
 		try{
-			$email = $this->input->post('email');
-			$password = $this->input->post('password');
+			$email = $this->input->get('email');
+			$password = $this->input->get('password');
 
 			if(empty($email)){
 				$data = ERROR( 0, 'Please enter the email.');
