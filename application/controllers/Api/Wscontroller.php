@@ -450,4 +450,127 @@ class Wscontroller extends REST_Controller
 			$this->response($data);
 		}
 	}
+
+	public function add_celebrity_post()
+	{
+		try{
+			$name 			   = $this->input->post('name');
+			$email             = $this->input->post('email');
+			$phone             = $this->input->post('phone');
+			$role_id           = '3';
+			$registration_type = 'Other';
+
+
+			$title 			   = $this->input->post('title');
+			$tag_line 		   = $this->input->post('tag_line');
+			$short_description = $this->input->post('short_description');
+			$long_description  = $this->input->post('long_description');
+			$categories 	   = $this->input->post('categories');
+			$price 			   = $this->input->post('price');
+			$is_featured 	   = $this->input->post('is_featured');
+			$added_date        = date('Y-m-d H:i:s');
+
+			// validation
+			
+
+			if(empty($title))
+			{
+				$data = ERROR( 0, 'Please enter the title');
+				$this->response($data);
+			}
+
+			if(empty($tag_line))
+			{
+				$data = ERROR( 0, 'Please enter the tag_line');
+				$this->response($data);
+			}
+
+			if(empty($short_description))
+			{
+				$data = ERROR( 0, 'Please enter short_description');
+				$this->response($data);
+			}
+
+			if(empty($long_description))
+			{
+				$data = ERROR( 0, 'Please enter the long_description');
+				$this->response($data);
+			}
+
+			if(empty($categories))
+			{
+				$data = ERROR( 0, 'Please enter the categories');
+				$this->response($data);
+			}
+
+			if(empty($price))
+			{
+				$data = ERROR( 0, 'Please enter the price');
+				$this->response($data);
+			}
+
+			if(empty($is_featured))
+			{
+				$data = ERROR( 0, 'Please enter the is_featured');
+				$this->response($data);
+			}
+
+			$user_data['vName'] = $name;
+			$user_data['vEmail'] = $email;
+			$user_data['vPhone'] = $phone;
+			$user_data['iRoleId'] = $role_id;
+
+			$user_data['eRegistrationType'] = $registration_type;
+
+			$last_id = $this->UserModel->register_user($user_data);
+
+			$celebrity_data['iUsersId'] = $last_id;
+			$celebrity_data['vTitle'] = $title;
+			$celebrity_data['vTagLine'] = $tag_line;
+			$celebrity_data['vShortDescription'] = $short_description;
+			$celebrity_data['vLongDescription'] = $long_description;
+			$celebrity_data['vCategories'] = $categories;
+			$celebrity_data['dPrice'] = $price;
+			$celebrity_data['eIsFeatured'] = $is_featured;
+			$celebrity_data['dtAddedDate'] = $added_date;
+
+			$result = $this->CelebrityModel->register_celebrity($celebrity_data);
+
+			if(!empty($result))
+			{
+				$data = SUCCESS(1, 'Celebrity Added successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0,  'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function get_celebrity_get()
+	{
+		try{
+			$celebrity_id = $this->input->get('celebrity_id');
+
+			$result = $this->CelebrityModel->get_celebrity_details($celebrity_id);
+			if(!empty($result))
+			{
+				$data = SUCCESS( 1, 'Celebrity details found successfully.',$result);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Celebrity details not found.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
 }
