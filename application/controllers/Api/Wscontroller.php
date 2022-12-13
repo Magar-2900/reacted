@@ -11,6 +11,7 @@ class Wscontroller extends REST_Controller
 		parent::__construct();
 		$this->load->library('Authorization_Token');
 		$this->load->model('UserModel');
+		$this->load->model('CelebrityModel');
 	}
 
 	public function validate_access_token($headers)
