@@ -123,11 +123,11 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
-	public function login_get()
+	public function login_post()
 	{
 		try{
-			$email = $this->input->get('email');
-			$password = $this->input->get('password');
+			$email = $this->input->post('email');
+			$password = $this->input->post('password');
 
 			if(empty($email)){
 				$data = ERROR( 0, 'Please enter the email.');
