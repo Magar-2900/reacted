@@ -461,6 +461,7 @@ class Wscontroller extends REST_Controller
 			$role_id           = '3';
 			$registration_type = 'Other';
 
+			
 
 			$title 			   = $this->input->post('title');
 			$tag_line 		   = $this->input->post('tag_line');
@@ -470,9 +471,25 @@ class Wscontroller extends REST_Controller
 			$price 			   = $this->input->post('price');
 			$is_featured 	   = $this->input->post('is_featured');
 			$added_date        = date('Y-m-d H:i:s');
-
+			$country           = $this->input->post('country');
 			// validation
 			
+			if(empty($email)){
+				$data = ERROR( 0, 'Please enter the email');
+				$this->response($data);
+			}
+
+			if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
+				$data = ERROR( 0, 'Please enter valid email');
+			  	$this->response($data);
+			}
+
+			$is_exist = $this->UserModel->email_exist($email);
+
+			if(!empty($is_exist)){
+				$data = ERROR( 0, 'User already exist this email');
+				$this->response($data);
+			}
 
 			if(empty($title))
 			{
@@ -516,24 +533,61 @@ class Wscontroller extends REST_Controller
 				$this->response($data);
 			}
 
-			$user_data['vName'] = $name;
-			$user_data['vEmail'] = $email;
-			$user_data['vPhone'] = $phone;
-			$user_data['iRoleId'] = $role_id;
+			$data = [];  
+      		$config['upload_path'] 		= './public/uploads/profile';
+			$config['allowed_types'] 	= 'gif|jpg|png';
+			
+			$imgData = [];
+			$errors = [];
+			$files = $_FILES;
+			$upload_count = count($_FILES['profile_picture']['name']);
+
+			for( $i = 0; $i < $upload_count; $i++ )
+			{
+				$imgData[] = $files['profile_picture']['name'][$i];
+
+			    $_FILES['profile_picture'] = [
+			        'name'     => $files['profile_picture']['name'][$i],
+			        'type'     => $files['profile_picture']['type'][$i],
+			        'tmp_name' => $files['profile_picture']['tmp_name'][$i],
+			        'error'    => $files['profile_picture']['error'][$i],
+			        'size'     => $files['profile_picture']['size'][$i]
+			    ];
+			    
+			   
+
+			    $this->load->library('upload', $config);
+				if ( ! $this->upload->do_upload('profile_picture'))
+				{
+					$error = array('status' => 0,'message' => $this->upload->display_errors());
+					$this->response($error);
+				}
+				else
+				{
+					$upload = $this->upload->data();
+				}
+			}
+			
+			$user_data['vName'] 	= $name;
+			$user_data['vEmail'] 	= $email;
+			$user_data['vPhone'] 	= $phone;
+			$user_data['iRoleId'] 	= $role_id;
+			$user_data['vCountry'] 	= $country;
+			$user_data['vImage'] 	= json_encode($imgData);
 
 			$user_data['eRegistrationType'] = $registration_type;
 
 			$last_id = $this->UserModel->register_user($user_data);
 
-			$celebrity_data['iUsersId'] = $last_id;
-			$celebrity_data['vTitle'] = $title;
-			$celebrity_data['vTagLine'] = $tag_line;
-			$celebrity_data['vShortDescription'] = $short_description;
-			$celebrity_data['vLongDescription'] = $long_description;
-			$celebrity_data['vCategories'] = $categories;
-			$celebrity_data['dPrice'] = $price;
-			$celebrity_data['eIsFeatured'] = $is_featured;
-			$celebrity_data['dtAddedDate'] = $added_date;
+			$celebrity_data['iUsersId'] 			= $last_id;
+			$celebrity_data['vTitle'] 				= $title;
+			$celebrity_data['vTagLine'] 			= $tag_line;
+			$celebrity_data['vShortDescription'] 	= $short_description;
+			$celebrity_data['vLongDescription'] 	= $long_description;
+			$celebrity_data['vCategories'] 			= $categories;
+			$celebrity_data['dPrice'] 				= $price;
+			$celebrity_data['eIsFeatured'] 			= $is_featured;
+			$celebrity_data['dtAddedDate'] 			= $added_date;
 
 			$result = $this->CelebrityModel->register_celebrity($celebrity_data);
 
