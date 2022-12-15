@@ -12,6 +12,7 @@ class Wscontroller extends REST_Controller
 		$this->load->library('Authorization_Token');
 		$this->load->model('UserModel');
 		$this->load->model('CelebrityModel');
+		$this->load->model('MusicCreatorModel');
 	}
 
 	public function validate_access_token($headers)
@@ -472,6 +473,14 @@ class Wscontroller extends REST_Controller
 			$is_featured 	   = $this->input->post('is_featured');
 			$added_date        = date('Y-m-d H:i:s');
 			$country           = $this->input->post('country');
+
+			$account_name 	   = $this->input->post('account_name');
+			$account_number    = $this->input->post('account_number');
+			$bank_name 	       = $this->input->post('bank_name');
+			$bank_code 	       = $this->input->post('bank_code');
+			$bank_address 	   = $this->input->post('bank_address');
+
+
 			// validation
 			
 			if(empty($email)){
@@ -533,6 +542,36 @@ class Wscontroller extends REST_Controller
 				$this->response($data);
 			}
 
+			if(empty($account_name))
+			{
+				$data = ERROR( 0, 'Please enter account_name');
+				$this->response($data);
+			}
+
+			if(empty($account_number))
+			{
+				$data = ERROR( 0, 'Please enter the account_number');
+				$this->response($data);
+			}
+
+			if(empty($bank_name))
+			{
+				$data = ERROR( 0, 'Please enter the bank_name');
+				$this->response($data);
+			}
+
+			if(empty($bank_code))
+			{
+				$data = ERROR( 0, 'Please enter the bank_code');
+				$this->response($data);
+			}
+
+			if(empty($bank_address))
+			{
+				$data = ERROR( 0, 'Please enter the bank_address');
+				$this->response($data);
+			}
+
 			$data = [];  
       		$config['upload_path'] 		= './public/uploads/profile';
 			$config['allowed_types'] 	= 'gif|jpg|png';
@@ -589,6 +628,12 @@ class Wscontroller extends REST_Controller
 			$celebrity_data['eIsFeatured'] 			= $is_featured;
 			$celebrity_data['dtAddedDate'] 			= $added_date;
 
+			$celebrity_data['vAccountName'] 		= $account_name;
+			$celebrity_data['vAccountNumber'] 		= $account_number;
+			$celebrity_data['vBankName'] 			= $bank_name;
+			$celebrity_data['vBankCode'] 			= $bank_code;
+			$celebrity_data['vBankAddress'] 		= $bank_address;
+
 			$result = $this->CelebrityModel->register_celebrity($celebrity_data);
 
 			if(!empty($result))
@@ -623,6 +668,150 @@ class Wscontroller extends REST_Controller
 				$data = ERROR( 0, 'Celebrity details not found.');
 				$this->response($data);
 			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function add_music_creator_post()
+	{
+		try{
+			$step = $this->input->post('step');
+
+			if(empty($step))
+			{
+				$data = ERROR( 0, 'Please enter the step');
+				$this->response($data);
+			}
+
+			if($step == 'register')
+			{
+				// register
+				$name 			   = $this->input->post('name');
+				$email             = $this->input->post('email');
+				$phone             = $this->input->post('phone');
+				$role_id           = '3';
+				$registration_type = 'Other';
+
+				// validation
+				if(empty($name))
+				{
+					$data = ERROR( 0, 'Please enter the name');
+					$this->response($data);
+				}
+
+				if(empty($email)){
+					$data = ERROR( 0, 'Please enter the email');
+					$this->response($data);
+				}
+
+				if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
+					$data = ERROR( 0, 'Please enter valid email');
+				  	$this->response($data);
+				}
+
+				$is_exist = $this->UserModel->email_exist($email);
+
+				if(!empty($is_exist)){
+					$data = ERROR( 0, 'User already exist this email');
+					$this->response($data);
+				}
+
+				if(empty($phone)){
+					$data = ERROR( 0, 'Please enter the phone');
+					$this->response($data);
+				}
+				$user_data['vName'] 	= $name;
+				$user_data['vEmail'] 	= $email;
+				$user_data['vPhone'] 	= $phone;
+				$user_data['iRoleId'] 	= $role_id;
+				$user_data['eRegistrationType'] = $registration_type;
+
+				$last_id = $this->UserModel->register_user($user_data);
+				
+				if(!empty($last_id))
+				{	
+					$res = $this->UserModel->get_user($last_id);
+					$data = SUCCESS(1, 'Music Creator Added successfully.',$res);
+					$this->response($data);
+				}
+				else
+				{
+					$data = ERROR( 0,  'Something went wrong...please try again.');
+					$this->response($data);
+				}
+			}
+			else if($step == 'artist')
+			{
+				$artist = $this->input->post('artist_name');
+				$user_id = $this->input->post('user_id');
+				if(empty($artist))
+				{
+					$data = ERROR( 0, 'Please enter the artist');
+					$this->response($data);
+				}
+				$music_creator_data['vArtistName'] = $artist;
+				$music_creator_data['iUsersId']    = $user_id;
+				$music_creator_data['dtAddedDate'] = date('Y-m-d H:i:s');
+				$result = $this->MusicCreatorModel->add_artist($music_creator_data);
+				if(!empty($result))
+				{	
+					$res = $this->MusicCreatorModel->get_artist($result);
+					$data = SUCCESS(1, 'Artist Added successfully.',$res);
+					$this->response($data);
+				}
+				else
+				{
+					$data = ERROR( 0,  'Something went wrong...please try again.');
+					$this->response($data);
+				}
+			}
+			else if($step == 'upload')
+			{
+				$music_creator_id = $this->input->post('music_creator_id');
+				
+				if(empty($music_creator_id))
+				{
+					$data = ERROR( 0, 'Please enter the music_creator_id');
+					$this->response($data);
+				}
+
+				// Music Upload
+				$data = [];  
+	      		$config['upload_path'] 		= './public/uploads/music';
+				$config['allowed_types'] 	= 'mp3|mpeg|mpg|mpeg3';
+				
+				$errors = [];
+				$files = $_FILES;
+
+				$this->load->library('upload', $config);
+				if ( ! $this->upload->do_upload('music'))
+				{
+					$error = array('status'=>0,'error' => $this->upload->display_errors());
+					$this->response($data);
+				}
+				else
+				{
+					$upload = $this->upload->data();
+				}
+
+				$music_creator_data['dtUpdatedDate'] 	= date('Y-m-d H:i:s');
+				$music_creator_data['vUploadMusic']		= $upload['file_name'];
+
+				$result = $this->MusicCreatorModel->upload_music($music_creator_data,$music_creator_id);
+
+				if(!empty($result))
+				{
+					$data = SUCCESS(1, 'Music uploaded successfully.',[]);
+					$this->response($data);
+				}
+				else
+				{
+					$data = ERROR( 0,  'Something went wrong...please try again.');
+					$this->response($data);
+				}
+			}			
 		}catch(Exception $e){
 			$data = ERROR( 0, $e->getMessage());
 			$this->response($data);
