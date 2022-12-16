@@ -691,7 +691,7 @@ class Wscontroller extends REST_Controller
 				$name 			   = $this->input->post('name');
 				$email             = $this->input->post('email');
 				$phone             = $this->input->post('phone');
-				$role_id           = '3';
+				$role_id           = '2';
 				$registration_type = 'Other';
 
 				// validation
@@ -732,6 +732,13 @@ class Wscontroller extends REST_Controller
 				
 				if(!empty($last_id))
 				{	
+					$res = $this->UserModel->get_user($last_id);
+					$token['user_id'] = $res[0]['user_id'];
+					$token['name'] = $res[0]['name'];
+					$token['email'] = $res[0]['email'];
+					$enc_token = $this->authorization_token->generateToken($token);
+					$this->UserModel->update_token($enc_token,$token['user_id']);
+
 					$res = $this->UserModel->get_user($last_id);
 					$data = SUCCESS(1, 'Music Creator Added successfully.',$res);
 					$this->response($data);
