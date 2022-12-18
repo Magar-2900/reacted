@@ -107,4 +107,11 @@ class UserModel extends CI_Model
 		$result = $this->db->update('users', $data);
 		return $result;
 	}
+
+	public function update_user_data($data, $id)
+	{
+		$this->db->where('iUsersId', $id);
+		$result = $this->db->update('users', $data);
+		return $result;
+	}
 }

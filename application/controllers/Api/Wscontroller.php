@@ -13,6 +13,8 @@ class Wscontroller extends REST_Controller
 		$this->load->model('UserModel');
 		$this->load->model('CelebrityModel');
 		$this->load->model('MusicCreatorModel');
+		$this->load->model('ContactModel');
+		$this->load->model('PlatformModel');
 	}
 
 	public function validate_access_token($headers)
@@ -658,6 +660,17 @@ class Wscontroller extends REST_Controller
 			$celebrity_id = $this->input->get('celebrity_id');
 
 			$result = $this->CelebrityModel->get_celebrity_details($celebrity_id);
+			$images = json_decode($result[0]['images']);
+			if(!empty($images))
+			{
+				$img = [];
+				foreach($images as $val)
+				{
+					$img[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
+				}
+			}
+			$result[0]['images'] = $img;
+			
 			if(!empty($result))
 			{
 				$data = SUCCESS( 1, 'Celebrity details found successfully.',$result);
@@ -666,6 +679,29 @@ class Wscontroller extends REST_Controller
 			else
 			{
 				$data = ERROR( 0, 'Celebrity details not found.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function delete_celebrity_post()
+	{
+		try{
+			$celebrity_id = $this->input->post('celebrity_id');
+
+			$result = $this->CelebrityModel->delete_celebrity($celebrity_id);
+			
+			if($result)
+			{
+				$data = SUCCESS( 1, 'Celebrity deleted successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
 				$this->response($data);
 			}
 		}catch(Exception $e){
@@ -819,6 +855,458 @@ class Wscontroller extends REST_Controller
 					$this->response($data);
 				}
 			}			
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function get_music_creator_get()
+	{
+		try{
+			$music_creator_id = $this->input->get('music_creator_id');
+
+			$result = $this->MusicCreatorModel->get_music_creator_details($music_creator_id);
+			if(!empty($result[0]['images']))
+			{
+				$images = json_decode($result[0]['images']);
+				if(!empty($images))
+				{
+					$img = [];
+					foreach($images as $val)
+					{
+						$img[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
+					}
+				}
+				$result[0]['images'] = $img;	
+			}
+			
+			
+			if(!empty($result))
+			{
+				$data = SUCCESS( 1, 'Celebrity details found successfully.',$result);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Celebrity details not found.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function delete_music_creator_post()
+	{
+		try{
+			$music_creator_id = $this->input->post('music_creator_id');
+
+			$result = $this->MusicCreatorModel->delete_music_creator($music_creator_id);
+			
+			if($result)
+			{
+				$data = SUCCESS( 1, 'Music Creator deleted successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function update_music_creator_post()
+	{
+		try{
+			$music_creator_id  = $this->input->post('music_creator_id');
+			$name 			   = $this->input->post('name');
+			$email             = $this->input->post('email');
+			$phone             = $this->input->post('phone');
+			$country		   = $this->input->post('country');
+			$update_date	   = date('Y-m-d H:i:s');
+
+			// profile_picture
+			$data = [];  
+      		$config['upload_path'] 		= './public/uploads/profile';
+			$config['allowed_types'] 	= 'gif|jpg|png|mp3|mpeg|mpg|mpeg3';
+			
+			$imgData = [];
+			$errors = [];
+			$files = $_FILES;
+			$upload_count = count($_FILES['profile_picture']['name']);
+
+			for( $i = 0; $i < $upload_count; $i++ )
+			{
+				$imgData[] = $files['profile_picture']['name'][$i];
+
+			    $_FILES['profile_picture'] = [
+			        'name'     => $files['profile_picture']['name'][$i],
+			        'type'     => $files['profile_picture']['type'][$i],
+			        'tmp_name' => $files['profile_picture']['tmp_name'][$i],
+			        'error'    => $files['profile_picture']['error'][$i],
+			        'size'     => $files['profile_picture']['size'][$i]
+			    ];
+			    
+			   
+
+			    $this->load->library('upload', $config);
+				if ( ! $this->upload->do_upload('profile_picture'))
+				{
+					$error = array('status' => 0,'message' => $this->upload->display_errors());
+					$this->response($error);
+				}
+				else
+				{
+					$upload = $this->upload->data();
+				}
+			}
+
+			$user_data['vName'] 		= $name;
+			$user_data['vEmail'] 		= $email;
+			$user_data['vPhone'] 		= $phone;
+			$user_data['vCountry'] 		= $country;
+			$user_data['vImage'] 		= json_encode($imgData);
+			$user_data['dtUpdatedDate'] = $update_date;
+
+			$res = $this->UserModel->update_user_data($user_data,$music_creator_id);
+
+			$artist_name       = $this->input->post('artist_name');
+			$categories        = $this->input->post('categories');
+			$social_media_links= $this->input->post('social_media_links');
+			// music
+			
+			$data1 = [];  
+      		$config1['upload_path'] 		= './public/uploads/music';
+			$config1['allowed_types'] 	= 'mp3|mpeg|mpg|mpeg3';
+			
+			$errors1 = [];
+			$files1 = $_FILES;
+
+			$this->load->library('upload', $config1);
+			if ( ! $this->upload->do_upload('music'))
+			{
+				$data1 = array('status'=>0,'error' => $this->upload->display_errors());
+				$this->response($data1);
+			}
+			else
+			{
+				$upload1 = $this->upload->data();
+			}
+
+			$music_creator_data['vArtistName'] 		= $artist_name;
+			$music_creator_data['vCategories'] 		= $categories;
+			$music_creator_data['vSocialMediaLinks']= json_encode($social_media_links);
+			$music_creator_data['vUploadMusic']		= $upload1['file_name'];
+			$music_creator_data['dtUpdatedDate'] 	= date('Y-m-d H:i:s');
+
+			$result = $this->MusicCreatorModel->update_music_creator($music_creator_data,$music_creator_id);
+			
+			if($result)
+			{
+				$data = SUCCESS( 1, 'Music Creator updated successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+
+	public function add_contact_us_post()
+	{
+		try{
+			$name 		= $this->input->post('name');
+			$email      = $this->input->post('email');
+			$phone      = $this->input->post('phone');
+			$subject	= $this->input->post('subject');
+			$message	= $this->input->post('message');
+			$added_date	= date('Y-m-d H:i:s');
+
+			// validation
+			if(empty($name)){
+				$data = ERROR( 0, 'Please enter the name');
+				$this->response($data);
+			}
+
+			if(empty($email)){
+				$data = ERROR( 0, 'Please enter the email');
+				$this->response($data);
+			}
+
+			if(empty($phone)){
+				$data = ERROR( 0, 'Please enter the phone');
+				$this->response($data);
+			}
+
+			if(empty($subject)){
+				$data = ERROR( 0, 'Please enter the subject');
+				$this->response($data);
+			}
+
+			if(empty($message)){
+				$data = ERROR( 0, 'Please enter the message');
+				$this->response($data);
+			}
+
+			$contact_data['vName'] 	  = $name;
+			$contact_data['vEmail'] 	  = $email;
+			$contact_data['vPhone'] 	  = $phone;
+			$contact_data['vSubject'] 	  = $subject;
+			$contact_data['vMessage'] 	  = $message;
+			$contact_data['dtAddedDate'] = $added_date;
+
+			$result = $this->ContactModel->add_contact_us($contact_data);
+
+			if($result)
+			{
+				$data = SUCCESS( 1, 'Your message posted successfully.Team reacted will contact you soon!',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function get_contact_us_get()
+	{
+		try{
+			$contact_us_id = $this->input->get('contact_us_id');
+
+			$result = $this->ContactModel->get_contact_us($contact_us_id);
+			
+			if(!empty($result))
+			{
+				$data = SUCCESS( 1, 'Contact us details found successfully.',$result);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Contact us details not found.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function get_celebrities_by_category_get()
+	{
+		try{
+			$category_id = $this->input->get('category_id');
+
+			$result = $this->CelebrityModel->get_celebrities_by_category($category_id);
+			
+			if(!empty($result))
+			{
+				$data = SUCCESS( 1, 'Celebrity details found successfully.',$result);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Contact us details not found.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function add_social_media_post()
+	{
+		try{
+			$platform_name = $this->input->post('platform_name');
+			$link          = $this->input->post('link');
+			$added_date	   = date('Y-m-d H:i:s');
+
+			// validation
+			if(empty($platform_name)){
+				$data = ERROR( 0, 'Please enter the platform_name');
+				$this->response($data);
+			}
+
+			$platform_data['vPlatformName'] = $platform_name;
+			$platform_data['vLink'] 	  	= $link;
+			$platform_data['dtAddedDate']  	= $added_date;
+
+			$result = $this->PlatformModel->add_platform($platform_data);
+
+			if($result)
+			{
+				$data = SUCCESS( 1, 'Social media platform added successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function get_social_media_platform_get()
+	{
+		try{
+			$platform_id = $this->input->get('platform_id');
+
+			if(empty($platform_id))
+			{
+				$data = ERROR( 0, 'Please enter the platform_id');
+				$this->response($data);
+			}
+
+			$result = $this->PlatformModel->get_social_media_platform($platform_id);
+			
+			if(!empty($result))
+			{
+				$data = SUCCESS( 1, 'Social media platform details found successfully.',$result);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Contact us details not found.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function delete_social_media_platform_post()
+	{
+		try{
+			$platform_id = $this->input->post('platform_id');
+
+			if(empty($platform_id))
+			{
+				$data = ERROR( 0, 'Please enter the platform_id');
+				$this->response($data);
+			}
+			$result = $this->PlatformModel->delete_social_media_platform($platform_id);
+			
+			if($result)
+			{
+				$data = SUCCESS( 1, 'Social media platform deleted successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+	
+	public function update_social_media_platform_post()
+	{
+		try{
+			$platform_id   = $this->input->post('platform_id');
+			$platform_name = $this->input->post('platform_name');
+			$link          = $this->input->post('link');
+			$updated_date	   = date('Y-m-d H:i:s');
+
+			if(empty($platform_id))
+			{
+				$data = ERROR( 0, 'Please enter the platform_id');
+				$this->response($data);
+			}
+			if(empty($platform_name))
+			{
+				$data = ERROR( 0, 'Please enter the platform_name');
+				$this->response($data);
+			}
+			$data['vPlatformName'] = $platform_name;
+			$data['vLink'] 		   = $link;
+			$data['dtUpdatedDate'] = $updated_date;
+
+			$result = $this->PlatformModel->update_social_media_platform($platform_id,$data);
+			
+			if($result)
+			{
+				$data = SUCCESS( 1, 'Social media platform updated successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function get_similar_celebrities_get()
+	{
+		try{
+			$category_id = $this->input->get('category_id');
+
+			$result = $this->CelebrityModel->get_celebrities_by_category($category_id);
+			
+			if(!empty($result))
+			{
+				$data = SUCCESS( 1, 'Similar Celebrities found successfully.',$result);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Contact us details not found.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function category_get($slug)
+	{
+		$title      = $this->input->get('title');
+		$price      = $this->input->get('price');
+		$price_from = $this->input->get('price_from');
+		$price_to   = $this->input->get('price_to');
+
+		try{
+			$category = $this->CelebrityModel->get_category_id($slug);
+			$result = $this->CelebrityModel->get_celebrities_by_category($category[0]['iCategoryMasterId'],$title,$price,$price_from,$price_to);
+			
+			if(!empty($result))
+			{
+				$data = SUCCESS( 1, 'Celebrities found successfully.',$result);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Celebrities not found.');
+				$this->response($data);
+			}
 		}catch(Exception $e){
 			$data = ERROR( 0, $e->getMessage());
 			$this->response($data);
