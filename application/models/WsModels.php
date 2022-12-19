@@ -5,7 +5,7 @@ class WsModels extends CI_Model {
   
 	public function getAllRecords()
 	{    
-		$this->db->select('iUsersId as user_id,vName as name,vEmail as email,vAccessToken as access_token');
+		$this->db->select('iUsersId as user_id,vFirstName as first_name,vLastName as last_name,vEmail as email,vAccessToken as access_token');
 		$this->db->from('users');
 		$query = $this->db->get()->result();  
 		return $query;
@@ -13,7 +13,7 @@ class WsModels extends CI_Model {
 
 	public function getRecord($user_id)
 	{    
-		$this->db->select('iUsersId as user_id,vName as name,vEmail as email,vAccessToken as access_token');
+		$this->db->select('iUsersId as user_id,vFirstName as first_name,vLastName as last_name,vEmail as email,vAccessToken as access_token');
 		$this->db->from('users');
 		$this->db->where('iUsersId',$user_id);
 		$query = $this->db->get()->result();  
@@ -28,7 +28,7 @@ class WsModels extends CI_Model {
 
 	public function isExist($email)
 	{
-		$this->db->select('iUsersId as user_id,vName as name,vEmail as email,vAccessToken as access_token');
+		$this->db->select('iUsersId as user_id,vFirstName as first_name,vLastName as last_name,vEmail as email,vAccessToken as access_token');
 		$this->db->from('users');
 		$this->db->where('vEmail',$email);
 		$query = $this->db->get()->result();  
@@ -37,7 +37,7 @@ class WsModels extends CI_Model {
 	
 	public function loginAction($data)
 	{
-		$this->db->select('iUsersId as user_id,vName as name,vEmail as email,vAccessToken as access_token,vPassword as password');
+		$this->db->select('iUsersId as user_id,vFirstName as first_name,vLastName as last_name,vEmail as email,vAccessToken as access_token,vPassword as password');
 		$this->db->from('users');
 		$this->db->where('vEmail',$data['vEmail']);
 		$query = $this->db->get()->result();  

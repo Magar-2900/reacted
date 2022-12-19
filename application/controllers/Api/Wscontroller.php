@@ -15,6 +15,8 @@ class Wscontroller extends REST_Controller
 		$this->load->model('MusicCreatorModel');
 		$this->load->model('ContactModel');
 		$this->load->model('PlatformModel');
+		$this->load->model('CategoryModel');
+		$this->load->model('CouponModel');
 	}
 
 	public function validate_access_token($headers)
@@ -47,7 +49,8 @@ class Wscontroller extends REST_Controller
 	public function register_post()
 	{
 		try{
-			$name = $this->input->post('name');
+			$first_name = $this->input->post('first_name');
+			$last_name = $this->input->post('last_name');
 			$email = $this->input->post('email');
 			$phone = $this->input->post('phone');
 			$password = $this->input->post('password');
@@ -56,8 +59,13 @@ class Wscontroller extends REST_Controller
 			$registration_id = $this->input->post('registration_id');
 
 			// validation
-			if(empty($name)){
-				$data = ERROR( 0, 'Please enter the name');
+			if(empty($first_name)){
+				$data = ERROR( 0, 'Please enter the first_name');
+
+				$this->response($data);
+			}
+			if(empty($last_name)){
+				$data = ERROR( 0, 'Please enter the last_name');
 
 				$this->response($data);
 			}
@@ -100,7 +108,8 @@ class Wscontroller extends REST_Controller
 				$this->response($data);
 			}
 
-			$user_data['vName'] = $name;
+			$user_data['vFirstName'] = $first_name;
+			$user_data['vLastName'] = $last_name;
 			$user_data['vEmail'] = $email;
 			$user_data['vPhone'] = $phone;
 			$user_data['iRoleId'] = $role_id;
@@ -159,7 +168,7 @@ class Wscontroller extends REST_Controller
 				if (password_verify($password, $record[0]['password'])) 
 				{
 					$token['user_id'] = $record[0]['user_id'];
-					$token['name'] = $record[0]['name'];
+					$token['name'] = $record[0]['first_name'];
 					$token['email'] = $record[0]['email'];
 					$enc_token = $this->authorization_token->generateToken($token);
 					$this->UserModel->update_token($enc_token,$token['user_id']);
@@ -219,10 +228,11 @@ class Wscontroller extends REST_Controller
 	{
 		try{
 			$headers = $this->input->request_headers(); 
-			$token = $this->validate_access_token($headers);			
+			$token   = $this->validate_access_token($headers);			
 			$user_id = $token['user_id'];
 			
-			$name = $this->input->post('name');
+			$first_name = $this->input->post('first_name');
+			$last_name  = $this->input->post('last_name');
 			$phone = $this->input->post('phone');
 
 			// validation
@@ -237,7 +247,8 @@ class Wscontroller extends REST_Controller
 				$this->response($data);
 			}
 
-			$user_data['vName'] = $name;
+			$user_data['vFirstName'] = $first_name;
+			$user_data['vLastName'] = $last_name;
 			$user_data['vPhone'] = $phone;
 
 			$user = $this->UserModel->update_user($user_id,$user_data);
@@ -458,7 +469,8 @@ class Wscontroller extends REST_Controller
 	public function add_celebrity_post()
 	{
 		try{
-			$name 			   = $this->input->post('name');
+			$first_name 	   = $this->input->post('first_name');
+			$last_name         = $this->input->post('last_name');
 			$email             = $this->input->post('email');
 			$phone             = $this->input->post('phone');
 			$role_id           = '3';
@@ -609,7 +621,8 @@ class Wscontroller extends REST_Controller
 				}
 			}
 			
-			$user_data['vName'] 	= $name;
+			$user_data['vFirstName']= $first_name;
+			$user_data['vLastName'] = $last_name;
 			$user_data['vEmail'] 	= $email;
 			$user_data['vPhone'] 	= $phone;
 			$user_data['iRoleId'] 	= $role_id;
@@ -660,17 +673,19 @@ class Wscontroller extends REST_Controller
 			$celebrity_id = $this->input->get('celebrity_id');
 
 			$result = $this->CelebrityModel->get_celebrity_details($celebrity_id);
-			$images = json_decode($result[0]['images']);
-			if(!empty($images))
+			if(!empty($result[0]['images']))
 			{
+				$images = json_decode($result[0]['images']);
 				$img = [];
-				foreach($images as $val)
+				if(!empty($images))
 				{
-					$img[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
+					foreach($images as $val)
+					{
+						$img[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
+					}
 				}
+				$result[0]['images'] = $img;
 			}
-			$result[0]['images'] = $img;
-			
 			if(!empty($result))
 			{
 				$data = SUCCESS( 1, 'Celebrity details found successfully.',$result);
@@ -724,16 +739,17 @@ class Wscontroller extends REST_Controller
 			if($step == 'register')
 			{
 				// register
-				$name 			   = $this->input->post('name');
+				$first_name 	   = $this->input->post('first_name');
+				$last_name 	   	   = $this->input->post('last_name');
 				$email             = $this->input->post('email');
 				$phone             = $this->input->post('phone');
 				$role_id           = '2';
 				$registration_type = 'Other';
 
 				// validation
-				if(empty($name))
+				if(empty($first_name))
 				{
-					$data = ERROR( 0, 'Please enter the name');
+					$data = ERROR( 0, 'Please enter the first_name');
 					$this->response($data);
 				}
 
@@ -758,7 +774,8 @@ class Wscontroller extends REST_Controller
 					$data = ERROR( 0, 'Please enter the phone');
 					$this->response($data);
 				}
-				$user_data['vName'] 	= $name;
+				$user_data['vFirstName']= $first_name;
+				$user_data['vLastName'] = $last_name;
 				$user_data['vEmail'] 	= $email;
 				$user_data['vPhone'] 	= $phone;
 				$user_data['iRoleId'] 	= $role_id;
@@ -813,6 +830,7 @@ class Wscontroller extends REST_Controller
 			else if($step == 'upload')
 			{
 				$music_creator_id = $this->input->post('music_creator_id');
+				$catrgories 	  = $this->input->post('catrgories');
 				
 				if(empty($music_creator_id))
 				{
@@ -838,7 +856,8 @@ class Wscontroller extends REST_Controller
 				{
 					$upload = $this->upload->data();
 				}
-
+				
+				$music_creator_data['vCategories'] 		= $catrgories;
 				$music_creator_data['dtUpdatedDate'] 	= date('Y-m-d H:i:s');
 				$music_creator_data['vUploadMusic']		= $upload['file_name'];
 
@@ -925,7 +944,8 @@ class Wscontroller extends REST_Controller
 	{
 		try{
 			$music_creator_id  = $this->input->post('music_creator_id');
-			$name 			   = $this->input->post('name');
+			$first_name 	   = $this->input->post('first_name');
+			$last_name 		   = $this->input->post('last_name');
 			$email             = $this->input->post('email');
 			$phone             = $this->input->post('phone');
 			$country		   = $this->input->post('country');
@@ -934,7 +954,7 @@ class Wscontroller extends REST_Controller
 			// profile_picture
 			$data = [];  
       		$config['upload_path'] 		= './public/uploads/profile';
-			$config['allowed_types'] 	= 'gif|jpg|png|mp3|mpeg|mpg|mpeg3';
+			$config['allowed_types'] 	= 'jpeg|gif|jpg|png|mp3|mpeg|mpg|mpeg3';
 			
 			$imgData = [];
 			$errors = [];
@@ -967,7 +987,8 @@ class Wscontroller extends REST_Controller
 				}
 			}
 
-			$user_data['vName'] 		= $name;
+			$user_data['vFirstName']    = $first_name;
+			$user_data['vLastName']     = $last_name;
 			$user_data['vEmail'] 		= $email;
 			$user_data['vPhone'] 		= $phone;
 			$user_data['vCountry'] 		= $country;
@@ -1305,6 +1326,579 @@ class Wscontroller extends REST_Controller
 			else
 			{
 				$data = ERROR( 0, 'Celebrities not found.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function add_category_post()
+	{
+		try{
+			$category_name = $this->input->post('category_name');
+			$slug          = $this->input->post('slug');
+			$description   = $this->input->post('description');			
+			$added_date	   = date('Y-m-d H:i:s');
+
+			// validation
+			if(empty($category_name))
+			{
+				$data = ERROR( 0, 'Please enter the category_name');
+				$this->response($data);
+			}
+
+			if(empty($slug))
+			{
+				$data = ERROR( 0, 'Please enter the slug');
+				$this->response($data);
+			}
+
+			$config['upload_path']    = 'public/uploads/category';
+			$config['allowed_types']  = 'gif|jpg|png|jpeg';
+			// $config['max_size']       = 1024 * 5;
+			// $config['max_width']      = 1024;
+			// $config['max_height']     = 768;
+
+			$this->load->library('upload', $config);
+			if ( ! $this->upload->do_upload('image'))
+			{
+				$data = array('status'=>0,'error' => $this->upload->display_errors());
+				$this->response($data);
+			}
+			else
+			{
+				$upload = $this->upload->data();
+			}
+
+			$category_data['vCategoryName'] = $category_name;
+			$category_data['vSlug'] 	  	= $slug;
+			$category_data['vImage'] 	  	= $upload['file_name'];
+			$category_data['vDescription'] 	= $description;
+			$category_data['dtAddedDate']  	= $added_date;
+
+			$result = $this->CategoryModel->add_category($category_data);
+
+			if($result)
+			{
+				$data = SUCCESS( 1, 'Category added successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function get_category_get()
+	{
+		try{
+			$category_id = $this->input->get('category_id');
+
+			$result = $this->CategoryModel->get_category($category_id);
+			if(!empty($result[0]['image']))
+			{
+				$result[0]['image'] = $this->config->item('base_url').'public/uploads/category/'.$result[0]['image'];
+			}
+			
+			if(!empty($result))
+			{
+				$data = SUCCESS( 1, 'Category details found successfully.',$result);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Category details not found.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function delete_category_post()
+	{
+		try{
+			$category_id = $this->input->post('category_id');
+
+			if(empty($category_id))
+			{
+				$data = ERROR( 0, 'Please enter the category_id');
+				$this->response($data);
+			}
+			$result = $this->CategoryModel->delete_category($category_id);
+			
+			if($result)
+			{
+				$data = SUCCESS( 1, 'Category deleted successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function update_category_post()
+	{
+		try{
+			$category_id   = $this->input->post('category_id');
+			$category_name = $this->input->post('category_name');
+			$slug          = $this->input->post('slug');
+			$description   = $this->input->post('description');			
+			$updated_date  = date('Y-m-d H:i:s');
+
+			if(empty($category_id))
+			{
+				$data = ERROR( 0, 'Please enter the category_id');
+				$this->response($data);
+			}
+			if(empty($category_name))
+			{
+				$data = ERROR( 0, 'Please enter the category_name');
+				$this->response($data);
+			}
+			if(empty($slug))
+			{
+				$data = ERROR( 0, 'Please enter the slug');
+				$this->response($data);
+			}
+			$config['upload_path']    = 'public/uploads/category';
+			$config['allowed_types']  = 'gif|jpg|png|jpeg';
+
+			$this->load->library('upload', $config);
+			if ( ! $this->upload->do_upload('image'))
+			{
+				$data = array('status'=>0,'error' => $this->upload->display_errors());
+				$this->response($data);
+			}
+			else
+			{
+				$upload = $this->upload->data();
+			}
+			$category_data['vCategoryName'] = $category_name;
+			$category_data['vSlug'] 	  	= $slug;
+			$category_data['vImage'] 	  	= $upload['file_name'];
+			$category_data['vDescription'] 	= $description;
+			$category_data['dtUpdatedDate'] = $updated_date;
+
+			$result = $this->CategoryModel->update_category($category_id,$category_data);
+			
+			if($result)
+			{
+				$data = SUCCESS( 1, 'Category updated successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function add_coupon_post()
+	{
+		try{
+			$coupon_title = $this->input->post('coupon_title');
+			$coupon_code  = $this->input->post('coupon_code');
+			$description  = $this->input->post('description');
+
+			$celebrity_id = $this->input->post('celebrity_id');
+			$start_date  = $this->input->post('start_date');
+			$end_date  = $this->input->post('end_date');
+
+			$coupon_limit  = $this->input->post('coupon_limit');
+			$status  = $this->input->post('status');
+
+
+			$added_date	   = date('Y-m-d H:i:s');
+
+			// validation
+			if(empty($coupon_title))
+			{
+				$data = ERROR( 0, 'Please enter the coupon_title');
+				$this->response($data);
+			}
+
+			if(empty($coupon_code))
+			{
+				$data = ERROR( 0, 'Please enter the coupon_code');
+				$this->response($data);
+			}
+
+			if(empty($celebrity_id))
+			{
+				$data = ERROR( 0, 'Please enter the celebrity_id');
+				$this->response($data);
+			}
+
+			if(empty($start_date))
+			{
+				$data = ERROR( 0, 'Please enter the start_date');
+				$this->response($data);
+			}
+
+			if(empty($end_date))
+			{
+				$data = ERROR( 0, 'Please enter the end_date');
+				$this->response($data);
+			}
+
+			if(empty($coupon_limit))
+			{
+				$data = ERROR( 0, 'Please enter the coupon_limit');
+				$this->response($data);
+			}
+
+			if(empty($status))
+			{
+				$data = ERROR( 0, 'Please enter the coupon_limit');
+				$this->response($status);
+			}
+
+			$coupon_data['vCouponTitle'] = $coupon_title;
+			$coupon_data['vCouponCode']  = $coupon_code;
+			$coupon_data['vDescription'] = $description;
+
+			$coupon_data['iCelebrityId'] = $celebrity_id;
+			$coupon_data['dStartDate'] 	 = $start_date;
+			$coupon_data['dEndDate'] 	 = $end_date;
+			$coupon_data['iCouponLimit'] = $coupon_limit;
+			$coupon_data['eStatus'] 	 = $status;
+			$coupon_data['dtAddedDate']  = $added_date;
+
+			$result = $this->CouponModel->add_coupon($coupon_data);
+
+			if($result)
+			{
+				$data = SUCCESS( 1, 'Coupon added successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function get_coupon_get()
+	{
+		try{
+			$coupon_id = $this->input->get('coupon_id');
+
+			$result = $this->CouponModel->get_coupon($coupon_id);
+			
+			if(!empty($result))
+			{
+				$data = SUCCESS( 1, 'Coupon details found successfully.',$result);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Coupon details not found.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function delete_coupon_post()
+	{
+		try{
+			$coupon_id = $this->input->post('coupon_id');
+
+			if(empty($coupon_id))
+			{
+				$data = ERROR( 0, 'Please enter the coupon_id');
+				$this->response($data);
+			}
+			$result = $this->CouponModel->delete_coupon($coupon_id);
+			
+			if($result)
+			{
+				$data = SUCCESS( 1, 'Coupon deleted successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function update_coupon_post()
+	{
+		try{
+			$coupon_id     = $this->input->post('coupon_id');
+			$coupon_title  = $this->input->post('coupon_title');
+			$coupon_code   = $this->input->post('coupon_code');
+			$description   = $this->input->post('description');
+			$celebrity_id  = $this->input->post('celebrity_id');
+			$start_date    = $this->input->post('start_date');
+			$end_date      = $this->input->post('end_date');
+			$coupon_limit  = $this->input->post('coupon_limit');
+			$status        = $this->input->post('status');
+			$updated_date  = date('Y-m-d H:i:s');
+
+			// validation
+			if(empty($coupon_id))
+			{
+				$data = ERROR( 0, 'Please enter the coupon_id');
+				$this->response($data);
+			}
+
+			if(empty($coupon_title))
+			{
+				$data = ERROR( 0, 'Please enter the coupon_title');
+				$this->response($data);
+			}
+
+			if(empty($coupon_code))
+			{
+				$data = ERROR( 0, 'Please enter the coupon_code');
+				$this->response($data);
+			}
+
+			if(empty($celebrity_id))
+			{
+				$data = ERROR( 0, 'Please enter the celebrity_id');
+				$this->response($data);
+			}
+
+			if(empty($start_date))
+			{
+				$data = ERROR( 0, 'Please enter the start_date');
+				$this->response($data);
+			}
+
+			if(empty($end_date))
+			{
+				$data = ERROR( 0, 'Please enter the end_date');
+				$this->response($data);
+			}
+
+			if(empty($coupon_limit))
+			{
+				$data = ERROR( 0, 'Please enter the coupon_limit');
+				$this->response($data);
+			}
+
+			if(empty($status))
+			{
+				$data = ERROR( 0, 'Please enter the coupon_limit');
+				$this->response($status);
+			}
+
+			$coupon_data['vCouponTitle'] = $coupon_title;
+			$coupon_data['vCouponCode']  = $coupon_code;
+			$coupon_data['vDescription'] = $description;
+
+			$coupon_data['iCelebrityId'] = $celebrity_id;
+			$coupon_data['dStartDate'] 	 = $start_date;
+			$coupon_data['dEndDate'] 	 = $end_date;
+			$coupon_data['iCouponLimit'] = $coupon_limit;
+			$coupon_data['eStatus'] 	 = $status;
+			$coupon_data['dtUpdatedDate']= $updated_date;
+
+			$result = $this->CouponModel->update_coupon($coupon_id,$coupon_data);
+			
+			if($result)
+			{
+				$data = SUCCESS( 1, 'Coupon updated successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function add_music_creator_by_admin_post()
+	{
+		try{
+			$first_name 	   = $this->input->post('first_name');
+			$last_name 		   = $this->input->post('last_name');
+			$email             = $this->input->post('email');
+			$phone             = $this->input->post('phone');
+			$country		   = $this->input->post('country');
+			
+
+			if(empty($first_name))
+			{
+				$data = ERROR( 0, 'Please enter the first_name');
+				$this->response($data);
+			}
+			if(empty($last_name))
+			{
+				$data = ERROR( 0, 'Please enter the last_name');
+				$this->response($data);
+			}
+			if(empty($email)){
+				$data = ERROR( 0, 'Please enter the email');
+				$this->response($data);
+			}
+
+			if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
+				$data = ERROR( 0, 'Please enter valid email');
+			  	$this->response($data);
+			}
+
+			$is_exist = $this->UserModel->email_exist($email);
+
+			if(!empty($is_exist)){
+				$data = ERROR( 0, 'User already exist this email');
+				$this->response($data);
+			}
+			if(empty($phone))
+			{
+				$data = ERROR( 0, 'Please enter the phone');
+				$this->response($data);
+			}
+			if(empty($country))
+			{
+				$data = ERROR( 0, 'Please enter the country');
+				$this->response($data);
+			}
+			
+			
+			// Profile picture
+			$data = [];  
+	  		$config['upload_path'] 		= './public/uploads/profile';
+			$config['allowed_types'] 	= 'jpeg|gif|jpg|png|mp3|mpeg|mpg|mpeg3';
+			
+			$imgData = [];
+			$errors = [];
+			$files = $_FILES;
+			$upload_count = count($_FILES['profile_picture']['name']);
+
+			for( $i = 0; $i < $upload_count; $i++ )
+			{
+				$imgData[] = $files['profile_picture']['name'][$i];
+
+			    $_FILES['profile_picture'] = [
+			        'name'     => $files['profile_picture']['name'][$i],
+			        'type'     => $files['profile_picture']['type'][$i],
+			        'tmp_name' => $files['profile_picture']['tmp_name'][$i],
+			        'error'    => $files['profile_picture']['error'][$i],
+			        'size'     => $files['profile_picture']['size'][$i]
+			    ];
+			    
+			   
+
+			    $this->load->library('upload', $config);
+				if ( ! $this->upload->do_upload('profile_picture'))
+				{
+					$error = array('status' => 0,'message' => $this->upload->display_errors());
+					$this->response($error);
+				}
+				else
+				{
+					$upload = $this->upload->data();
+				}
+			}
+			$user_data['vFirstName']= $first_name;
+			$user_data['vLastName'] = $last_name;
+			$user_data['vEmail'] 	= $email;
+			$user_data['vPhone'] 	= $phone;
+			$user_data['vPhone'] 	= $phone;
+			$user_data['iRoleId'] 	= '2';
+			$user_data['eRegistrationType'] = 'Other';
+			$user_data['vImage'] 		= json_encode($imgData);
+			$last_id = $this->UserModel->register_user($user_data);
+
+			$artist_name       = $this->input->post('artist_name');
+			$categories        = $this->input->post('categories');
+			$social_media_links= $this->input->post('social_media_links');
+			$description       = $this->input->post('description');
+
+			if(empty($artist_name))
+			{
+				$data = ERROR( 0, 'Please enter the artist_name');
+				$this->response($data);
+			}
+
+			if(empty($categories))
+			{
+				$data = ERROR( 0, 'Please select the categories');
+				$this->response($data);
+			}
+
+			if(empty($social_media_links))
+			{
+				$data = ERROR( 0, 'Please enter the social_media_links');
+				$this->response($data);
+			}
+
+			if(empty($description))
+			{
+				$data = ERROR( 0, 'Please enter the description');
+				$this->response($data);
+			}
+					// music
+			$data1 = [];  
+	  		$config1['upload_path'] 		= './public/uploads/music';
+			$config1['allowed_types'] 	= 'mp3|mpeg|mpg|mpeg3';
+			
+			$errors1 = [];
+			$files1 = $_FILES;
+
+			$this->load->library('upload', $config1);
+			if ( ! $this->upload->do_upload('music'))
+			{
+				$data1 = array('status'=>0,'error' => $this->upload->display_errors());
+				$this->response($data1);
+			}
+			else
+			{
+				$upload1 = $this->upload->data();
+			}
+			$music_creator_data['vArtistName']       = $artist_name;
+			$music_creator_data['iUsersId']          = $last_id;
+			$music_creator_data['vCategories']       = $categories;
+			$music_creator_data['vSocialMediaLinks'] = $social_media_links;
+			$music_creator_data['vDescription'] 	 = $description;
+			$music_creator_data['vUploadMusic']		 = $upload1['file_name'];
+			$music_creator_data['dtAddedDate']       = date('Y-m-d H:i:s');
+			$result = $this->MusicCreatorModel->add_artist($music_creator_data);
+			if($result)
+			{
+				$data = SUCCESS( 1, 'Music Creator added successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
 				$this->response($data);
 			}
 		}catch(Exception $e){
