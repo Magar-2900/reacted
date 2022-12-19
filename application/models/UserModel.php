@@ -27,7 +27,7 @@ class UserModel extends CI_Model
 
   	public function login_action($data)
     {
-		$this->db->select('iUsersId as user_id,vName as name,vEmail as email,vPassword as password');
+		$this->db->select('iUsersId as user_id,users.vFirstName as first_name,users.vLastName as last_name,vEmail as email,vPassword as password');
 		$this->db->from('users');
 		$this->db->where('vEmail',$data['vEmail']);
 		$query_obj = $this->db->get();  
@@ -45,7 +45,7 @@ class UserModel extends CI_Model
 
   	public function get_user($user_id = '')
 	{
-		$this->db->select('users.iUsersId as user_id,users.vName as name,users.vEmail as email,users.vPhone as phone,user_roles.vRole as role_id,users.vAccessToken as access_token');
+		$this->db->select('users.iUsersId as user_id,users.vFirstName as first_name,users.vLastName as last_name,users.vEmail as email,users.vPhone as phone,user_roles.vRole as role_id,users.vAccessToken as access_token');
 		$this->db->from('users');
 		$this->db->join('user_roles','user_roles.iRoleId = users.iRoleId','left');
 		if(!empty($user_id))
@@ -75,7 +75,7 @@ class UserModel extends CI_Model
 
 	public function check_password($user_id)
     {
-		$this->db->select('iUsersId as user_id,vName as name,vEmail as email,vPassword as password');
+		$this->db->select('iUsersId as user_id,vFirstName as first_name,vLastName as last_name,vEmail as email,vPassword as password');
 		$this->db->from('users');
 		$this->db->where('iUsersId',$user_id);
 		$query_obj = $this->db->get();  
@@ -92,7 +92,7 @@ class UserModel extends CI_Model
 
 	public function check_security_code($email,$security_code)
 	{
-		$this->db->select('iUsersId as user_id,vName as name,vEmail as email,vPassword as password');
+		$this->db->select('iUsersId as user_id,vFirstName as first_name,vLastName as last_name,vEmail as email,vPassword as password');
 		$this->db->from('users');
 		$this->db->where('vEmail',$email);
 		$this->db->where('iEmailVerifyOtp',$security_code);
