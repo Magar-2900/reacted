@@ -48,6 +48,7 @@ class CelebrityModel extends CI_Model
   	
   	public function get_celebrities_by_category($category_id = '', $title = '', $price = '', $price_form = '', $price_to = '')
 	{
+
 		$this->db->select("users.iUsersId as user_id,users.vFirstName as first_name,users.vLastName as last_name,users.vEmail as email,users.vPhone as phone,user_roles.vRole as role,user_celebrity.vTitle as title,user_celebrity.vTagLine as tag_line,user_celebrity.vShortDescription as short_description,user_celebrity.vLongDescription as long_description,user_celebrity.dPrice as price,user_celebrity.eIsFeatured as is_featured,user_celebrity.dtAddedDate as added_date,user_celebrity.dtUpdatedDate as updated_date,GROUP_CONCAT(category_master.vCategoryName SEPARATOR ',') as categories,users.vImage as images,");
 		$this->db->from('users');
 		$this->db->join('user_roles','user_roles.iRoleId = users.iRoleId','left');
@@ -70,7 +71,7 @@ class CelebrityModel extends CI_Model
 			$this->db->order_by('user_celebrity.dPrice',$price);	
 		}
 
-		if(!empty($price_form) && !empty($price_to))
+		if($price_form !== '' && $price_to !== '')
 		{
 			$this->db->where('dPrice >=', $price_form);
 			$this->db->where('dPrice <=', $price_to);
