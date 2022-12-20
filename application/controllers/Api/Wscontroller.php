@@ -669,22 +669,23 @@ class Wscontroller extends REST_Controller
 
 	public function get_celebrity_get()
 	{
-		try{
+		try
+		{
 			$celebrity_id = $this->input->get('celebrity_id');
 
 			$result = $this->CelebrityModel->get_celebrity_details($celebrity_id);
 			if(!empty($result[0]['images']))
 			{
 				$images = json_decode($result[0]['images']);
-				$img = [];
+				$img1 = [];
 				if(!empty($images))
 				{
 					foreach($images as $val)
 					{
-						$img[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
+						$img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
 					}
 				}
-				$result[0]['images'] = $img;
+				$result[0]['images'] = $img1;
 			}
 			if(!empty($result))
 			{
