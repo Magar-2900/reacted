@@ -1188,6 +1188,26 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
+	public function get_all_social_media_platforms_get(){
+		try {
+			$result = $this->PlatformModel->get_all_social_media_platform();
+			
+			if(!empty($result))
+			{
+				$data = SUCCESS( 1, 'Social media platform details found successfully.',$result);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Contact us details not found.');
+				$this->response($data);
+			}
+		} catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
 	public function get_social_media_platform_get()
 	{
 		try{
