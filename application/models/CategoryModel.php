@@ -41,4 +41,15 @@ class CategoryModel extends CI_Model
     	$result = $this->db->delete('category_master');
     	return $result;
   	}
+
+
+  	public function get_category_id($slug = '')
+	{
+		$this->db->select('iCategoryMasterId');
+	    $this->db->from('category_master');
+	    $this->db->where('vSlug',$slug);
+	    $dataArr = $this->db->get();
+	    $result = is_object($dataArr) ? $dataArr->result_array() : array();
+		return $result;
+	}
 }
