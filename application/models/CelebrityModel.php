@@ -54,8 +54,9 @@ class CelebrityModel extends CI_Model
 		$this->db->join('user_roles','user_roles.iRoleId = users.iRoleId','left');
 		$this->db->join('user_celebrity','user_celebrity.iUsersId = users.iUsersId','left');
 		$this->db->join("category_master","find_in_set(category_master.iCategoryMasterId,user_celebrity.vCategories)<> 0","left",false);
-		if(!empty($category_id))
+		if($category_id !== '')
 		{
+			//echo 'hiii';
 			$this->db->where('find_in_set('.$category_id.',user_celebrity.vCategories)<> 0');
 		}
 		

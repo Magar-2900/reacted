@@ -1334,7 +1334,7 @@ class Wscontroller extends REST_Controller
 		$price      = $this->input->get('price');
 		$price_from = $this->input->get('price_from');
 		$price_to   = $this->input->get('price_to');
-		
+
 		try{
 			$category = $this->CelebrityModel->get_category_id($slug);
 			$result = $this->CelebrityModel->get_celebrities_by_category($category[0]['iCategoryMasterId'],$title,$price,$price_from,$price_to);
