@@ -1414,15 +1414,16 @@ class Wscontroller extends REST_Controller
 	{
 		try{
 			$slug = $category;
+
 			$title      = $this->input->get('title');
 			$price      = $this->input->get('price');
 			$price_from = $this->input->get('price_from');
 			$price_to   = $this->input->get('price_to');
 		
-			$category = $this->CelebrityModel->get_category_id($slug);
+			$category1 = $this->CategoryModel->get_category_id($slug);
 			
-			if(!empty($category)){
-				$result = $this->CelebrityModel->get_celebrities_by_category($category[0]['iCategoryMasterId'],$title,$price,$price_from,$price_to);
+			if(!empty($category1)){
+				$result = $this->CelebrityModel->get_celebrities_by_category($category1[0]['iCategoryMasterId'],$title,$price,$price_from,$price_to);
 				for ($i=0; $i < count($result) ; $i++) 
 				{
 					if(!empty($result[$i]['images']))
@@ -1441,7 +1442,7 @@ class Wscontroller extends REST_Controller
 						$result[$i]['images'] = $img1;
 					}
 				}
-				
+
 				if(!empty($result))
 				{
 					$data = SUCCESS( 1, 'Celebrities found successfully.',$result);
