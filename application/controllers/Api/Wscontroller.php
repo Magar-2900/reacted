@@ -1311,26 +1311,6 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
-	public function get_all_social_media_platforms_get(){
-		try {
-			$result = $this->PlatformModel->get_all_social_media_platform();
-			
-			if(!empty($result))
-			{
-				$data = SUCCESS( 1, 'Social media platform details found successfully.',$result);
-				$this->response($data);
-			}
-			else
-			{
-				$data = ERROR( 0, 'Contact us details not found.');
-				$this->response($data);
-			}
-		} catch(Exception $e){
-			$data = ERROR( 0, $e->getMessage());
-			$this->response($data);
-		}
-	}
-
 	public function get_social_media_platform_get()
 	{
 		try{
@@ -1432,7 +1412,6 @@ class Wscontroller extends REST_Controller
 
 	public function category_get($category)
 	{
-
 		try{
 			$slug = $category;
 			$title      = $this->input->get('title');
@@ -1444,6 +1423,25 @@ class Wscontroller extends REST_Controller
 			
 			if(!empty($category)){
 				$result = $this->CelebrityModel->get_celebrities_by_category($category[0]['iCategoryMasterId'],$title,$price,$price_from,$price_to);
+				for ($i=0; $i < count($result) ; $i++) 
+				{
+					if(!empty($result[$i]['images']))
+					{
+						$images = json_decode($result[$i]['images']);
+
+						$img1 = [];
+						if(!empty($images))
+						{
+							foreach($images as $val)
+							{
+								$img1[] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/profile_image/".$val;
+								// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
+							}
+						}
+						$result[$i]['images'] = $img1;
+					}
+				}
+				
 				if(!empty($result))
 				{
 					$data = SUCCESS( 1, 'Celebrities found successfully.',$result);
