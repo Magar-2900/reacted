@@ -16,7 +16,7 @@ class PlatformModel extends CI_Model
   	}
 
 	public function get_all_social_media_platform(){
-		$this->db->select('vPlatformName  as platform_name,vLink as platform_link,dtAddedDate as added_date,dtUpdatedDate as updated_date,eStatus as status');
+		$this->db->select('iPlatformMasterId as id, vPlatformName  as platform_name,vLink as platform_link,dtAddedDate as added_date,dtUpdatedDate as updated_date,eStatus as status');
 		$this->db->from('platform_master');
 		$this->db->where('eStatus','Active');
 		$query_obj = $this->db->get();
