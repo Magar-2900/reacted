@@ -1554,6 +1554,27 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
+	public function get_all_categories_get(){
+		try{
+			$result = $this->CategoryModel->get_all_categories();
+
+			
+			if(!empty($result))
+			{
+				$data = SUCCESS( 1, 'Category details found successfully.',$result);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Category details not found.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
 	public function get_category_get()
 	{
 		try{

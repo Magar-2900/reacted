@@ -15,6 +15,14 @@ class CategoryModel extends CI_Model
   		return $result;
   	}
 
+	public function get_all_categories(){
+		$this->db->select('iCategoryMasterId as category_id,vCategoryName  as category_name,vSlug as slug,vDescription as description,vImage as image,dtAddedDate as added_date,dtUpdatedDate as updated_date,eStatus as status');
+		$this->db->from('category_master');
+		$query_obj = $this->db->get();
+		$result = is_object($query_obj) ? $query_obj->result_array() : array();
+		return $result;
+	}
+
   	public function get_category($id = '')
   	{
   		$this->db->select('iCategoryMasterId as category_id,vCategoryName  as category_name,vSlug as slug,vDescription as description,vImage as image,dtAddedDate as added_date,dtUpdatedDate as updated_date,eStatus as status');
