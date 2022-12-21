@@ -587,8 +587,8 @@ class Wscontroller extends REST_Controller
 			}
 
 			$data = [];  
-      		$config['upload_path'] 		= './public/uploads/profile';
-			$config['allowed_types'] 	= 'gif|jpg|png';
+      		// $config['upload_path'] 		= './public/uploads/profile';
+			// $config['allowed_types'] 	= 'gif|jpg|png';
 			
 			$imgData = [];
 			$errors = [];
@@ -607,18 +607,20 @@ class Wscontroller extends REST_Controller
 			        'size'     => $files['profile_picture']['size'][$i]
 			    ];
 			    
-			   
+			   	if (!empty($files["profile_picture"]["name"]))
+            	{
+	                $file_path = "profile_image";
+	                $file_name = $files["profile_picture"]["name"][$i];
+	                $file_tmp_path = $_FILES["profile_picture"]["tmp_name"];
+	                // print_r($file_tmp_path);die;
+	                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
+	                if (!$response)
+	                {
+	                    //file upload failed
 
-			    $this->load->library('upload', $config);
-				if ( ! $this->upload->do_upload('profile_picture'))
-				{
-					$error = array('status' => 0,'message' => $this->upload->display_errors());
-					$this->response($error);
-				}
-				else
-				{
-					$upload = $this->upload->data();
-				}
+	                }
+	            }
+
 			}
 			
 			$user_data['vFirstName']= $first_name;
@@ -674,19 +676,45 @@ class Wscontroller extends REST_Controller
 			$celebrity_id = $this->input->get('celebrity_id');
 
 			$result = $this->CelebrityModel->get_celebrity_details($celebrity_id);
-			if(!empty($result[0]['images']))
+			if(empty($celebrity_id))
 			{
-				$images = json_decode($result[0]['images']);
-				$img1 = [];
-				if(!empty($images))
+				for ($i=0; $i < count($result) ; $i++) 
 				{
-					foreach($images as $val)
+					if(!empty($result[$i]['images']))
 					{
-						$img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
+						$images = json_decode($result[$i]['images']);
+
+						$img1 = [];
+						if(!empty($images))
+						{
+							foreach($images as $val)
+							{
+								$img1[] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/profile_image/".$val;
+								// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
+							}
+						}
+						$result[$i]['images'] = $img1;
 					}
 				}
-				$result[0]['images'] = $img1;
 			}
+			else
+			{
+				if(!empty($result[0]['images']))
+				{
+					$images = json_decode($result[0]['images']);
+					$img1 = [];
+					if(!empty($images))
+					{
+						foreach($images as $val)
+						{
+							$img1[] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/profile_image/".$val;
+							// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
+						}
+					}
+					$result[0]['images'] = $img1;
+				}
+			}
+			
 			if(!empty($result))
 			{
 				$data = SUCCESS( 1, 'Celebrity details found successfully.',$result);
@@ -788,7 +816,7 @@ class Wscontroller extends REST_Controller
 				{	
 					$res = $this->UserModel->get_user($last_id);
 					$token['user_id'] = $res[0]['user_id'];
-					$token['name'] = $res[0]['name'];
+					$token['name'] = $res[0]['first_name'];
 					$token['email'] = $res[0]['email'];
 					$enc_token = $this->authorization_token->generateToken($token);
 					$this->UserModel->update_token($enc_token,$token['user_id']);
@@ -845,22 +873,25 @@ class Wscontroller extends REST_Controller
 				$config['allowed_types'] 	= 'mp3|mpeg|mpg|mpeg3';
 				
 				$errors = [];
-				$files = $_FILES;
+				$files = $_FILES;				
+				// print_r($files);die;
+				if (!empty($files["music"]["name"]))
+            	{
+	                $file_path = "music";
+	                $file_name = $files["music"]["name"];
+	                $file_tmp_path = $_FILES["music"]["tmp_name"];
+	                // print_r($file_tmp_path);die;
+	                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
+	                if (!$response)
+	                {
+	                    //file upload failed
 
-				$this->load->library('upload', $config);
-				if ( ! $this->upload->do_upload('music'))
-				{
-					$error = array('status'=>0,'error' => $this->upload->display_errors());
-					$this->response($data);
-				}
-				else
-				{
-					$upload = $this->upload->data();
-				}
+	                }
+	            }
 				
 				$music_creator_data['vCategories'] 		= $catrgories;
 				$music_creator_data['dtUpdatedDate'] 	= date('Y-m-d H:i:s');
-				$music_creator_data['vUploadMusic']		= $upload['file_name'];
+				$music_creator_data['vUploadMusic']		= $files["music"]["name"];
 
 				$result = $this->MusicCreatorModel->upload_music($music_creator_data,$music_creator_id);
 
@@ -887,18 +918,44 @@ class Wscontroller extends REST_Controller
 			$music_creator_id = $this->input->get('music_creator_id');
 
 			$result = $this->MusicCreatorModel->get_music_creator_details($music_creator_id);
-			if(!empty($result[0]['images']))
+
+			if(empty($music_creator_id))
 			{
-				$images = json_decode($result[0]['images']);
-				if(!empty($images))
+				for ($i=0; $i < count($result) ; $i++) 
 				{
-					$img = [];
-					foreach($images as $val)
+					if(!empty($result[$i]['images']))
 					{
-						$img[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
+						$images = json_decode($result[$i]['images']);
+
+						$img1 = [];
+						if(!empty($images))
+						{
+							foreach($images as $val)
+							{
+								$img1[] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/profile_image/".$val;
+								// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
+							}
+						}
+						$result[$i]['images'] = $img1;
 					}
 				}
-				$result[0]['images'] = $img;	
+			}
+			else
+			{
+				if(!empty($result[0]['images']))
+				{
+					$images = json_decode($result[0]['images']);
+					$img1 = [];
+					if(!empty($images))
+					{
+						foreach($images as $val)
+						{
+							$img1[] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/profile_image/".$val;
+							// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
+						}
+					}
+					$result[0]['images'] = $img1;
+				}
 			}
 			
 			
@@ -976,16 +1033,19 @@ class Wscontroller extends REST_Controller
 			    
 			   
 
-			    $this->load->library('upload', $config);
-				if ( ! $this->upload->do_upload('profile_picture'))
-				{
-					$error = array('status' => 0,'message' => $this->upload->display_errors());
-					$this->response($error);
-				}
-				else
-				{
-					$upload = $this->upload->data();
-				}
+			    if (!empty($files["profile_picture"]["name"]))
+            	{
+	                $file_path = "profile_image";
+	                $file_name = $files["profile_picture"]["name"][$i];
+	                $file_tmp_path = $_FILES["profile_picture"]["tmp_name"];
+	                // print_r($file_tmp_path);die;
+	                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
+	                if (!$response)
+	                {
+	                    //file upload failed
+
+	                }
+	            }
 			}
 
 			$user_data['vFirstName']    = $first_name;
@@ -1010,21 +1070,24 @@ class Wscontroller extends REST_Controller
 			$errors1 = [];
 			$files1 = $_FILES;
 
-			$this->load->library('upload', $config1);
-			if ( ! $this->upload->do_upload('music'))
-			{
-				$data1 = array('status'=>0,'error' => $this->upload->display_errors());
-				$this->response($data1);
-			}
-			else
-			{
-				$upload1 = $this->upload->data();
-			}
+			if (!empty($files["music"]["name"]))
+        	{
+                $file_path = "music";
+                $file_name = $files["music"]["name"];
+                $file_tmp_path = $_FILES["music"]["tmp_name"];
+                // print_r($file_tmp_path);die;
+                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
+                if (!$response)
+                {
+                    //file upload failed
+
+                }
+            }
 
 			$music_creator_data['vArtistName'] 		= $artist_name;
 			$music_creator_data['vCategories'] 		= $categories;
 			$music_creator_data['vSocialMediaLinks']= json_encode($social_media_links);
-			$music_creator_data['vUploadMusic']		= $upload1['file_name'];
+			$music_creator_data['vUploadMusic']		= $files["music"]["name"];
 			$music_creator_data['dtUpdatedDate'] 	= date('Y-m-d H:i:s');
 
 			$result = $this->MusicCreatorModel->update_music_creator($music_creator_data,$music_creator_id);
@@ -1137,9 +1200,69 @@ class Wscontroller extends REST_Controller
 
 			$result = $this->CelebrityModel->get_celebrities_by_category($category_id);
 			
+			for ($i=0; $i < count($result) ; $i++) 
+			{
+				if(!empty($result[$i]['images']))
+				{
+					$images = json_decode($result[$i]['images']);
+
+					$img1 = [];
+					if(!empty($images))
+					{
+						foreach($images as $val)
+						{
+							$img1[] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/profile_image/".$val;
+							// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
+						}
+					}
+					$result[$i]['images'] = $img1;
+				}
+			}
+
 			if(!empty($result))
 			{
 				$data = SUCCESS( 1, 'Celebrity details found successfully.',$result);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Contact us details not found.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function get_similar_celebrities_get()
+	{
+		try{
+			$category_id = $this->input->get('category_id');
+
+			$result = $this->CelebrityModel->get_celebrities_by_category($category_id);
+			for ($i=0; $i < count($result) ; $i++) 
+			{
+				if(!empty($result[$i]['images']))
+				{
+					$images = json_decode($result[$i]['images']);
+
+					$img1 = [];
+					if(!empty($images))
+					{
+						foreach($images as $val)
+						{
+							$img1[] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/profile_image/".$val;
+							// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
+						}
+					}
+					$result[$i]['images'] = $img1;
+				}
+			}
+
+			if(!empty($result))
+			{
+				$data = SUCCESS( 1, 'Similar Celebrities found successfully.',$result);
 				$this->response($data);
 			}
 			else
@@ -1285,55 +1408,46 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
-	public function get_similar_celebrities_get()
+	
+
+	public function category_get($category)
 	{
 		try{
-			$category_id = $this->input->get('category_id');
-
-			$result = $this->CelebrityModel->get_celebrities_by_category($category_id);
-			
-			if(!empty($result))
-			{
-				$data = SUCCESS( 1, 'Similar Celebrities found successfully.',$result);
-				$this->response($data);
-			}
-			else
-			{
-				$data = ERROR( 0, 'Contact us details not found.');
-				$this->response($data);
-			}
-		}catch(Exception $e){
-			$data = ERROR( 0, $e->getMessage());
-			$this->response($data);
-		}
-	}
-
-	public function category_get($slug)
-	{
-		$title      = $this->input->get('title');
-		$price      = $this->input->get('price');
-		$price_from = $this->input->get('price_from');
-		$price_to   = $this->input->get('price_to');
-
-		try{
+			$slug = $category;
+			$title      = $this->input->get('title');
+			$price      = $this->input->get('price');
+			$price_from = $this->input->get('price_from');
+			$price_to   = $this->input->get('price_to');
+		
 			$category = $this->CelebrityModel->get_category_id($slug);
-			$result = $this->CelebrityModel->get_celebrities_by_category($category[0]['iCategoryMasterId'],$title,$price,$price_from,$price_to);
 			
-			if(!empty($result))
-			{
-				$data = SUCCESS( 1, 'Celebrities found successfully.',$result);
-				$this->response($data);
+			if(!empty($category)){
+				$result = $this->CelebrityModel->get_celebrities_by_category($category[0]['iCategoryMasterId'],$title,$price,$price_from,$price_to);
+				if(!empty($result))
+				{
+					$data = SUCCESS( 1, 'Celebrities found successfully.',$result);
+					$this->response($data);
+				}
+				else
+				{
+					$data = ERROR( 0, 'Celebrities not found.');
+					$this->response($data);
+				}
 			}
 			else
 			{
 				$data = ERROR( 0, 'Celebrities not found.');
 				$this->response($data);
 			}
+
+			
 		}catch(Exception $e){
 			$data = ERROR( 0, $e->getMessage());
 			$this->response($data);
 		}
 	}
+
+
 
 	public function add_category_post()
 	{
@@ -1356,26 +1470,29 @@ class Wscontroller extends REST_Controller
 				$this->response($data);
 			}
 
-			$config['upload_path']    = 'public/uploads/category';
-			$config['allowed_types']  = 'gif|jpg|png|jpeg';
+			// $config['upload_path']    = 'public/uploads/category';
+			// $config['allowed_types']  = 'gif|jpg|png|jpeg';
 			// $config['max_size']       = 1024 * 5;
 			// $config['max_width']      = 1024;
 			// $config['max_height']     = 768;
 
-			$this->load->library('upload', $config);
-			if ( ! $this->upload->do_upload('image'))
-			{
-				$data = array('status'=>0,'error' => $this->upload->display_errors());
-				$this->response($data);
-			}
-			else
-			{
-				$upload = $this->upload->data();
-			}
+			if (!empty($_FILES["image"]["name"]))
+        	{
+                $file_path = "category";
+                $file_name = $_FILES["image"]["name"];
+                $file_tmp_path = $_FILES["image"]["tmp_name"];
+                // print_r($file_tmp_path);die;
+                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
+                if (!$response)
+                {
+                    //file upload failed
+
+                }
+            }
 
 			$category_data['vCategoryName'] = $category_name;
 			$category_data['vSlug'] 	  	= $slug;
-			$category_data['vImage'] 	  	= $upload['file_name'];
+			$category_data['vImage'] 	  	= $_FILES["image"]["name"];
 			$category_data['vDescription'] 	= $description;
 			$category_data['dtAddedDate']  	= $added_date;
 
@@ -1403,10 +1520,21 @@ class Wscontroller extends REST_Controller
 			$category_id = $this->input->get('category_id');
 
 			$result = $this->CategoryModel->get_category($category_id);
+
 			if(!empty($result[0]['image']))
 			{
-				$result[0]['image'] = $this->config->item('base_url').'public/uploads/category/'.$result[0]['image'];
+				// $result[0]['image'] = $this->config->item('base_url').'public/uploads/category/'.$result[0]['image'];
+
+				
+					
+						$result[0]['image'] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/category/".$result[0]['image'];
+						// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
+					
+				
+				
 			}
+
+
 			
 			if(!empty($result))
 			{
@@ -1476,22 +1604,24 @@ class Wscontroller extends REST_Controller
 				$data = ERROR( 0, 'Please enter the slug');
 				$this->response($data);
 			}
-			$config['upload_path']    = 'public/uploads/category';
-			$config['allowed_types']  = 'gif|jpg|png|jpeg';
 
-			$this->load->library('upload', $config);
-			if ( ! $this->upload->do_upload('image'))
-			{
-				$data = array('status'=>0,'error' => $this->upload->display_errors());
-				$this->response($data);
-			}
-			else
-			{
-				$upload = $this->upload->data();
-			}
+			if (!empty($_FILES["image"]["name"]))
+        	{
+                $file_path = "category";
+                $file_name = $_FILES["image"]["name"];
+                $file_tmp_path = $_FILES["image"]["tmp_name"];
+                // print_r($file_tmp_path);die;
+                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
+                if (!$response)
+                {
+                    //file upload failed
+
+                }
+            }
+
 			$category_data['vCategoryName'] = $category_name;
 			$category_data['vSlug'] 	  	= $slug;
-			$category_data['vImage'] 	  	= $upload['file_name'];
+			$category_data['vImage'] 	  	= $_FILES["image"]["name"];
 			$category_data['vDescription'] 	= $description;
 			$category_data['dtUpdatedDate'] = $updated_date;
 
@@ -1815,18 +1945,19 @@ class Wscontroller extends REST_Controller
 			        'size'     => $files['profile_picture']['size'][$i]
 			    ];
 			    
-			   
+			   	if (!empty($files["profile_picture"]["name"]))
+            	{
+	                $file_path = "profile_image";
+	                $file_name = $files["profile_picture"]["name"][$i];
+	                $file_tmp_path = $_FILES["profile_picture"]["tmp_name"];
+	                // print_r($file_tmp_path);die;
+	                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
+	                if (!$response)
+	                {
+	                    //file upload failed
 
-			    $this->load->library('upload', $config);
-				if ( ! $this->upload->do_upload('profile_picture'))
-				{
-					$error = array('status' => 0,'message' => $this->upload->display_errors());
-					$this->response($error);
-				}
-				else
-				{
-					$upload = $this->upload->data();
-				}
+	                }
+	            }
 			}
 			$user_data['vFirstName']= $first_name;
 			$user_data['vLastName'] = $last_name;
@@ -1874,22 +2005,25 @@ class Wscontroller extends REST_Controller
 			$errors1 = [];
 			$files1 = $_FILES;
 
-			$this->load->library('upload', $config1);
-			if ( ! $this->upload->do_upload('music'))
-			{
-				$data1 = array('status'=>0,'error' => $this->upload->display_errors());
-				$this->response($data1);
-			}
-			else
-			{
-				$upload1 = $this->upload->data();
-			}
+			if (!empty($files["music"]["name"]))
+        	{
+                $file_path = "music";
+                $file_name = $files["music"]["name"];
+                $file_tmp_path = $_FILES["music"]["tmp_name"];
+                // print_r($file_tmp_path);die;
+                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
+                if (!$response)
+                {
+                    //file upload failed
+
+                }
+            }
 			$music_creator_data['vArtistName']       = $artist_name;
 			$music_creator_data['iUsersId']          = $last_id;
 			$music_creator_data['vCategories']       = $categories;
 			$music_creator_data['vSocialMediaLinks'] = $social_media_links;
 			$music_creator_data['vDescription'] 	 = $description;
-			$music_creator_data['vUploadMusic']		 = $upload1['file_name'];
+			$music_creator_data['vUploadMusic']		 = $files["music"]["name"];
 			$music_creator_data['dtAddedDate']       = date('Y-m-d H:i:s');
 			$result = $this->MusicCreatorModel->add_artist($music_creator_data);
 			if($result)
