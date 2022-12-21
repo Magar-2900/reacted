@@ -17,7 +17,7 @@ class CategoryModel extends CI_Model
 
   	public function get_category($id = '')
   	{
-  		$this->db->select('vCategoryName  as category_name,vSlug as slug,vDescription as description,vImage as image,dtAddedDate as added_date,dtUpdatedDate as updated_date,eStatus as status');
+  		$this->db->select('iCategoryMasterId as category_id,vCategoryName  as category_name,vSlug as slug,vDescription as description,vImage as image,dtAddedDate as added_date,dtUpdatedDate as updated_date,eStatus as status');
 		$this->db->from('category_master');
 		if(!empty($id))
 		{
@@ -41,4 +41,15 @@ class CategoryModel extends CI_Model
     	$result = $this->db->delete('category_master');
     	return $result;
   	}
+
+
+  	public function get_category_id($slug = '')
+	{
+		$this->db->select('iCategoryMasterId');
+	    $this->db->from('category_master');
+	    $this->db->where('vSlug',$slug);
+	    $dataArr = $this->db->get();
+	    $result = is_object($dataArr) ? $dataArr->result_array() : array();
+		return $result;
+	}
 }
