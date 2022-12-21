@@ -17,7 +17,7 @@ class CategoryModel extends CI_Model
 
   	public function get_category($id = '')
   	{
-  		$this->db->select('vCategoryName  as category_name,vSlug as slug,vDescription as description,vImage as image,dtAddedDate as added_date,dtUpdatedDate as updated_date,eStatus as status');
+  		$this->db->select('iCategoryMasterId as category_id,vCategoryName  as category_name,vSlug as slug,vDescription as description,vImage as image,dtAddedDate as added_date,dtUpdatedDate as updated_date,eStatus as status');
 		$this->db->from('category_master');
 		if(!empty($id))
 		{

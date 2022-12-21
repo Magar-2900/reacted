@@ -91,6 +91,7 @@ class CelebrityModel extends CI_Model
 		$this->db->where('vSlug',$slug);
 		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
+		
 		return $result;
 	}
 }
