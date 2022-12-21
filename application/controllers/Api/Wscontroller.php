@@ -1423,6 +1423,25 @@ class Wscontroller extends REST_Controller
 			
 			if(!empty($category)){
 				$result = $this->CelebrityModel->get_celebrities_by_category($category[0]['iCategoryMasterId'],$title,$price,$price_from,$price_to);
+				for ($i=0; $i < count($result) ; $i++) 
+				{
+					if(!empty($result[$i]['images']))
+					{
+						$images = json_decode($result[$i]['images']);
+
+						$img1 = [];
+						if(!empty($images))
+						{
+							foreach($images as $val)
+							{
+								$img1[] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/profile_image/".$val;
+								// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
+							}
+						}
+						$result[$i]['images'] = $img1;
+					}
+				}
+				
 				if(!empty($result))
 				{
 					$data = SUCCESS( 1, 'Celebrities found successfully.',$result);
