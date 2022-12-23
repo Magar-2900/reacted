@@ -1436,10 +1436,22 @@ class Wscontroller extends REST_Controller
 			$slug = $category;
 
 			$title      = $this->input->get('title');
+			if(!$title){
+				$title = '';
+			}
 			$price      = $this->input->get('price');
+			if(!$price){
+				$price = '';
+			}
 			$price_from = $this->input->get('price_from');
+			if(!$price_from){
+				$price_from = '0';
+			}
 			$price_to   = $this->input->get('price_to');
-		
+			if(!$price_to){
+				$price_to = '';
+			}
+			
 			$category1 = $this->CategoryModel->get_category_id($slug);
 			
 			if(!empty($category1)){
