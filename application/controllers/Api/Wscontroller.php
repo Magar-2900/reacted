@@ -2123,48 +2123,86 @@ class Wscontroller extends REST_Controller
 			$qty 	 = $this->input->post('qty');
 			$price   = $this->input->post('price');
 			$name    = $this->input->post('name');
+			$coupon_code    = $this->input->post('coupon_code');
 
-			$data = array(
-			        'id' 	  => $prod_id,
-			        'qty'     => $qty,
-			        'price'   => $price,
-			        'name'    => $name,		        
-			        'user_id' => $user_id,
-			);
-			
-			$this->cart->insert($data);			
-				
-			$numItems = count($this->cart->contents());
-			$i = 0;
-			foreach($this->cart->contents() as $key) 
+			if(empty($user_id))
 			{
-				if($i+1 == $numItems) 
-				{
-					$saved_rowid = $key['rowid'];
-				}
-				$i++;
+				$data = ERROR( 0, 'Please enter the user_id');
+				$this->response($data);
 			}
 
-			
-			$cart['vRowId']	  = $saved_rowid;
-			$cart['iUsersId'] = $user_id;
-			$cart['iId'] 	  = $prod_id;
-			$cart['iQty'] 	  = $qty;
-			$cart['dPrice']   = $price;
-			$cart['vName']    = $name;
-			$cart['dtAddedDate'] = date('Y-m-d H:i:s');
+			if(empty($prod_id))
+			{
+				$data = ERROR( 0, 'Please select the prod_id');
+				$this->response($data);
+			}
 
-			$last_id = $this->CartModel->add_to_cart($cart);
+			if(empty($qty))
+			{
+				$data = ERROR( 0, 'Please enter the qty');
+				$this->response($data);
+			}
+
+			if(empty($price))
+			{
+				$data = ERROR( 0, 'Please enter the price');
+				$this->response($data);
+			}
+			
+			$cart['iUsersId']    = $user_id;
+			$cart['vCuponCode']  = $coupon_code;
+			
+			$res = $this->CartModel->check_cart($user_id);
+
+			if(!empty($res))
+			{
+				$this->CartModel->update_cart($cart,$user_id);
+				$last_id = $this->CartModel->get_cart_id($user_id);
+			}else{
+				$cart['dtAddedDate'] = date('Y-m-d H:i:s');
+				$last_id = $this->CartModel->add_to_cart($cart);	
+			}
+			
 			if(!empty($last_id))
 			{
-				$data = SUCCESS( 1, 'Item added to cart successfully.',[]);
-				$this->response($data);
+				$cart_items['iCartId']    = $last_id;
+				$cart_items['iProductId'] = $prod_id;
+				$cart_items['iQty'] 	  = $qty;
+				$cart_items['dPrice']     = $price;
+				$cart_items['vName']      = $name;
+				$cart_items['dtAddedDate']= date('Y-m-d H:i:s');
+
+				$res = $this->CartModel->add_to_cart_items($cart_items);	
+				if(!empty($res))
+				{	
+					$result = $this->CartModel->get_cart_items($last_id);
+					if(!empty($result))
+					{
+						$sub_total = 0;
+						foreach ($result as $key => $value) {
+							$sub_total += $value['dPrice'];
+						}
+						$cart_data['dSubTotal'] = $sub_total;
+						$cart_data['dTotal']    = $sub_total;
+						$this->db->where('iCartId ', $last_id);
+						$this->db->update('cart', $cart_data);
+					}
+					$data = SUCCESS( 1, 'Item added to cart successfully.',[]);
+					$this->response($data);
+				}
+				else
+				{
+					$data = ERROR( 0, 'Something went wrong...please try again.');
+					$this->response($data);
+				}
 			}
 			else
 			{
 				$data = ERROR( 0, 'Something went wrong...please try again.');
 				$this->response($data);
 			}
+			
+			
 		}catch(Exception $e){
 			$data = ERROR( 0, $e->getMessage());
 			$this->response($data);
@@ -2175,14 +2213,10 @@ class Wscontroller extends REST_Controller
 	{
 		try
 		{
-			$row_id = $this->input->post('row_id');
-		
-			$data = array(
-	           'rowid' => $row_id,
-	           'qty'   => 0
-	        );
-			$this->cart->update($data);
-			$result = $this->CartModel->delete_form_cart($row_id);	
+			$cart_item_id = $this->input->post('cart_item_id');
+			
+			$result = $this->CartModel->delete_form_cart($cart_item_id);
+			
 			if(!empty($result))
 			{
 				$data = SUCCESS( 1, 'Item deleted form cart successfully.',[]);
@@ -2198,5 +2232,31 @@ class Wscontroller extends REST_Controller
 			$data = ERROR( 0, $e->getMessage());
 			$this->response($data);
 		}	
+	}
+
+	public function get_cart_get()
+	{
+		try
+		{
+			$user_id = $this->input->get('user_id');
+			$result = $this->CartModel->get_cart_details($user_id);
+			if(!empty($result))
+			{
+				$result[0]['cart_items'] = $this->CartModel->get_cart_items_details($result[0]['cart_id']);
+				$data = SUCCESS( 1, 'Item deleted form cart successfully.',$result);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Cart data not found.');
+				$this->response($data);
+			}
+
+				
+
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
 	}
 }
