@@ -1523,6 +1523,7 @@ class Wscontroller extends REST_Controller
                 $file_tmp_path = $_FILES["image"]["tmp_name"];
                 // print_r($file_tmp_path);die;
                 $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
+				//print_r($response);
                 if (!$response)
                 {
                     //file upload failed
@@ -1540,7 +1541,7 @@ class Wscontroller extends REST_Controller
 
 			if($result)
 			{
-				$data = SUCCESS( 1, 'Category added successfully.',[]);
+				$data = SUCCESS( 1, 'Category added successfully.',['file_response' => $response]);
 				$this->response($data);
 			}
 			else
