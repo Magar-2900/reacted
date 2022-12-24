@@ -17,6 +17,7 @@ class Wscontroller extends REST_Controller
 		$this->load->model('PlatformModel');
 		$this->load->model('CategoryModel');
 		$this->load->model('CouponModel');
+		$this->load->model('CartModel');
 	}
 
 	public function validate_access_token($headers)
@@ -1311,7 +1312,8 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
-	public function get_all_social_media_platforms_get(){
+	public function get_all_social_media_platforms_get()
+	{
 		try {
 			$result = $this->PlatformModel->get_all_social_media_platform();
 			
@@ -1428,18 +1430,28 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
-	
-
 	public function category_get($category)
 	{
 		try{
 			$slug = $category;
 
 			$title      = $this->input->get('title');
+			if(!$title){
+				$title = '';
+			}
 			$price      = $this->input->get('price');
+			if(!$price){
+				$price = '';
+			}
 			$price_from = $this->input->get('price_from');
+			if(!$price_from){
+				$price_from = '0';
+			}
 			$price_to   = $this->input->get('price_to');
-		
+			if(!$price_to){
+				$price_to = '';
+			}
+			
 			$category1 = $this->CategoryModel->get_category_id($slug);
 			
 			if(!empty($category1)){
@@ -1486,8 +1498,6 @@ class Wscontroller extends REST_Controller
 			$this->response($data);
 		}
 	}
-
-
 
 	public function add_category_post()
 	{
@@ -1555,7 +1565,8 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
-	public function get_all_categories_get(){
+	public function get_all_categories_get()
+	{
 		try{
 			$result = $this->CategoryModel->get_all_categories();
 
@@ -2098,6 +2109,152 @@ class Wscontroller extends REST_Controller
 				$data = ERROR( 0, 'Something went wrong...please try again.');
 				$this->response($data);
 			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function add_to_cart_post()
+	{
+		try
+		{
+			$user_id = $this->input->post('user_id');
+			$prod_id = $this->input->post('prod_id');
+			$qty 	 = $this->input->post('qty');
+			$price   = $this->input->post('price');
+			$name    = $this->input->post('name');
+			$coupon_code    = $this->input->post('coupon_code');
+
+			if(empty($user_id))
+			{
+				$data = ERROR( 0, 'Please enter the user_id');
+				$this->response($data);
+			}
+
+			if(empty($prod_id))
+			{
+				$data = ERROR( 0, 'Please select the prod_id');
+				$this->response($data);
+			}
+
+			if(empty($qty))
+			{
+				$data = ERROR( 0, 'Please enter the qty');
+				$this->response($data);
+			}
+
+			if(empty($price))
+			{
+				$data = ERROR( 0, 'Please enter the price');
+				$this->response($data);
+			}
+			
+			$cart['iUsersId']    = $user_id;
+			$cart['vCuponCode']  = $coupon_code;
+			
+			$res = $this->CartModel->check_cart($user_id);
+
+			if(!empty($res))
+			{
+				$this->CartModel->update_cart($cart,$user_id);
+				$last_id = $this->CartModel->get_cart_id($user_id);
+			}else{
+				$cart['dtAddedDate'] = date('Y-m-d H:i:s');
+				$last_id = $this->CartModel->add_to_cart($cart);	
+			}
+			
+			if(!empty($last_id))
+			{
+				$cart_items['iCartId']    = $last_id;
+				$cart_items['iProductId'] = $prod_id;
+				$cart_items['iQty'] 	  = $qty;
+				$cart_items['dPrice']     = $price;
+				$cart_items['vName']      = $name;
+				$cart_items['dtAddedDate']= date('Y-m-d H:i:s');
+
+				$res = $this->CartModel->add_to_cart_items($cart_items);	
+				if(!empty($res))
+				{	
+					$result = $this->CartModel->get_cart_items($last_id);
+					if(!empty($result))
+					{
+						$sub_total = 0;
+						foreach ($result as $key => $value) {
+							$sub_total += $value['dPrice'];
+						}
+						$cart_data['dSubTotal'] = $sub_total;
+						$cart_data['dTotal']    = $sub_total;
+						$this->db->where('iCartId ', $last_id);
+						$this->db->update('cart', $cart_data);
+					}
+					$data = SUCCESS( 1, 'Item added to cart successfully.',[]);
+					$this->response($data);
+				}
+				else
+				{
+					$data = ERROR( 0, 'Something went wrong...please try again.');
+					$this->response($data);
+				}
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+			
+			
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function delete_from_cart_post()
+	{
+		try
+		{
+			$cart_item_id = $this->input->post('cart_item_id');
+			
+			$result = $this->CartModel->delete_form_cart($cart_item_id);
+			
+			if(!empty($result))
+			{
+				$data = SUCCESS( 1, 'Item deleted form cart successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}	
+	}
+
+	public function get_cart_get()
+	{
+		try
+		{
+			$user_id = $this->input->get('user_id');
+			$result = $this->CartModel->get_cart_details($user_id);
+			if(!empty($result))
+			{
+				$result[0]['cart_items'] = $this->CartModel->get_cart_items_details($result[0]['cart_id']);
+				$data = SUCCESS( 1, 'Item deleted form cart successfully.',$result);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Cart data not found.');
+				$this->response($data);
+			}
+
+				
+
 		}catch(Exception $e){
 			$data = ERROR( 0, $e->getMessage());
 			$this->response($data);
