@@ -23,6 +23,7 @@ class CouponModel extends CI_Model
 		{
 			$this->db->where('iCouponId  ',$id);
 		}
+		$this->db->where('iIsDeleted ','0');
 		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
 		return $result;
@@ -37,8 +38,9 @@ class CouponModel extends CI_Model
 
   	public function delete_coupon($coupon_id = '')
   	{
-    	$this->db->where('iCouponId  ', $coupon_id);
-    	$result = $this->db->delete('coupons');
+  		$data['iIsDeleted'] = '1';
+    	$this->db->where('iCouponId ', $coupon_id);
+		$result = $this->db->update('coupons', $data);
     	return $result;
   	}
 }

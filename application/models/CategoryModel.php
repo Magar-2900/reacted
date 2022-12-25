@@ -18,6 +18,7 @@ class CategoryModel extends CI_Model
 	public function get_all_categories(){
 		$this->db->select('iCategoryMasterId as category_id,vCategoryName  as category_name,vSlug as slug,vDescription as description,vImage as image,dtAddedDate as added_date,dtUpdatedDate as updated_date,eStatus as status');
 		$this->db->from('category_master');
+		$this->db->where('iIsDeleted ','0');
 		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
 		return $result;
@@ -31,8 +32,10 @@ class CategoryModel extends CI_Model
 		{
 			$this->db->where('iCategoryMasterId ',$id);
 		}
+		$this->db->where('iIsDeleted ','0');
 		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
+		#print_r($this->db->last_query());die;
 		return $result;
   	} 
   	
@@ -45,8 +48,9 @@ class CategoryModel extends CI_Model
 
   	public function delete_category($category_id = '')
   	{
+  		$data['iIsDeleted'] = '1';
     	$this->db->where('iCategoryMasterId ', $category_id);
-    	$result = $this->db->delete('category_master');
+		$result = $this->db->update('category_master', $data);
     	return $result;
   	}
 
@@ -56,6 +60,7 @@ class CategoryModel extends CI_Model
 		$this->db->select('iCategoryMasterId');
 	    $this->db->from('category_master');
 	    $this->db->where('vSlug',$slug);
+	    $this->db->where('iIsDeleted ','0');
 	    $dataArr = $this->db->get();
 	    $result = is_object($dataArr) ? $dataArr->result_array() : array();
 		return $result;

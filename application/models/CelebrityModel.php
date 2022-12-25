@@ -22,6 +22,7 @@
 			$this->db->join('user_roles','user_roles.iRoleId = users.iRoleId','left');
 			$this->db->join('user_celebrity','user_celebrity.iUsersId = users.iUsersId','left');
 			$this->db->join("category_master","find_in_set(category_master.iCategoryMasterId,user_celebrity.vCategories)<> 0","left",false);
+			$this->db->where('users.iIsDeleted ','0');
 			if(!empty($celebrity_id))
 			{
 				$this->db->where('users.iUsersId',$celebrity_id);
@@ -37,11 +38,13 @@
 
 		public function delete_celebrity($celebrity_id = '')
 	  	{
-	  		$this->db->where('iUsersId', $celebrity_id);
-	    	$this->db->delete('user_celebrity');
+	  		// $data['iIsDeleted'] = '1';
+	  		// $this->db->where('iUsersId', $celebrity_id);
+	    	// $this->db->update('user_celebrity',$data);
 
+	    	$data['iIsDeleted'] = '1';
 	    	$this->db->where('iUsersId', $celebrity_id);
-	    	$result = $this->db->delete('users');
+	    	$result = $this->db->update('users',$data);
 	    	return $result;
 	  	}
 
@@ -60,7 +63,7 @@
 			}
 			
 			$this->db->where('users.iRoleId',3);
-			
+			$this->db->where('users.iIsDeleted ','0');	
 			if($price_form != '' && $price_to != '')
 			{
 				$this->db->where('dPrice >=', $price_form);
