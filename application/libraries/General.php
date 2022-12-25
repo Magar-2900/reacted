@@ -186,15 +186,25 @@ Class General
         return $response;
     }
 
+    public function get_setting($key)
+    {
+        $this->CI->db->select('vSettingName,vSettingValue');
+        $this->CI->db->from('app_setting');
+        $this->CI->db->where('vSettingName',$key);
+        $query_obj = $this->CI->db->get();
+        $result = is_object($query_obj) ? $query_obj->result_array() : array();
+        return $result[0]['vSettingValue'];
+    }
     public function getAWSConnectionObject()
     {
         if (is_object($this->_aws_avial_obj)) {
             return $this->_aws_avial_obj;
         }
-        $AWS_ACCESSKEY = $this->CI->config->item('AWS_ACCESSKEY');
-        $AWS_SECRECTKEY = $this->CI->config->item('AWS_SECRECTKEY');
-        $AWS_SSL_VERIFY = ($this->CI->config->item('AWS_SSL_VERIFY') == "Y") ? TRUE : FALSE;
-        $AWS_END_POINT = $this->CI->config->item('AWS_END_POINT');
+        
+        $AWS_ACCESSKEY  = $this->get_setting('AWS_ACCESSKEY');
+        $AWS_SECRECTKEY = $this->get_setting('AWS_SECRECTKEY');
+        $AWS_SSL_VERIFY = ($this->get_setting('AWS_SSL_VERIFY')  == "Y") ? TRUE : FALSE;
+        $AWS_END_POINT  = $this->get_setting('AWS_END_POINT');
 
         try {
             if (version_compare(PHP_VERSION, '5.5', '>=')) {
