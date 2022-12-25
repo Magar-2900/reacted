@@ -23,6 +23,7 @@ class MusicCreatorModel extends CI_Model
 		{
 			$this->db->where('umc.iMusicCreatorid ',$music_creator_id);	
 		}
+		$this->db->where('users.iIsDeleted ','0');	
 		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
 		return $result;
@@ -46,6 +47,7 @@ class MusicCreatorModel extends CI_Model
 		{
 			$this->db->where('users.iUsersId',$music_creator_id);
 		}
+		$this->db->where('users.iIsDeleted ','0');	
 		$this->db->where('users.iRoleId',2);
 		$this->db->group_by('users.iUsersId');
 		$query_obj = $this->db->get();
@@ -55,11 +57,14 @@ class MusicCreatorModel extends CI_Model
 
   	public function delete_music_creator($music_creator_id = '')
   	{
-  		$this->db->where('iUsersId', $music_creator_id);
-    	$this->db->delete('user_music_creator');
+  		// $data['iIsDeleted'] = '1';
+  		// $this->db->where('iUsersId', $music_creator_id);
+    	// $this->db->update('user_music_creator',$data);
 
+    	$data['iIsDeleted'] = '1';
     	$this->db->where('iUsersId', $music_creator_id);
-    	$result = $this->db->delete('users');
+    	$result = $this->db->update('users',$data);
+
     	return $result;
   	}
 

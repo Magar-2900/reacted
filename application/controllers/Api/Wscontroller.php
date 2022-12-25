@@ -1650,15 +1650,7 @@ class Wscontroller extends REST_Controller
 
 			if(!empty($result[0]['image']))
 			{
-				// $result[0]['image'] = $this->config->item('base_url').'public/uploads/category/'.$result[0]['image'];
-
-				
-					
-						$result[0]['image'] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/category/".$result[0]['image'];
-						// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
-					
-				
-				
+				$result[0]['image'] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/category/".$result[0]['image'];	
 			}
 
 

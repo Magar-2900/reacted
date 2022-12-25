@@ -19,6 +19,7 @@ class PlatformModel extends CI_Model
 		$this->db->select('iPlatformMasterId as id, vPlatformName  as platform_name,vLink as platform_link,dtAddedDate as added_date,dtUpdatedDate as updated_date,eStatus as status');
 		$this->db->from('platform_master');
 		$this->db->where('eStatus','Active');
+		$this->db->where('iIsDeleted ','0');
 		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
 		return $result;
@@ -29,6 +30,7 @@ class PlatformModel extends CI_Model
   		$this->db->select('vPlatformName  as platform_name,vLink as platform_link,dtAddedDate as added_date,dtUpdatedDate as updated_date,eStatus as status');
 		$this->db->from('platform_master');
 		$this->db->where('iPlatformMasterId',$id);
+		$this->db->where('iIsDeleted ','0');
 		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
 		return $result;
@@ -36,9 +38,9 @@ class PlatformModel extends CI_Model
   	
   	public function delete_social_media_platform($platform_id = '')
   	{
-
+  		$data['iIsDeleted'] = '1';
     	$this->db->where('iPlatformMasterId', $platform_id);
-    	$result = $this->db->delete('platform_master');
+    	$result = $this->db->update('platform_master',$data);
     	return $result;
   	}
 
