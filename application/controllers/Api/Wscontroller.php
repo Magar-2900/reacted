@@ -621,10 +621,8 @@ class Wscontroller extends REST_Controller
 	                if (!$response)
 	                {
 	                    //file upload failed
-
 	                }
 	            }
-
 			}
 			
 			$user_data['vFirstName']= $first_name;
@@ -639,12 +637,43 @@ class Wscontroller extends REST_Controller
 
 			$last_id = $this->UserModel->register_user($user_data);
 
+			if (!empty($_FILES["w9_form"]["name"]))
+        	{
+                $file_path = "w9_form";
+                $file_name = $_FILES["w9_form"]["name"];
+                $file_tmp_path = $_FILES["w9_form"]["tmp_name"];
+                // print_r($file_tmp_path);die;
+                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
+                if (!$response)
+                {
+                    //file upload failed
+
+                }
+            }
+
 			$celebrity_data['iUsersId'] 			= $last_id;
 			$celebrity_data['vTitle'] 				= $title;
 			$celebrity_data['vTagLine'] 			= $tag_line;
 			$celebrity_data['vShortDescription'] 	= $short_description;
 			$celebrity_data['vLongDescription'] 	= $long_description;
+
+			$category_arr = explode(",",$categories);
+			
+			if(in_array(7, $category_arr))
+			{
+				$other_category = $this->input->post('other_category');
+				$category_data['vCategoryName']   = $other_category;
+				$category_data['vSlug'] 	  	  = strtolower($other_category);
+				$category_data['vCategoryParent'] = '7';
+				$category_data['dtAddedDate']  	  = date('Y-m-d H:i:s');
+
+				$result = $this->CategoryModel->add_category($category_data);
+				$category_arr[] = $result;
+				$categories = implode(",",$category_arr);
+			}
+
 			$celebrity_data['vCategories'] 			= $categories;
+
 			$celebrity_data['dPrice'] 				= $price;
 			$celebrity_data['eIsFeatured'] 			= $is_featured;
 			$celebrity_data['dtAddedDate'] 			= $added_date;
@@ -654,6 +683,8 @@ class Wscontroller extends REST_Controller
 			$celebrity_data['vBankName'] 			= $bank_name;
 			$celebrity_data['vBankCode'] 			= $bank_code;
 			$celebrity_data['vBankAddress'] 		= $bank_address;
+			$celebrity_data['vW9Form'] 		        = $_FILES["w9_form"]["name"];
+			$celebrity_data['vSocialMediaLinks']    = json_encode($social_media_links);
 
 			$result = $this->CelebrityModel->register_celebrity($celebrity_data);
 
@@ -693,11 +724,14 @@ class Wscontroller extends REST_Controller
 						{
 							foreach($images as $val)
 							{
-								$img1[] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/profile_image/".$val;
-								// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
+								$img1[] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/profile_image/".$val;								
 							}
 						}
 						$result[$i]['images'] = $img1;
+					}
+					if(!empty($result[$i]['w9form']))
+					{
+						$result[$i]['w9form'] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/w9_form/".$result[$i]['w9form'];
 					}
 				}
 			}
@@ -717,8 +751,12 @@ class Wscontroller extends REST_Controller
 					}
 					$result[0]['images'] = $img1;
 				}
+				if(!empty($result[0]['w9form']))
+				{
+					$result[0]['w9form'] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/w9_form/".$result[0]['w9form'];
+				}				
 			}
-			
+
 			if(!empty($result))
 			{
 				$data = SUCCESS( 1, 'Celebrity details found successfully.',$result);
@@ -863,7 +901,7 @@ class Wscontroller extends REST_Controller
 			else if($step == 'upload')
 			{
 				$music_creator_id = $this->input->post('music_creator_id');
-				$catrgories 	  = $this->input->post('catrgories');
+				$categories 	  = $this->input->post('categories');
 				
 				if(empty($music_creator_id))
 				{
@@ -878,7 +916,7 @@ class Wscontroller extends REST_Controller
 				
 				$errors = [];
 				$files = $_FILES;				
-				// print_r($files);die;
+				
 				if (!empty($files["music"]["name"]))
             	{
 	                $file_path = "music";
@@ -892,7 +930,22 @@ class Wscontroller extends REST_Controller
 
 	                }
 	            }
+				$category_arr = explode(",",$categories);
 				
+				if(in_array(7, $category_arr))
+				{
+					$other_category = $this->input->post('other_category');
+					$category_data['vCategoryName']   = $other_category;
+					$category_data['vSlug'] 	  	  = strtolower($other_category);
+					$category_data['vCategoryParent'] = '7';
+					$category_data['dtAddedDate']  	  = date('Y-m-d H:i:s');
+
+					$result = $this->CategoryModel->add_category($category_data);
+					$category_arr[] = $result;
+					
+					$categories = implode(",",$category_arr);
+				}
+
 				$music_creator_data['vCategories'] 		= $catrgories;
 				$music_creator_data['dtUpdatedDate'] 	= date('Y-m-d H:i:s');
 				$music_creator_data['vUploadMusic']		= $files["music"]["name"];
