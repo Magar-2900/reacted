@@ -536,7 +536,4 @@ $site_url .= str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT
 $config['site_url'] = $site_url;
 $config['email_sending_library'] = 'system';//phpmailer
 $config['third_party'] = APPPATH . 'third_party/';
-$config['AWS_ACCESSKEY'] = 'AKIAY4GBF6Z3MMICD4H7';
-$config['AWS_SECRECTKEY'] = 'z2PjC3sLGy9YjCC/4wantoBIuuk6PgI4orSbeyKE';
-$config['AWS_END_POINT'] = 'us-west-2';
-$config['AWS_BUCKET_NAME'] = 'reacted';
+
