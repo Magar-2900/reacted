@@ -469,9 +469,6 @@ class Wscontroller extends REST_Controller
 
 	public function add_celebrity_post()
 	{
-
-		print_r($_POST);
-		exit;
 		try{
 			$first_name 	   = $this->input->post('first_name');
 			$last_name         = $this->input->post('last_name');
@@ -480,6 +477,7 @@ class Wscontroller extends REST_Controller
 			$role_id           = '3';
 			$registration_type = 'Other';
 
+			$social_media_links = $this->input->post('social_media_links');
 			
 
 			$title 			   = $this->input->post('title');
@@ -632,6 +630,7 @@ class Wscontroller extends REST_Controller
 			$user_data['iRoleId'] 	= $role_id;
 			$user_data['vCountry'] 	= $country;
 			$user_data['vImage'] 	= json_encode($imgData);
+			$user_data['vSocialMediaLinks'] = $social_media_links;
 
 			$user_data['eRegistrationType'] = $registration_type;
 
