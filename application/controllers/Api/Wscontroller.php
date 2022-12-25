@@ -469,6 +469,9 @@ class Wscontroller extends REST_Controller
 
 	public function add_celebrity_post()
 	{
+
+		print_r($_POST);
+		exit;
 		try{
 			$first_name 	   = $this->input->post('first_name');
 			$last_name         = $this->input->post('last_name');
