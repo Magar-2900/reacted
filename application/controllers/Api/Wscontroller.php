@@ -599,7 +599,7 @@ class Wscontroller extends REST_Controller
 
 			for( $i = 0; $i < $upload_count; $i++ )
 			{
-				$imgData[] = $files['profile_picture']['name'][$i];
+				$imgData[] = str_replace(' ', '_', $files['profile_picture']['name'][$i]);
 
 			    $_FILES['profile_picture'] = [
 			        'name'     => $files['profile_picture']['name'][$i],
@@ -612,9 +612,9 @@ class Wscontroller extends REST_Controller
 			   	if (!empty($files["profile_picture"]["name"]))
             	{
 	                $file_path = "profile_image";
-	                $file_name = $files["profile_picture"]["name"][$i];
+	                $file_name = str_replace(' ', '_', $files["profile_picture"]["name"][$i]);
 	                $file_tmp_path = $_FILES["profile_picture"]["tmp_name"];
-	                // print_r($file_tmp_path);die;
+	                
 	                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
 	                if (!$response)
 	                {
@@ -630,7 +630,6 @@ class Wscontroller extends REST_Controller
 			$user_data['iRoleId'] 	= $role_id;
 			$user_data['vCountry'] 	= $country;
 			$user_data['vImage'] 	= json_encode($imgData);
-			$user_data['vSocialMediaLinks'] = $social_media_links;
 
 			$user_data['eRegistrationType'] = $registration_type;
 
@@ -639,7 +638,7 @@ class Wscontroller extends REST_Controller
 			if (!empty($_FILES["w9_form"]["name"]))
         	{
                 $file_path = "w9_form";
-                $file_name = $_FILES["w9_form"]["name"];
+                $file_name = str_replace(' ', '_', $_FILES["w9_form"]["name"]);
                 $file_tmp_path = $_FILES["w9_form"]["tmp_name"];
                 // print_r($file_tmp_path);die;
                 $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
@@ -655,7 +654,7 @@ class Wscontroller extends REST_Controller
 			$celebrity_data['vTagLine'] 			= $tag_line;
 			$celebrity_data['vShortDescription'] 	= $short_description;
 			$celebrity_data['vLongDescription'] 	= $long_description;
-
+			$celebrity_data['vSocialMediaLinks'] = $social_media_links;
 			$category_arr = explode(",",$categories);
 			
 			if(in_array(7, $category_arr))
@@ -682,7 +681,7 @@ class Wscontroller extends REST_Controller
 			$celebrity_data['vBankName'] 			= $bank_name;
 			$celebrity_data['vBankCode'] 			= $bank_code;
 			$celebrity_data['vBankAddress'] 		= $bank_address;
-			$celebrity_data['vW9Form'] 		        = $_FILES["w9_form"]["name"];
+			$celebrity_data['vW9Form'] 		        = str_replace(' ', '_', $_FILES["w9_form"]["name"]);
 			$celebrity_data['vSocialMediaLinks']    = json_encode($social_media_links);
 
 			$result = $this->CelebrityModel->register_celebrity($celebrity_data);
