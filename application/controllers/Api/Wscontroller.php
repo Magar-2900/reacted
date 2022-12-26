@@ -18,6 +18,7 @@ class Wscontroller extends REST_Controller
 		$this->load->model('CategoryModel');
 		$this->load->model('CouponModel');
 		$this->load->model('CartModel');
+
 	}
 
 	public function validate_access_token($headers)
@@ -706,6 +707,9 @@ class Wscontroller extends REST_Controller
 	{
 		try
 		{
+			$AWS_BUCKET_NAME = $this->general->get_setting('AWS_BUCKET_NAME');
+			$AWS_END_POINT   = $this->general->get_setting('AWS_END_POINT');
+
 			$celebrity_id = $this->input->get('celebrity_id');
 
 			$result = $this->CelebrityModel->get_celebrity_details($celebrity_id);
@@ -722,14 +726,14 @@ class Wscontroller extends REST_Controller
 						{
 							foreach($images as $val)
 							{
-								$img1[] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/profile_image/".$val;								
+								$img1[] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/profile_image/".$val;								
 							}
 						}
 						$result[$i]['images'] = $img1;
 					}
 					if(!empty($result[$i]['w9form']))
 					{
-						$result[$i]['w9form'] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/w9_form/".$result[$i]['w9form'];
+						$result[$i]['w9form'] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/w9_form/".$result[$i]['w9form'];
 					}
 				}
 			}
@@ -743,7 +747,7 @@ class Wscontroller extends REST_Controller
 					{
 						foreach($images as $val)
 						{
-							$img1[] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/profile_image/".$val;
+							$img1[] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINTz.".amazonaws.com/profile_image/".$val;
 							// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
 						}
 					}
@@ -751,7 +755,7 @@ class Wscontroller extends REST_Controller
 				}
 				if(!empty($result[0]['w9form']))
 				{
-					$result[0]['w9form'] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/w9_form/".$result[0]['w9form'];
+					$result[0]['w9form'] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINTz.".amazonaws.com/w9_form/".$result[0]['w9form'];
 				}				
 			}
 
@@ -987,7 +991,7 @@ class Wscontroller extends REST_Controller
 						{
 							foreach($images as $val)
 							{
-								$img1[] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/profile_image/".$val;
+								$img1[] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/profile_image/".$val;
 								// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
 							}
 						}
@@ -1005,7 +1009,7 @@ class Wscontroller extends REST_Controller
 					{
 						foreach($images as $val)
 						{
-							$img1[] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/profile_image/".$val;
+							$img1[] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/profile_image/".$val;
 							// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
 						}
 					}
@@ -1266,7 +1270,7 @@ class Wscontroller extends REST_Controller
 					{
 						foreach($images as $val)
 						{
-							$img1[] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/profile_image/".$val;
+							$img1[] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/profile_image/".$val;
 							// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
 						}
 					}
@@ -1307,7 +1311,7 @@ class Wscontroller extends REST_Controller
 					{
 						foreach($images as $val)
 						{
-							$img1[] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/profile_image/".$val;
+							$img1[] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/profile_image/".$val;
 							// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
 						}
 					}
@@ -1521,7 +1525,7 @@ class Wscontroller extends REST_Controller
 						{
 							foreach($images as $val)
 							{
-								$img1[] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/profile_image/".$val;
+								$img1[] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/profile_image/".$val;
 								// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
 							}
 						}
@@ -1650,7 +1654,7 @@ class Wscontroller extends REST_Controller
 
 			if(!empty($result[0]['image']))
 			{
-				$result[0]['image'] = "https://".$this->config->item('AWS_BUCKET_NAME').".s3.".$this->config->item('AWS_END_POINT').".amazonaws.com/category/".$result[0]['image'];	
+				$result[0]['image'] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/category/".$result[0]['image'];	
 			}
 
 
