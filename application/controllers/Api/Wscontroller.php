@@ -18,7 +18,7 @@ class Wscontroller extends REST_Controller
 		$this->load->model('CategoryModel');
 		$this->load->model('CouponModel');
 		$this->load->model('CartModel');
-
+		$this->load->model('WishlistModel');
 	}
 
 	public function validate_access_token($headers)
@@ -2582,5 +2582,121 @@ class Wscontroller extends REST_Controller
 			$data = ERROR( 0, $e->getMessage());
 			$this->response($data);
 		}
+	}
+
+	public function add_to_wishlist_post()
+	{
+		try{
+			$user_id 	= $this->input->post('user_id');
+			$product_id = $this->input->post('product_id');
+
+			if(empty($user_id))
+			{
+				$data = ERROR( 0, 'Please enter the user_id');
+				$this->response($data);
+			}
+
+			if(empty($product_id))
+			{
+				$data = ERROR( 0, 'Please enter the product_id');
+				$this->response($data);
+			}
+
+			$check_wishlist = $this->WishlistModel->check_wishlist($user_id,$product_id);
+			if(empty($check_wishlist))
+			{
+				$user_data['IUsersId'] 	= $user_id;
+				$user_data['iProductId'] 	= $product_id;
+				$user_data['dtAddedDate'] = date('Y-m-d H:i:s');
+				$res_wishlist = $this->WishlistModel->insert_wishlist($user_data);
+				if($res_wishlist)
+				{
+					$data = SUCCESS( 1, 'Item added to wishlist successfully.',[]);
+					$this->response($data);
+				}
+				else
+				{
+					$data = ERROR( 0, 'Something went wrong...please try again.');
+					$this->response($data);
+				}
+			}
+			else
+			{
+				$data = ERROR( 0, 'Item already in wishlist.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function delete_from_wishlist_post()
+	{
+		try
+		{
+			$wishlist_id = $this->input->post('wishlist_id');
+			
+			$result = $this->WishlistModel->delete_form_wishlist($wishlist_id);
+			
+			if(!empty($result))
+			{
+				$data = SUCCESS( 1, 'Item deleted form wishlist successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}	
+	}
+
+	public function get_wishlist_get()
+	{
+		try
+		{
+			$AWS_BUCKET_NAME = $this->general->get_setting('AWS_BUCKET_NAME');
+			$AWS_END_POINT   = $this->general->get_setting('AWS_END_POINT');
+			$user_id = $this->input->get('user_id');
+
+			$result = $this->WishlistModel->get_wishlist($user_id);
+			
+			for ($i=0; $i < count($result) ; $i++) 
+			{
+				if(!empty($result[$i]['images']))
+				{
+					$images = json_decode($result[$i]['images']);
+
+					$img1 = [];
+					if(!empty($images))
+					{
+						foreach($images as $val)
+						{
+							$img1[] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/profile_image/".$val;								
+						}
+					}
+					$result[$i]['images'] = $img1;
+				}
+			}
+			if(!empty($result))
+			{
+				$data = SUCCESS( 1, 'Wishlist found successfully.',$result);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}	
 	}
 }
