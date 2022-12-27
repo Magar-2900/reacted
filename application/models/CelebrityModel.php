@@ -15,6 +15,13 @@
 	  		return $result;
 	  	}
 
+	  	public function update_celebrity($user_id,$data)
+	  	{	  		
+	  		$this->db->where('iUsersId', $user_id);
+			$result = $this->db->update('user_celebrity', $data);
+			return $result;
+	  	}
+
 	    public function get_celebrity_details($celebrity_id = '')
 		{
 			$this->db->select("users.iUsersId as user_id,users.vFirstName as first_name,users.vLastName as last_name,users.vEmail as email,users.vPhone as phone,user_roles.vRole as role,user_celebrity.vTitle as title,user_celebrity.vTagLine as tag_line,user_celebrity.vShortDescription as short_description,user_celebrity.vLongDescription as long_description,user_celebrity.dPrice as price,user_celebrity.eIsFeatured as is_featured,user_celebrity.dtAddedDate as added_date,user_celebrity.dtUpdatedDate as updated_date,GROUP_CONCAT(category_master.vCategoryName SEPARATOR ',') as categories,users.vImage as images,vW9Form as w9form,vSocialMediaLinks as social_media_links");

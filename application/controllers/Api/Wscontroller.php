@@ -974,6 +974,9 @@ class Wscontroller extends REST_Controller
 	public function get_music_creator_get()
 	{
 		try{
+
+			$AWS_BUCKET_NAME = $this->general->get_setting('AWS_BUCKET_NAME');
+			$AWS_END_POINT   = $this->general->get_setting('AWS_END_POINT');
 			$music_creator_id = $this->input->get('music_creator_id');
 
 			$result = $this->MusicCreatorModel->get_music_creator_details($music_creator_id);
@@ -1255,6 +1258,8 @@ class Wscontroller extends REST_Controller
 	public function get_celebrities_by_category_get()
 	{
 		try{
+			$AWS_BUCKET_NAME = $this->general->get_setting('AWS_BUCKET_NAME');
+			$AWS_END_POINT   = $this->general->get_setting('AWS_END_POINT');
 			$category_id = $this->input->get('category_id');
 
 			$result = $this->CelebrityModel->get_celebrities_by_category($category_id);
@@ -1297,6 +1302,8 @@ class Wscontroller extends REST_Controller
 	public function get_similar_celebrities_get()
 	{
 		try{
+			$AWS_BUCKET_NAME = $this->general->get_setting('AWS_BUCKET_NAME');
+			$AWS_END_POINT   = $this->general->get_setting('AWS_END_POINT');
 			$category_id = $this->input->get('category_id');
 
 			$result = $this->CelebrityModel->get_celebrities_by_category($category_id);
@@ -1340,6 +1347,7 @@ class Wscontroller extends REST_Controller
 		try{
 			$platform_name = $this->input->post('platform_name');
 			$link          = $this->input->post('link');
+			$icon          = $this->input->post('icon');
 			$added_date	   = date('Y-m-d H:i:s');
 
 			// validation
@@ -1350,6 +1358,7 @@ class Wscontroller extends REST_Controller
 
 			$platform_data['vPlatformName'] = $platform_name;
 			$platform_data['vLink'] 	  	= $link;
+			$platform_data['vIcon'] 	  	= $icon;
 			$platform_data['dtAddedDate']  	= $added_date;
 
 			$result = $this->PlatformModel->add_platform($platform_data);
@@ -1396,11 +1405,11 @@ class Wscontroller extends REST_Controller
 		try{
 			$platform_id = $this->input->get('platform_id');
 
-			if(empty($platform_id))
-			{
-				$data = ERROR( 0, 'Please enter the platform_id');
-				$this->response($data);
-			}
+			// if(empty($platform_id))
+			// {
+			// 	$data = ERROR( 0, 'Please enter the platform_id');
+			// 	$this->response($data);
+			// }
 
 			$result = $this->PlatformModel->get_social_media_platform($platform_id);
 			
@@ -1411,7 +1420,7 @@ class Wscontroller extends REST_Controller
 			}
 			else
 			{
-				$data = ERROR( 0, 'Contact us details not found.');
+				$data = ERROR( 0, 'Social media platform details not found.');
 				$this->response($data);
 			}
 		}catch(Exception $e){
@@ -1454,6 +1463,7 @@ class Wscontroller extends REST_Controller
 			$platform_id   = $this->input->post('platform_id');
 			$platform_name = $this->input->post('platform_name');
 			$link          = $this->input->post('link');
+			$icon          = $this->input->post('icon');
 			$updated_date	   = date('Y-m-d H:i:s');
 
 			if(empty($platform_id))
@@ -1468,6 +1478,7 @@ class Wscontroller extends REST_Controller
 			}
 			$data['vPlatformName'] = $platform_name;
 			$data['vLink'] 		   = $link;
+			$data['vIcon'] 	  	   = $icon;
 			$data['dtUpdatedDate'] = $updated_date;
 
 			$result = $this->PlatformModel->update_social_media_platform($platform_id,$data);
@@ -1491,6 +1502,9 @@ class Wscontroller extends REST_Controller
 	public function category_get($category)
 	{
 		try{
+
+			$AWS_BUCKET_NAME = $this->general->get_setting('AWS_BUCKET_NAME');
+			$AWS_END_POINT   = $this->general->get_setting('AWS_END_POINT');
 			$slug = $category;
 
 			$title      = $this->input->get('title');
@@ -1648,6 +1662,8 @@ class Wscontroller extends REST_Controller
 	public function get_category_get()
 	{
 		try{
+			$AWS_BUCKET_NAME = $this->general->get_setting('AWS_BUCKET_NAME');
+			$AWS_END_POINT   = $this->general->get_setting('AWS_END_POINT');
 			$category_id = $this->input->get('category_id');
 
 			$result = $this->CategoryModel->get_category($category_id);
@@ -2170,35 +2186,20 @@ class Wscontroller extends REST_Controller
 		try
 		{
 			$user_id = $this->input->post('user_id');
-			$prod_id = $this->input->post('prod_id');
-			$qty 	 = $this->input->post('qty');
-			$price   = $this->input->post('price');
-			$name    = $this->input->post('name');
 			$coupon_code    = $this->input->post('coupon_code');
-
+			$cart_items    = $this->input->post('cart_items');
+			
+			// $prod_id = $this->input->post('prod_id');
+			// $qty 	 = $this->input->post('qty');
+			// $price   = $this->input->post('price');
+			// $name    = $this->input->post('name');
+			
 			if(empty($user_id))
 			{
 				$data = ERROR( 0, 'Please enter the user_id');
 				$this->response($data);
 			}
 
-			if(empty($prod_id))
-			{
-				$data = ERROR( 0, 'Please select the prod_id');
-				$this->response($data);
-			}
-
-			if(empty($qty))
-			{
-				$data = ERROR( 0, 'Please enter the qty');
-				$this->response($data);
-			}
-
-			if(empty($price))
-			{
-				$data = ERROR( 0, 'Please enter the price');
-				$this->response($data);
-			}
 			
 			$cart['iUsersId']    = $user_id;
 			$cart['vCuponCode']  = $coupon_code;
@@ -2216,14 +2217,29 @@ class Wscontroller extends REST_Controller
 			
 			if(!empty($last_id))
 			{
-				$cart_items['iCartId']    = $last_id;
-				$cart_items['iProductId'] = $prod_id;
-				$cart_items['iQty'] 	  = $qty;
-				$cart_items['dPrice']     = $price;
-				$cart_items['vName']      = $name;
-				$cart_items['dtAddedDate']= date('Y-m-d H:i:s');
+				$cart_data = json_decode($cart_items,true);
+				
+				$cart_items_arr = [];
+				foreach ($cart_data as $key => $value) 
+				{
+					$is_cart_data_exist = $this->CartModel->is_cart_data_exist($last_id,$value['prod_id']);
+					if(!$is_cart_data_exist)
+					{
+						$cart_items_arr[$key]['iCartId']    = $last_id;
+						$cart_items_arr[$key]['iProductId'] = $value['prod_id'];
+						$cart_items_arr[$key]['iQty'] 	    = $value['qty'];
+						$cart_items_arr[$key]['dPrice']     = $value['price'];
+						$cart_items_arr[$key]['vName']      = $value['name'];
+						$cart_items_arr[$key]['dtAddedDate']= date('Y-m-d H:i:s');	
+					}
+					else
+					{
+						$data = ERROR( 0, 'Item(s) already exist in cart.');
+						$this->response($data);
+					}
+				}
 
-				$res = $this->CartModel->add_to_cart_items($cart_items);	
+				$res = $this->CartModel->add_to_cart_items($cart_items_arr);	
 				if(!empty($res))
 				{	
 					$result = $this->CartModel->get_cart_items($last_id);
@@ -2238,7 +2254,7 @@ class Wscontroller extends REST_Controller
 						$this->db->where('iCartId ', $last_id);
 						$this->db->update('cart', $cart_data);
 					}
-					$data = SUCCESS( 1, 'Item added to cart successfully.',[]);
+					$data = SUCCESS( 1, 'Item(s) added to cart successfully.',[]);
 					$this->response($data);
 				}
 				else
@@ -2289,11 +2305,30 @@ class Wscontroller extends REST_Controller
 	{
 		try
 		{
+			$AWS_BUCKET_NAME = $this->general->get_setting('AWS_BUCKET_NAME');
+			$AWS_END_POINT   = $this->general->get_setting('AWS_END_POINT');
 			$user_id = $this->input->get('user_id');
 			$result = $this->CartModel->get_cart_details($user_id);
 			if(!empty($result))
 			{
 				$result[0]['cart_items'] = $this->CartModel->get_cart_items_details($result[0]['cart_id']);
+				for ($i=0; $i < count($result[0]['cart_items']) ; $i++) 
+				{
+					if(!empty($result[0]['cart_items'][$i]['images']))
+					{
+						$images = json_decode($result[0]['cart_items'][$i]['images']);
+
+						$img1 = [];
+						if(!empty($images))
+						{
+							foreach($images as $val)
+							{
+								$img1[] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/profile_image/".$val;								
+							}
+						}
+						$result[0]['cart_items'][$i]['images'] = $img1;
+					}
+				}
 				$data = SUCCESS( 1, 'Item deleted form cart successfully.',$result);
 				$this->response($data);
 			}
@@ -2305,6 +2340,244 @@ class Wscontroller extends REST_Controller
 
 				
 
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function update_celebrity_post()
+	{
+		try{
+			$celebrity_id 	   = $this->input->post('celebrity_id');
+			$first_name 	   = $this->input->post('first_name');
+			$last_name         = $this->input->post('last_name');
+			$email             = $this->input->post('email');
+			$phone             = $this->input->post('phone');
+			$role_id           = '3';
+			$registration_type = 'Other';
+
+			$social_media_links = $this->input->post('social_media_links');
+			
+
+			$title 			   = $this->input->post('title');
+			$tag_line 		   = $this->input->post('tag_line');
+			$short_description = $this->input->post('short_description');
+			$long_description  = $this->input->post('long_description');
+			$categories 	   = $this->input->post('categories');
+			$price 			   = $this->input->post('price');
+			$is_featured 	   = $this->input->post('is_featured');
+			$added_date        = date('Y-m-d H:i:s');
+			$country           = $this->input->post('country');
+
+			$account_name 	   = $this->input->post('account_name');
+			$account_number    = $this->input->post('account_number');
+			$bank_name 	       = $this->input->post('bank_name');
+			$bank_code 	       = $this->input->post('bank_code');
+			$bank_address 	   = $this->input->post('bank_address');
+
+
+			// validation
+			if(empty($celebrity_id)){
+				$data = ERROR( 0, 'Please enter the celebrity_id');
+				$this->response($data);
+			}
+
+			if(empty($email)){
+				$data = ERROR( 0, 'Please enter the email');
+				$this->response($data);
+			}
+
+			if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
+				$data = ERROR( 0, 'Please enter valid email');
+			  	$this->response($data);
+			}
+
+			$is_exist = $this->UserModel->email_exist($email);
+
+			if(!empty($is_exist)){
+				$data = ERROR( 0, 'User already exist this email');
+				$this->response($data);
+			}
+
+			if(empty($title))
+			{
+				$data = ERROR( 0, 'Please enter the title');
+				$this->response($data);
+			}
+
+			if(empty($tag_line))
+			{
+				$data = ERROR( 0, 'Please enter the tag_line');
+				$this->response($data);
+			}
+
+			if(empty($short_description))
+			{
+				$data = ERROR( 0, 'Please enter short_description');
+				$this->response($data);
+			}
+
+			if(empty($long_description))
+			{
+				$data = ERROR( 0, 'Please enter the long_description');
+				$this->response($data);
+			}
+
+			if(empty($categories))
+			{
+				$data = ERROR( 0, 'Please enter the categories');
+				$this->response($data);
+			}
+
+			if(empty($price))
+			{
+				$data = ERROR( 0, 'Please enter the price');
+				$this->response($data);
+			}
+
+			if(empty($is_featured))
+			{
+				$data = ERROR( 0, 'Please enter the is_featured');
+				$this->response($data);
+			}
+
+			if(empty($account_name))
+			{
+				$data = ERROR( 0, 'Please enter account_name');
+				$this->response($data);
+			}
+
+			if(empty($account_number))
+			{
+				$data = ERROR( 0, 'Please enter the account_number');
+				$this->response($data);
+			}
+
+			if(empty($bank_name))
+			{
+				$data = ERROR( 0, 'Please enter the bank_name');
+				$this->response($data);
+			}
+
+			if(empty($bank_code))
+			{
+				$data = ERROR( 0, 'Please enter the bank_code');
+				$this->response($data);
+			}
+
+			if(empty($bank_address))
+			{
+				$data = ERROR( 0, 'Please enter the bank_address');
+				$this->response($data);
+			}
+
+			$data = [];
+			
+			$imgData = [];
+			$errors = [];
+			$files = $_FILES;
+			$upload_count = count($_FILES['profile_picture']['name']);
+
+			for( $i = 0; $i < $upload_count; $i++ )
+			{
+				$imgData[] = str_replace(' ', '_', $files['profile_picture']['name'][$i]);
+
+			    $_FILES['profile_picture'] = [
+			        'name'     => $files['profile_picture']['name'][$i],
+			        'type'     => $files['profile_picture']['type'][$i],
+			        'tmp_name' => $files['profile_picture']['tmp_name'][$i],
+			        'error'    => $files['profile_picture']['error'][$i],
+			        'size'     => $files['profile_picture']['size'][$i]
+			    ];
+			    
+			   	if (!empty($files["profile_picture"]["name"]))
+            	{
+	                $file_path = "profile_image";
+	                $file_name = str_replace(' ', '_', $files["profile_picture"]["name"][$i]);
+	                $file_tmp_path = $_FILES["profile_picture"]["tmp_name"];
+	                
+	                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
+	                if (!$response)
+	                {
+	                    //file upload failed
+	                }
+	            }
+			}
+			
+			$user_data['vFirstName']= $first_name;
+			$user_data['vLastName'] = $last_name;
+			$user_data['vEmail'] 	= $email;
+			$user_data['vPhone'] 	= $phone;
+			$user_data['iRoleId'] 	= $role_id;
+			$user_data['vCountry'] 	= $country;
+			$user_data['vImage'] 	= json_encode($imgData);
+			$user_data['dtUpdatedDate'] = date('Y-m-d H:i:s');
+			$user_data['eRegistrationType'] = $registration_type;
+
+			$last_id = $this->UserModel->update_user($celebrity_id,$user_data);
+
+			if (!empty($_FILES["w9_form"]["name"]))
+        	{
+                $file_path = "w9_form";
+                $file_name = str_replace(' ', '_', $_FILES["w9_form"]["name"]);
+                $file_tmp_path = $_FILES["w9_form"]["tmp_name"];
+                // print_r($file_tmp_path);die;
+                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
+                if (!$response)
+                {
+                    //file upload failed
+
+                }
+            }
+
+			$celebrity_data['iUsersId'] 			= $last_id;
+			$celebrity_data['vTitle'] 				= $title;
+			$celebrity_data['vTagLine'] 			= $tag_line;
+			$celebrity_data['vShortDescription'] 	= $short_description;
+			$celebrity_data['vLongDescription'] 	= $long_description;
+			$celebrity_data['vSocialMediaLinks'] = $social_media_links;
+			$category_arr = explode(",",$categories);
+			
+			if(in_array(7, $category_arr))
+			{
+				$other_category = $this->input->post('other_category');
+				$category_data['vCategoryName']   = $other_category;
+				$category_data['vSlug'] 	  	  = strtolower($other_category);
+				$category_data['vCategoryParent'] = '7';
+				$category_data['dtUpdatedDate']  	  = date('Y-m-d H:i:s');
+
+				$result = $this->CategoryModel->add_category($category_data);
+				$category_arr[] = $result;
+				$categories = implode(",",$category_arr);
+			}
+
+			$celebrity_data['vCategories'] 			= $categories;
+
+			$celebrity_data['dPrice'] 				= $price;
+			$celebrity_data['eIsFeatured'] 			= $is_featured;
+			$celebrity_data['dtAddedDate'] 			= $added_date;
+
+			$celebrity_data['vAccountName'] 		= $account_name;
+			$celebrity_data['vAccountNumber'] 		= $account_number;
+			$celebrity_data['vBankName'] 			= $bank_name;
+			$celebrity_data['vBankCode'] 			= $bank_code;
+			$celebrity_data['vBankAddress'] 		= $bank_address;
+			$celebrity_data['vW9Form'] 		        = str_replace(' ', '_', $_FILES["w9_form"]["name"]);
+			$celebrity_data['vSocialMediaLinks']    = json_encode($social_media_links);
+
+			$result = $this->CelebrityModel->register_celebrity($celebrity_data);
+
+			if(!empty($result))
+			{
+				$data = SUCCESS(1, 'Celebrity updated successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0,  'Something went wrong...please try again.');
+				$this->response($data);
+			}
 		}catch(Exception $e){
 			$data = ERROR( 0, $e->getMessage());
 			$this->response($data);

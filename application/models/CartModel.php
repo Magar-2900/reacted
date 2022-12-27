@@ -34,7 +34,7 @@ class CartModel extends CI_Model
 
   	public function add_to_cart_items($data)
   	{
-  		$this->db->insert('cart_items',$data);
+  		$this->db->insert_batch('cart_items',$data);
   		$result = $this->db->insert_id();
   		return $result;
   	}
@@ -78,9 +78,22 @@ class CartModel extends CI_Model
   	
   	public function get_cart_items_details($cart_id)
   	{
+  		$this->db->select('cart_items.iCartItemId as cart_item_id,cart_items.iCartId as cart_id,cart_items.iProductId as product_id,cart_items.vName as name,cart_items.iQty as qty,cart_items.dPrice as price,cart_items.dtAddedDate as added_date,users.vImage as images,user_celebrity.vTitle as title,user_celebrity.vTagLine as tag_line');
+  		$this->db->from('cart_items');
+  		$this->db->join('users','users.iUsersId = cart_items.iProductId','left');
+  		$this->db->join('user_celebrity','user_celebrity.iUsersId = users.iUsersId','left');
+  		$this->db->where('iCartId',$cart_id);
+  		$query_obj = $this->db->get();
+		$result = is_object($query_obj) ? $query_obj->result_array() : array();		
+		return $result;
+  	}
+
+  	public function is_cart_data_exist($cart_id,$product_id)
+  	{
   		$this->db->select('iCartItemId as cart_item_id,iCartId as cart_id,iProductId as product_id,vName as name,iQty as qty,dPrice as price,dtAddedDate as added_date');
   		$this->db->from('cart_items');
   		$this->db->where('iCartId',$cart_id);
+  		$this->db->where('iProductId',$product_id);
   		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();		
 		return $result;
