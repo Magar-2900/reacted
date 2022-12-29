@@ -176,7 +176,47 @@ class Wscontroller extends REST_Controller
 					$this->UserModel->update_token($enc_token,$token['user_id']);
 
 					$user_details = $this->UserModel->get_user($token['user_id']);
-					
+					#print_r($user_details[0]['role_id']);die;
+					if($user_details[0]['role_id1'] == '2')
+					{
+						$user_details[0]['creator_details'] = $this->MusicCreatorModel->get_music_creator_details($user_details[0]['user_id']);
+						if(!empty($user_details[0]['creator_details'][0]['images']))
+						{
+							$images = json_decode($user_details[0]['creator_details'][0]['images']);
+							$img1 = [];
+							if(!empty($images))
+							{
+								foreach($images as $val)
+								{
+									$img1[] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/profile_image/".$val;
+									// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
+								}
+							}
+							$user_details[0]['creator_details'][0]['images'] = $img1;
+						}
+					}
+					if($user_details[0]['role_id1'] == '3')
+					{
+						$user_details[0]['celebrity_details'] = $this->CelebrityModel->get_celebrity_details($user_details[0]['user_id']);
+						if(!empty($user_details[0]['celebrity_details'][0]['images']))
+						{
+							$images = json_decode($user_details[0]['celebrity_details'][0]['images']);
+							$img1 = [];
+							if(!empty($images))
+							{
+								foreach($images as $val)
+								{
+									$img1[] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/profile_image/".$val;
+									// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
+								}
+							}
+							$user_details[0]['celebrity_details'][0]['images'] = $img1;
+						}
+						if(!empty($user_details[0]['celebrity_details'][0]['w9form']))
+						{
+							$user_details[0]['celebrity_details'][0]['w9form'] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/w9_form/".$user_details[0]['w9form'];
+						}
+					}
 					$data = SUCCESS( 1,  'You have logged in successfully. ', $user_details);
 					$this->response($data);
 				}else{
