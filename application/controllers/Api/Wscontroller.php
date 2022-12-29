@@ -938,8 +938,6 @@ class Wscontroller extends REST_Controller
 					
 					$categories = implode(",",$category_arr);
 				}
-
-				$music_creator_data['vCategories'] 		= $catrgories;
 				
 				if(empty($artist))
 				{
@@ -949,7 +947,7 @@ class Wscontroller extends REST_Controller
 				$music_creator_data['vArtistName'] = $artist;
 				$music_creator_data['iUsersId']    = $user_id;
 				$music_creator_data['dtAddedDate'] = date('Y-m-d H:i:s');
-				$music_creator_data['vCategories'] = $category;
+				$music_creator_data['vCategories'] = $categories;
 				$result = $this->MusicCreatorModel->add_artist($music_creator_data);
 				if(!empty($result))
 				{	
@@ -1346,7 +1344,7 @@ class Wscontroller extends REST_Controller
 			$AWS_BUCKET_NAME = $this->general->get_setting('AWS_BUCKET_NAME');
 			$AWS_END_POINT   = $this->general->get_setting('AWS_END_POINT');
 			$category_id = $this->input->get('category_id');
-			$celebrity_id = $this->input->get('celebrity_id');
+			//$celebrity_id = $this->input->get('celebrity_id');
 
 			$result = $this->CelebrityModel->get_celebrities_by_category($category_id, $celebrity_id);
 			for ($i=0; $i < count($result) ; $i++) 
