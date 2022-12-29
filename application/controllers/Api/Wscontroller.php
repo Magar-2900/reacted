@@ -172,7 +172,6 @@ class Wscontroller extends REST_Controller
 					$token['user_id'] = $record[0]['user_id'];
 					$token['name'] = $record[0]['first_name'];
 					$token['email'] = $record[0]['email'];
-					$token['artist_name'] = "";
 					$enc_token = $this->authorization_token->generateToken($token);
 					$this->UserModel->update_token($enc_token,$token['user_id']);
 
@@ -880,7 +879,25 @@ class Wscontroller extends REST_Controller
 			{
 				$artist = $this->input->post('artist_name');
 				$user_id = $this->input->post('user_id');
-				$category = $this->input->post('cat_ids');
+				$categories = $this->input->post('categories');
+
+				$category_arr = explode(",",$categories);
+
+				if(in_array(7, $category_arr))
+				{
+					$other_category = $this->input->post('other_category');
+					$category_data['vCategoryName']   = $other_category;
+					$category_data['vSlug'] 	  	  = strtolower($other_category);
+					$category_data['vCategoryParent'] = '7';
+					$category_data['dtAddedDate']  	  = date('Y-m-d H:i:s');
+
+					$result = $this->CategoryModel->add_category($category_data);
+					$category_arr[] = $result;
+					
+					$categories = implode(",",$category_arr);
+				}
+
+				$music_creator_data['vCategories'] 		= $catrgories;
 				
 				if(empty($artist))
 				{
@@ -890,7 +907,7 @@ class Wscontroller extends REST_Controller
 				$music_creator_data['vArtistName'] = $artist;
 				$music_creator_data['iUsersId']    = $user_id;
 				$music_creator_data['dtAddedDate'] = date('Y-m-d H:i:s');
-				$music_creator_data['vCategories'] = $catrgories;
+				$music_creator_data['vCategories'] = $category;
 				$result = $this->MusicCreatorModel->add_artist($music_creator_data);
 				if(!empty($result))
 				{	
@@ -907,7 +924,6 @@ class Wscontroller extends REST_Controller
 			else if($step == 'upload')
 			{
 				$music_creator_id = $this->input->post('music_creator_id');
-				$categories 	  = $this->input->post('categories');
 				
 				if(empty($music_creator_id))
 				{
@@ -936,23 +952,7 @@ class Wscontroller extends REST_Controller
 
 	                }
 	            }
-				$category_arr = explode(",",$categories);
 				
-				if(in_array(7, $category_arr))
-				{
-					$other_category = $this->input->post('other_category');
-					$category_data['vCategoryName']   = $other_category;
-					$category_data['vSlug'] 	  	  = strtolower($other_category);
-					$category_data['vCategoryParent'] = '7';
-					$category_data['dtAddedDate']  	  = date('Y-m-d H:i:s');
-
-					$result = $this->CategoryModel->add_category($category_data);
-					$category_arr[] = $result;
-					
-					$categories = implode(",",$category_arr);
-				}
-
-				$music_creator_data['vCategories'] 		= $catrgories;
 				$music_creator_data['dtUpdatedDate'] 	= date('Y-m-d H:i:s');
 				$music_creator_data['vUploadMusic']		= str_replace(' ', '_', $files["music"]["name"]);
 
