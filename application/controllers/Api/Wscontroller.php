@@ -496,6 +496,7 @@ class Wscontroller extends REST_Controller
 			$bank_name 	       = $this->input->post('bank_name');
 			$bank_code 	       = $this->input->post('bank_code');
 			$bank_address 	   = $this->input->post('bank_address');
+			$paypal_id 	       = $this->input->post('paypal_id');
 
 
 			// validation
@@ -682,6 +683,7 @@ class Wscontroller extends REST_Controller
 			$celebrity_data['vBankName'] 			= $bank_name;
 			$celebrity_data['vBankCode'] 			= $bank_code;
 			$celebrity_data['vBankAddress'] 		= $bank_address;
+			$celebrity_data['vPaypalId'] 		    = $paypal_id;
 			$celebrity_data['vW9Form'] 		        = str_replace(' ', '_', $_FILES["w9_form"]["name"]);
 			$celebrity_data['vSocialMediaLinks']    = json_encode($social_media_links);
 
@@ -2375,6 +2377,7 @@ class Wscontroller extends REST_Controller
 			$bank_name 	       = $this->input->post('bank_name');
 			$bank_code 	       = $this->input->post('bank_code');
 			$bank_address 	   = $this->input->post('bank_address');
+			$paypal_id 	       = $this->input->post('paypal_id');
 
 
 			// validation
@@ -2563,6 +2566,7 @@ class Wscontroller extends REST_Controller
 			$celebrity_data['vBankName'] 			= $bank_name;
 			$celebrity_data['vBankCode'] 			= $bank_code;
 			$celebrity_data['vBankAddress'] 		= $bank_address;
+			$celebrity_data['vPaypalId'] 		    = $paypal_id;
 			$celebrity_data['vW9Form'] 		        = str_replace(' ', '_', $_FILES["w9_form"]["name"]);
 			$celebrity_data['vSocialMediaLinks']    = json_encode($social_media_links);
 
