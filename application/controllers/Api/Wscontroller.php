@@ -880,8 +880,8 @@ class Wscontroller extends REST_Controller
 			{
 				$artist = $this->input->post('artist_name');
 				$user_id = $this->input->post('user_id');
-				$category = $this->input->post('cat_ids')
-				$categories = 
+				$category = $this->input->post('cat_ids');
+				
 				if(empty($artist))
 				{
 					$data = ERROR( 0, 'Please enter the artist');
