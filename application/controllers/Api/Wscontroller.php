@@ -154,7 +154,7 @@ class Wscontroller extends REST_Controller
 			  	$this->response($data);
 			}
 
-			if(empty($password)){
+			if($password == ""){
 				$data = ERROR( 0, 'Please enter the password');
 				$this->response($data);
 			}
@@ -172,6 +172,7 @@ class Wscontroller extends REST_Controller
 					$token['user_id'] = $record[0]['user_id'];
 					$token['name'] = $record[0]['first_name'];
 					$token['email'] = $record[0]['email'];
+					$token['artist_name'] = NULL;
 					$enc_token = $this->authorization_token->generateToken($token);
 					$this->UserModel->update_token($enc_token,$token['user_id']);
 
@@ -879,6 +880,8 @@ class Wscontroller extends REST_Controller
 			{
 				$artist = $this->input->post('artist_name');
 				$user_id = $this->input->post('user_id');
+				$category = $this->input->post('cat_ids')
+				$categories = 
 				if(empty($artist))
 				{
 					$data = ERROR( 0, 'Please enter the artist');
@@ -887,6 +890,7 @@ class Wscontroller extends REST_Controller
 				$music_creator_data['vArtistName'] = $artist;
 				$music_creator_data['iUsersId']    = $user_id;
 				$music_creator_data['dtAddedDate'] = date('Y-m-d H:i:s');
+				$music_creator_data['vCategories'] = $catrgories;
 				$result = $this->MusicCreatorModel->add_artist($music_creator_data);
 				if(!empty($result))
 				{	
