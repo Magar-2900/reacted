@@ -152,14 +152,27 @@ Class General
     //     print_r($success);die;
     //     return $success;
     // }
+
+    public function get_setting($key)
+    {
+        $this->CI->db->select('vSettingName,vSettingValue');
+        $this->CI->db->from('app_setting');
+        $this->CI->db->where('vSettingName',$key);
+        $query_obj = $this->CI->db->get();
+        $result = is_object($query_obj) ? $query_obj->result_array() : array();
+        return $result[0]['vSettingValue'];
+    }
     
     public function uploadAWSData($temp_file = '', $folder_name = '', $file_name = '')
     {
         $folder_name = rtrim(trim($folder_name), "/");
-        $bucket_name = $this->CI->config->item('AWS_BUCKET_NAME');        
+        $bucket_name = $this->get_setting('AWS_BUCKET_NAME');
+        $file_name.'/'.$folder_name.'/'.$temp_file;
+
         try {
             $response = FALSE;
             if (trim($file_name) == "" || trim($bucket_name) == "" || trim($folder_name) == "") {
+                echo "hiii";
                 return $response;
             }
             $s3 = $this->getAWSConnectionObject();
@@ -178,23 +191,14 @@ Class General
             } else {
                 $object_folder = $bucket_name . "/" . $folder_name;
                 $response = $s3->putObjectFile($temp_file, $object_folder, $file_name, S3::ACL_PUBLIC_READ);
-
+                echo $response;
             }
         } catch (Exception $e) {
-            
+            print_r($e->getMessage());
         }
         return $response;
     }
 
-    public function get_setting($key)
-    {
-        $this->CI->db->select('vSettingName,vSettingValue');
-        $this->CI->db->from('app_setting');
-        $this->CI->db->where('vSettingName',$key);
-        $query_obj = $this->CI->db->get();
-        $result = is_object($query_obj) ? $query_obj->result_array() : array();
-        return $result[0]['vSettingValue'];
-    }
     public function getAWSConnectionObject()
     {
         if (is_object($this->_aws_avial_obj)) {

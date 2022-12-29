@@ -1139,11 +1139,6 @@ class Wscontroller extends REST_Controller
                 $file_tmp_path = $_FILES["music"]["tmp_name"];
                 // print_r($file_tmp_path);die;
                 $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
-                if (!$response)
-                {
-                    //file upload failed
-
-                }
             }
 
 			$music_creator_data['vArtistName'] 		= $artist_name;
@@ -2699,4 +2694,14 @@ class Wscontroller extends REST_Controller
 			$this->response($data);
 		}	
 	}
+
+	// public function upload_test_image_post(){
+	// 	$file = $_FILES['files']['name'];
+	// 	$temp_name = $_FILES['files']['tmp_name'];
+
+	// 	$response = $this->general->uploadAWSData($temp_name, 'profile_image', $file);
+
+	// 	echo $response;
+	// 	exit;
+	// }
 }
