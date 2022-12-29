@@ -708,7 +708,7 @@ class Wscontroller extends REST_Controller
 		try
 		{
 			$AWS_BUCKET_NAME = $this->general->get_setting('AWS_BUCKET_NAME');
-			echo $AWS_END_POINT   = $this->general->get_setting('AWS_END_POINT');
+			$AWS_END_POINT   = $this->general->get_setting('AWS_END_POINT');
 
 			$celebrity_id = $this->input->get('celebrity_id');
 
