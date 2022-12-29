@@ -172,7 +172,7 @@ class Wscontroller extends REST_Controller
 					$token['user_id'] = $record[0]['user_id'];
 					$token['name'] = $record[0]['first_name'];
 					$token['email'] = $record[0]['email'];
-					$token['artist_name'] = NULL;
+					$token['artist_name'] = "";
 					$enc_token = $this->authorization_token->generateToken($token);
 					$this->UserModel->update_token($enc_token,$token['user_id']);
 
