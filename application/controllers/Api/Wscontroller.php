@@ -496,6 +496,7 @@ class Wscontroller extends REST_Controller
 			$bank_name 	       = $this->input->post('bank_name');
 			$bank_code 	       = $this->input->post('bank_code');
 			$bank_address 	   = $this->input->post('bank_address');
+			$paypal_id 	       = $this->input->post('paypal_id');
 
 
 			// validation
@@ -600,7 +601,7 @@ class Wscontroller extends REST_Controller
 
 			for( $i = 0; $i < $upload_count; $i++ )
 			{
-				$imgData[] = str_replace(' ', '_', $files['profile_picture']['name'][$i]);
+				$imgData[] = str_replace(' ', '_', $files['profile_picture']['name'][$i]).'_'.time();
 
 			    $_FILES['profile_picture'] = [
 			        'name'     => $files['profile_picture']['name'][$i],
@@ -613,7 +614,7 @@ class Wscontroller extends REST_Controller
 			   	if (!empty($files["profile_picture"]["name"]))
             	{
 	                $file_path = "profile_image";
-	                $file_name = str_replace(' ', '_', $files["profile_picture"]["name"][$i]);
+	                $file_name = str_replace(' ', '_', $files["profile_picture"]["name"][$i]).'_'.time();
 	                $file_tmp_path = $_FILES["profile_picture"]["tmp_name"];
 	                
 	                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
@@ -639,7 +640,7 @@ class Wscontroller extends REST_Controller
 			if (!empty($_FILES["w9_form"]["name"]))
         	{
                 $file_path = "w9_form";
-                $file_name = str_replace(' ', '_', $_FILES["w9_form"]["name"]);
+                $file_name = str_replace(' ', '_', $_FILES["w9_form"]["name"]).'_'.time();
                 $file_tmp_path = $_FILES["w9_form"]["tmp_name"];
                 // print_r($file_tmp_path);die;
                 $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
@@ -682,7 +683,8 @@ class Wscontroller extends REST_Controller
 			$celebrity_data['vBankName'] 			= $bank_name;
 			$celebrity_data['vBankCode'] 			= $bank_code;
 			$celebrity_data['vBankAddress'] 		= $bank_address;
-			$celebrity_data['vW9Form'] 		        = str_replace(' ', '_', $_FILES["w9_form"]["name"]);
+			$celebrity_data['vPaypalId'] 		    = $paypal_id;
+			$celebrity_data['vW9Form'] 		        = str_replace(' ', '_', $_FILES["w9_form"]["name"]).'_'.time();
 			$celebrity_data['vSocialMediaLinks']    = json_encode($social_media_links);
 
 			$result = $this->CelebrityModel->register_celebrity($celebrity_data);
@@ -940,7 +942,7 @@ class Wscontroller extends REST_Controller
 				if (!empty($files["music"]["name"]))
             	{
 	                $file_path = "music";
-	                $file_name = str_replace(' ', '_', $files["music"]["name"]);
+	                $file_name = str_replace(' ', '_', $files["music"]["name"]).'_'.time();
 	                $file_tmp_path = $_FILES["music"]["tmp_name"];
 	                // print_r($file_tmp_path);die;
 	                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
@@ -952,7 +954,7 @@ class Wscontroller extends REST_Controller
 	            }
 				
 				$music_creator_data['dtUpdatedDate'] 	= date('Y-m-d H:i:s');
-				$music_creator_data['vUploadMusic']		= str_replace(' ', '_', $files["music"]["name"]);
+				$music_creator_data['vUploadMusic']		= str_replace(' ', '_', $files["music"]["name"]).'_'.time();
 
 				$result = $this->MusicCreatorModel->upload_music($music_creator_data,$music_creator_id);
 
@@ -1085,7 +1087,7 @@ class Wscontroller extends REST_Controller
 
 			for( $i = 0; $i < $upload_count; $i++ )
 			{
-				$imgData[] = str_replace(' ', '_', $files['profile_picture']['name'][$i]);
+				$imgData[] = str_replace(' ', '_', $files['profile_picture']['name'][$i]).'_'.time();
 
 			    $_FILES['profile_picture'] = [
 			        'name'     => $files['profile_picture']['name'][$i],
@@ -1100,7 +1102,7 @@ class Wscontroller extends REST_Controller
 			    if (!empty($files["profile_picture"]["name"]))
             	{
 	                $file_path = "profile_image";
-	                $file_name = str_replace(' ', '_', $files["profile_picture"]["name"][$i]);
+	                $file_name = str_replace(' ', '_', $files["profile_picture"]["name"][$i]).'_'.time();
 	                $file_tmp_path = $_FILES["profile_picture"]["tmp_name"];
 	                // print_r($file_tmp_path);die;
 	                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
@@ -1137,7 +1139,7 @@ class Wscontroller extends REST_Controller
 			if (!empty($files["music"]["name"]))
         	{
                 $file_path = "music";
-                $file_name = str_replace(' ', '_', $files["music"]["name"]);
+                $file_name = str_replace(' ', '_', $files["music"]["name"]).'_'.time();
                 $file_tmp_path = $_FILES["music"]["tmp_name"];
                 // print_r($file_tmp_path);die;
                 $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
@@ -1146,7 +1148,7 @@ class Wscontroller extends REST_Controller
 			$music_creator_data['vArtistName'] 		= $artist_name;
 			$music_creator_data['vCategories'] 		= $categories;
 			$music_creator_data['vSocialMediaLinks']= json_encode($social_media_links);
-			$music_creator_data['vUploadMusic']		= str_replace(' ', '_', $files["music"]["name"]);
+			$music_creator_data['vUploadMusic']		= str_replace(' ', '_', $files["music"]["name"]).'_'.time();
 			$music_creator_data['dtUpdatedDate'] 	= date('Y-m-d H:i:s');
 
 			$result = $this->MusicCreatorModel->update_music_creator($music_creator_data,$music_creator_id);
@@ -1599,7 +1601,7 @@ class Wscontroller extends REST_Controller
 			if (!empty($_FILES["image"]["name"]))
         	{
                 $file_path = "category";
-                $file_name = str_replace(' ', '_', $_FILES["image"]["name"]);
+                $file_name = str_replace(' ', '_', $_FILES["image"]["name"]).'_'.time();
                 $file_tmp_path = $_FILES["image"]["tmp_name"];
                 // print_r($file_tmp_path);die;
                 $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
@@ -1613,7 +1615,7 @@ class Wscontroller extends REST_Controller
 
 			$category_data['vCategoryName'] = $category_name;
 			$category_data['vSlug'] 	  	= $slug;
-			$category_data['vImage'] 	  	= str_replace(' ', '_', $_FILES["image"]["name"]);
+			$category_data['vImage'] 	  	= str_replace(' ', '_', $_FILES["image"]["name"]).'_'.time();
 			$category_data['vDescription'] 	= $description;
 			$category_data['dtAddedDate']  	= $added_date;
 
@@ -1745,7 +1747,7 @@ class Wscontroller extends REST_Controller
 			if (!empty($_FILES["image"]["name"]))
         	{
                 $file_path = "category";
-                $file_name = str_replace(' ', '_', $_FILES["image"]["name"]);
+                $file_name = str_replace(' ', '_', $_FILES["image"]["name"]).'_'.time();
                 $file_tmp_path = $_FILES["image"]["tmp_name"];
                 // print_r($file_tmp_path);die;
                 $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
@@ -1758,7 +1760,7 @@ class Wscontroller extends REST_Controller
 
 			$category_data['vCategoryName'] = $category_name;
 			$category_data['vSlug'] 	  	= $slug;
-			$category_data['vImage'] 	  	= str_replace(' ', '_', $_FILES["image"]["name"]);
+			$category_data['vImage'] 	  	= str_replace(' ', '_', $_FILES["image"]["name"]).'_'.time();
 			$category_data['vDescription'] 	= $description;
 			$category_data['dtUpdatedDate'] = $updated_date;
 
@@ -2072,7 +2074,7 @@ class Wscontroller extends REST_Controller
 
 			for( $i = 0; $i < $upload_count; $i++ )
 			{
-				$imgData[] = str_replace(' ', '_', $files['profile_picture']['name'][$i]);
+				$imgData[] = str_replace(' ', '_', $files['profile_picture']['name'][$i]).'_'.time();
 
 			    $_FILES['profile_picture'] = [
 			        'name'     => $files['profile_picture']['name'][$i],
@@ -2085,7 +2087,7 @@ class Wscontroller extends REST_Controller
 			   	if (!empty($files["profile_picture"]["name"]))
             	{
 	                $file_path = "profile_image";
-	                $file_name = str_replace(' ', '_', $files["profile_picture"]["name"][$i]);
+	                $file_name = str_replace(' ', '_', $files["profile_picture"]["name"][$i]).'_'.time();
 	                $file_tmp_path = $_FILES["profile_picture"]["tmp_name"];
 	                // print_r($file_tmp_path);die;
 	                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
@@ -2145,7 +2147,7 @@ class Wscontroller extends REST_Controller
 			if (!empty($files["music"]["name"]))
         	{
                 $file_path = "music";
-                $file_name = str_replace(' ', '_', $files["music"]["name"]);
+                $file_name = str_replace(' ', '_', $files["music"]["name"]).'_'.time();
                 $file_tmp_path = $_FILES["music"]["tmp_name"];
                 // print_r($file_tmp_path);die;
                 $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
@@ -2160,7 +2162,7 @@ class Wscontroller extends REST_Controller
 			$music_creator_data['vCategories']       = $categories;
 			$music_creator_data['vSocialMediaLinks'] = $social_media_links;
 			$music_creator_data['vDescription'] 	 = $description;
-			$music_creator_data['vUploadMusic']		 = str_replace(' ', '_', $files["music"]["name"]);
+			$music_creator_data['vUploadMusic']		 = str_replace(' ', '_', $files["music"]["name"]).'_'.time();
 			$music_creator_data['dtAddedDate']       = date('Y-m-d H:i:s');
 			$result = $this->MusicCreatorModel->add_artist($music_creator_data);
 			if($result)
@@ -2373,6 +2375,7 @@ class Wscontroller extends REST_Controller
 			$bank_name 	       = $this->input->post('bank_name');
 			$bank_code 	       = $this->input->post('bank_code');
 			$bank_address 	   = $this->input->post('bank_address');
+			$paypal_id 	       = $this->input->post('paypal_id');
 
 
 			// validation
@@ -2479,7 +2482,7 @@ class Wscontroller extends REST_Controller
 
 			for( $i = 0; $i < $upload_count; $i++ )
 			{
-				$imgData[] = str_replace(' ', '_', $files['profile_picture']['name'][$i]);
+				$imgData[] = str_replace(' ', '_', $files['profile_picture']['name'][$i]).'_'.time();
 
 			    $_FILES['profile_picture'] = [
 			        'name'     => $files['profile_picture']['name'][$i],
@@ -2492,7 +2495,7 @@ class Wscontroller extends REST_Controller
 			   	if (!empty($files["profile_picture"]["name"]))
             	{
 	                $file_path = "profile_image";
-	                $file_name = str_replace(' ', '_', $files["profile_picture"]["name"][$i]);
+	                $file_name = str_replace(' ', '_', $files["profile_picture"]["name"][$i]).'_'.time();
 	                $file_tmp_path = $_FILES["profile_picture"]["tmp_name"];
 	                
 	                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
@@ -2518,7 +2521,7 @@ class Wscontroller extends REST_Controller
 			if (!empty($_FILES["w9_form"]["name"]))
         	{
                 $file_path = "w9_form";
-                $file_name = str_replace(' ', '_', $_FILES["w9_form"]["name"]);
+                $file_name = str_replace(' ', '_', $_FILES["w9_form"]["name"]).'_'.time();
                 $file_tmp_path = $_FILES["w9_form"]["tmp_name"];
                 // print_r($file_tmp_path);die;
                 $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
@@ -2561,7 +2564,8 @@ class Wscontroller extends REST_Controller
 			$celebrity_data['vBankName'] 			= $bank_name;
 			$celebrity_data['vBankCode'] 			= $bank_code;
 			$celebrity_data['vBankAddress'] 		= $bank_address;
-			$celebrity_data['vW9Form'] 		        = str_replace(' ', '_', $_FILES["w9_form"]["name"]);
+			$celebrity_data['vPaypalId'] 		    = $paypal_id;
+			$celebrity_data['vW9Form'] 		        = str_replace(' ', '_', $_FILES["w9_form"]["name"]).'_'.time();
 			$celebrity_data['vSocialMediaLinks']    = json_encode($social_media_links);
 
 			$result = $this->CelebrityModel->register_celebrity($celebrity_data);
