@@ -172,7 +172,7 @@ Class General
         try {
             $response = FALSE;
             if (trim($file_name) == "" || trim($bucket_name) == "" || trim($folder_name) == "") {
-                echo "hiii";
+                //echo "hiii";
                 return $response;
             }
             $s3 = $this->getAWSConnectionObject();
@@ -180,7 +180,7 @@ Class General
 
                 
                     $object_config = array(
-                        'ACL' => 'public-read',
+                        'ACL' => 'private',
                         'Bucket' => $bucket_name,
                         'Key' => $folder_name . '/' . $file_name,
                         'SourceFile' => $temp_file,
@@ -193,6 +193,36 @@ Class General
                 $response = $s3->putObjectFile($temp_file, $object_folder, $file_name, S3::ACL_PUBLIC_READ);
                 echo $response;
             }
+        } catch (Exception $e) {
+            print_r($e->getMessage());
+        }
+        return $response;
+    }
+
+    public function getImageUrl($folder_name = '', $file_name = ''){
+        $folder_name = rtrim(trim($folder_name), "/");
+        $bucket_name = $this->get_setting('AWS_BUCKET_NAME');
+
+        try {
+            $response = FALSE;
+            if (trim($file_name) == "" || trim($bucket_name) == "" || trim($folder_name) == "") {
+                //echo "hiii";
+                return $response;
+            }
+            $s3 = $this->getAWSConnectionObject();                
+            /*$object_config = array(
+                'Bucket' => $bucket_name,
+                'Key' => $folder_name . '/' . $file_name
+            );*/
+
+            $cmd = $s3->getCommand('GetObject', [
+                'Bucket' => $bucket_name,
+                'Key' => $folder_name . '/' . $file_name
+            ]);
+
+            $request = $s3->createPresignedRequest($cmd, '+20 minutes');
+            $presignedUrl = (string)$request->getUri();
+            $response = $presignedUrl;              
         } catch (Exception $e) {
             print_r($e->getMessage());
         }
