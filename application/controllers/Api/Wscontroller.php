@@ -970,7 +970,8 @@ class Wscontroller extends REST_Controller
 			else if($step == 'upload')
 			{
 				$music_creator_id = $this->input->post('music_creator_id');
-				
+				$category_id      = $this->input->post('category_id');
+				$music_name       = $this->input->post('music_name');
 				if(empty($music_creator_id))
 				{
 					$data = ERROR( 0, 'Please enter the music_creator_id');
@@ -1002,6 +1003,8 @@ class Wscontroller extends REST_Controller
 				$music_creator_data['dtAddedDate'] 	= date('Y-m-d H:i:s');
 				$music_creator_data['vMusic']		= str_replace(' ', '_', $files["music"]["name"]).'_'.time();
 				$music_creator_data['iCreatorId']	= $music_creator_id;
+				$music_creator_data['iCategoryId']	= $category_id;
+				$music_creator_data['vMusicName']	= $music_name;
 				$result = $this->MusicCreatorModel->upload_music($music_creator_data);
 				
 				if(!empty($result))
@@ -2777,7 +2780,8 @@ class Wscontroller extends REST_Controller
 		}	
 	}
 
-	public function upload_test_image_post(){
+	public function upload_test_image_post()
+	{
 		$file = $_FILES['files']['name'];
 		$temp_name = $_FILES['files']['tmp_name'];
 
@@ -2787,11 +2791,71 @@ class Wscontroller extends REST_Controller
 		exit;
 	}
 
-	public function get_image_get(){
+	public function get_image_get()
+	{
 		$file = 'vision-exams.jpg';
 		$response = $this->general->getImageUrl('profile_image', $file);
 
 		echo $response;
 		exit;
+	}
+
+	public function upload_music_from_dashboard_post()
+	{
+		try
+		{
+			$music_creator_id = $this->input->post('music_creator_id');
+			$category_id      = $this->input->post('category_id');
+			$music_name       = $this->input->post('music_name');
+			if(empty($music_creator_id))
+			{
+				$data = ERROR( 0, 'Please enter the music_creator_id');
+				$this->response($data);
+			}
+
+			// Music Upload
+			$data = [];  
+      		$config['upload_path'] 		= './public/uploads/music';
+			$config['allowed_types'] 	= 'mp3|mpeg|mpg|mpeg3';
+			
+			$errors = [];
+			$files = $_FILES;				
+			
+			if (!empty($files["music"]["name"]))
+        	{
+                $file_path = "music";
+                $file_name = str_replace(' ', '_', $files["music"]["name"]).'_'.time();
+                $file_tmp_path = $_FILES["music"]["tmp_name"];
+                // print_r($file_tmp_path);die;
+                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
+                if (!$response)
+                {
+                    //file upload failed
+
+                }
+            }
+			
+			$music_creator_data['dtAddedDate'] 	= date('Y-m-d H:i:s');
+			$music_creator_data['vMusic']		= str_replace(' ', '_', $files["music"]["name"]).'_'.time();
+			$music_creator_data['iCreatorId']	= $music_creator_id;
+			$music_creator_data['iCategoryId']	= $category_id;
+			$music_creator_data['vMusicName']	= $music_name;
+			$result = $this->MusicCreatorModel->upload_music($music_creator_data);
+			
+			if(!empty($result))
+			{
+				$data = SUCCESS(1, 'Music uploaded successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0,  'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+		
 	}
 }
