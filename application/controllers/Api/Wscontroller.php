@@ -999,11 +999,11 @@ class Wscontroller extends REST_Controller
 	                }
 	            }
 				
-				$music_creator_data['dtUpdatedDate'] 	= date('Y-m-d H:i:s');
-				$music_creator_data['vUploadMusic']		= str_replace(' ', '_', $files["music"]["name"]).'_'.time();
-
-				$result = $this->MusicCreatorModel->upload_music($music_creator_data,$music_creator_id);
-
+				$music_creator_data['dtAddedDate'] 	= date('Y-m-d H:i:s');
+				$music_creator_data['vMusic']		= str_replace(' ', '_', $files["music"]["name"]).'_'.time();
+				$music_creator_data['iCreatorId']	= $music_creator_id;
+				$result = $this->MusicCreatorModel->upload_music($music_creator_data);
+				
 				if(!empty($result))
 				{
 					$data = SUCCESS(1, 'Music uploaded successfully.',[]);
@@ -1030,6 +1030,19 @@ class Wscontroller extends REST_Controller
 			$music_creator_id = $this->input->get('music_creator_id');
 
 			$result = $this->MusicCreatorModel->get_music_creator_details($music_creator_id);
+
+			if(!empty($music_creator_id))
+			{
+				$result[0]['musics'] = $this->MusicCreatorModel->get_musics($result[0]['music_creator_id']);
+				
+				for ($i=0; $i < count($result[0]['musics']) ; $i++) 
+				{
+					if(!empty($result[0]['musics'][$i]['musics']))
+					{	
+						$result[0]['musics'][$i]['musics'] = $this->general->getImageUrl('music', $result[0]['musics'][$i]['musics']);
+					}
+				}
+			}
 
 			if(empty($music_creator_id))
 			{
@@ -1075,7 +1088,7 @@ class Wscontroller extends REST_Controller
 			
 			if(!empty($result))
 			{
-				$data = SUCCESS( 1, 'Celebrity details found successfully.',$result);
+				$data = SUCCESS( 1, 'Music_creator details found successfully.',$result);
 				$this->response($data);
 			}
 			else
@@ -2188,7 +2201,17 @@ class Wscontroller extends REST_Controller
 				$data = ERROR( 0, 'Please enter the description');
 				$this->response($data);
 			}
-					// music
+			
+			$music_creator_data['vArtistName']       = $artist_name;
+			$music_creator_data['iUsersId']          = $last_id;
+			$music_creator_data['vCategories']       = $categories;
+			$music_creator_data['vSocialMediaLinks'] = $social_media_links;
+			$music_creator_data['vDescription'] 	 = $description;
+			#$music_creator_data['vUploadMusic']		 = str_replace(' ', '_', $files["music"]["name"]).'_'.time();
+			$music_creator_data['dtAddedDate']       = date('Y-m-d H:i:s');
+			$result = $this->MusicCreatorModel->add_artist($music_creator_data);
+			#print_r($result);die;
+			// music
 			$data1 = [];  
 	  		$config1['upload_path'] 		= './public/uploads/music';
 			$config1['allowed_types'] 	= 'mp3|mpeg|mpg|mpeg3';
@@ -2209,14 +2232,12 @@ class Wscontroller extends REST_Controller
 
                 }
             }
-			$music_creator_data['vArtistName']       = $artist_name;
-			$music_creator_data['iUsersId']          = $last_id;
-			$music_creator_data['vCategories']       = $categories;
-			$music_creator_data['vSocialMediaLinks'] = $social_media_links;
-			$music_creator_data['vDescription'] 	 = $description;
-			$music_creator_data['vUploadMusic']		 = str_replace(' ', '_', $files["music"]["name"]).'_'.time();
-			$music_creator_data['dtAddedDate']       = date('Y-m-d H:i:s');
-			$result = $this->MusicCreatorModel->add_artist($music_creator_data);
+			$music_creator_data1['dtAddedDate'] 	= date('Y-m-d H:i:s');
+			$music_creator_data1['vMusic']		= str_replace(' ', '_', $files["music"]["name"]).'_'.time();
+			$music_creator_data1['iCreatorId']	= $result;
+
+			$result1 = $this->MusicCreatorModel->upload_music($music_creator_data1);
+			#print_r($result1);die;
 			if($result)
 			{
 				$data = SUCCESS( 1, 'Music Creator added successfully.',[]);
