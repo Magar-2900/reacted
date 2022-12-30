@@ -69,9 +69,9 @@
 				$this->db->where('find_in_set('.$category_id.',user_celebrity.vCategories)<> 0');
 			}
 
-			/*if($celebrity_id !== ''){
+			if($celebrity_id !== ''){
 				$this->db->where('users.iUsersId != ',$celebrity_id);
-			}*/
+			}
 			
 			$this->db->where('users.iRoleId',3);
 			$this->db->where('users.iIsDeleted ','0');	
