@@ -2702,13 +2702,13 @@ class Wscontroller extends REST_Controller
 		}	
 	}
 
-	// public function upload_test_image_post(){
-	// 	$file = $_FILES['files']['name'];
-	// 	$temp_name = $_FILES['files']['tmp_name'];
+	public function upload_test_image_post(){
+		$file = $_FILES['files']['name'];
+		$temp_name = $_FILES['files']['tmp_name'];
 
-	// 	$response = $this->general->uploadAWSData($temp_name, 'profile_image', $file);
+		$response = $this->general->uploadAWSData($temp_name, 'profile_image', $file);
 
-	// 	echo $response;
-	// 	exit;
-	// }
+		echo $response;
+		exit;
+	}
 }
