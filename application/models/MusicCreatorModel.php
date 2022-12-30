@@ -29,16 +29,16 @@ class MusicCreatorModel extends CI_Model
 		return $result;
   	}   
 
-  	public function upload_music($music_creator_data,$music_creator_id)
+  	public function upload_music($music_creator_data)
   	{
-  		$this->db->where('iMusicCreatorid', $music_creator_id);
-		$result = $this->db->update('user_music_creator', $music_creator_data);
-		return $result;
+		$this->db->insert('music_uploads',$music_creator_data);
+  		$result = $this->db->insert_id();
+  		return $result;
   	}
 
   	public function get_music_creator_details($music_creator_id = '')
   	{
-  		$this->db->select("users.iUsersId as user_id,users.vFirstName as first_name,users.vLastName as last_name,users.vEmail as email,users.vPhone as phone,user_roles.vRole as role,user_music_creator.vArtistName as artist_name,user_music_creator.vDescription as description,user_music_creator.vUploadMusic as music,user_music_creator.dtAddedDate as added_date,user_music_creator.dtUpdatedDate as updated_date,GROUP_CONCAT(category_master.vCategoryName SEPARATOR ',') as categories,users.vImage as images,");
+  		$this->db->select("users.iUsersId as user_id,users.vFirstName as first_name,users.vLastName as last_name,users.vEmail as email,users.vPhone as phone,user_roles.vRole as role,user_music_creator.vArtistName as artist_name,user_music_creator.vDescription as description,user_music_creator.vUploadMusic as music,user_music_creator.dtAddedDate as added_date,user_music_creator.dtUpdatedDate as updated_date,GROUP_CONCAT(category_master.vCategoryName SEPARATOR ',') as categories,users.vImage as images,user_music_creator.iMusicCreatorid as music_creator_id");
 		$this->db->from('users');
 		$this->db->join('user_roles','user_roles.iRoleId = users.iRoleId','left');
 		$this->db->join('user_music_creator','user_music_creator.iUsersId = users.iUsersId','left');
@@ -74,6 +74,21 @@ class MusicCreatorModel extends CI_Model
   		$this->db->where('iUsersId', $music_creator_id);
 		$result = $this->db->update('user_music_creator', $music_creator_data);
 
+		return $result;
+  	}
+
+  	public function get_musics($music_creator_id)
+  	{
+  		$this->db->select('mu.iMusicUploadId   as music_upload_id,mu.iCreatorId as creator_id,mu.vMusic as musics,mu.dtAddedDate as added_date,mu.eStatus as status');
+		$this->db->from('music_uploads as mu');
+
+		if(!empty($music_creator_id))
+		{
+			$this->db->where('mu.iCreatorId ',$music_creator_id);	
+		}
+
+		$query_obj = $this->db->get();
+		$result = is_object($query_obj) ? $query_obj->result_array() : array();
 		return $result;
   	}
 }
