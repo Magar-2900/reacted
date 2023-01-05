@@ -2261,9 +2261,11 @@ class Wscontroller extends REST_Controller
 	{
 		try
 		{
-			$user_id = $this->input->post('user_id');
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+			$user_id 		= $this->input->post('user_id');
 			$coupon_code    = $this->input->post('coupon_code');
-			$cart_items    = $this->input->post('cart_items');
+			$cart_items    	= $this->input->post('cart_items');
 			
 			// $prod_id = $this->input->post('prod_id');
 			// $qty 	 = $this->input->post('qty');
@@ -2356,6 +2358,8 @@ class Wscontroller extends REST_Controller
 	{
 		try
 		{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
 			$cart_item_id = $this->input->post('cart_item_id');
 			
 			$result = $this->CartModel->delete_form_cart($cart_item_id);
@@ -2381,6 +2385,8 @@ class Wscontroller extends REST_Controller
 	{
 		try
 		{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
 			$AWS_BUCKET_NAME = $this->general->get_setting('AWS_BUCKET_NAME');
 			$AWS_END_POINT   = $this->general->get_setting('AWS_END_POINT');
 			$user_id = $this->input->get('user_id');
@@ -2850,6 +2856,160 @@ class Wscontroller extends REST_Controller
 			else
 			{
 				$data = ERROR( 0,  'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+		
+	}
+
+	public function checkout_post()
+	{
+		try
+		{
+			$billing_first_name 	= $this->input->post('billing_first_name');
+			if(empty($billing_first_name))
+			{
+				$data = ERROR( 0, 'Please enter the billing_first_name');
+				$this->response($data);
+			}
+			$billing_last_name 		= $this->input->post('billing_last_name');
+			if(empty($billing_last_name))
+			{
+				$data = ERROR( 0, 'Please enter the billing_last_name');
+				$this->response($data);
+			}
+			$billing_email			= $this->input->post('billing_email');	
+			if(empty($billing_email))
+			{
+				$data = ERROR( 0, 'Please enter the billing_email');
+				$this->response($data);
+			}					
+			$billing_phone			= $this->input->post('billing_phone');
+			if(empty($billing_phone))
+			{
+				$data = ERROR( 0, 'Please enter the billing_phone');
+				$this->response($data);
+			}
+			$billing_address_line1	= $this->input->post('billing_address_line1');
+			if(empty($billing_address_line1))
+			{
+				$data = ERROR( 0, 'Please enter the billing_address_line1');
+				$this->response($data);
+			}
+			$billing_address_line2	= $this->input->post('billing_address_line2');
+			if(empty($billing_address_line2))
+			{
+				$data = ERROR( 0, 'Please enter the billing_address_line2');
+				$this->response($data);
+			}
+			$billing_city			= $this->input->post('billing_city');
+			if(empty($billing_city))
+			{
+				$data = ERROR( 0, 'Please enter the billing_city');
+				$this->response($data);
+			}
+			$billing_state			= $this->input->post('billing_state');
+			if(empty($billing_state))
+			{
+				$data = ERROR( 0, 'Please enter the billing_state');
+				$this->response($data);
+			}
+			$billing_zip			= $this->input->post('billing_zip');
+			if(empty($billing_zip))
+			{
+				$data = ERROR( 0, 'Please enter the billing_zip');
+				$this->response($data);
+			}
+			$billing_country		= $this->input->post('billing_country');
+			if(empty($billing_country))
+			{
+				$data = ERROR( 0, 'Please enter the billing_country');
+				$this->response($data);
+			}
+			$order_sub_total		= $this->input->post('order_sub_total');
+			if(empty($order_sub_total))
+			{
+				$data = ERROR( 0, 'Please enter the order_sub_total');
+				$this->response($data);
+			}
+			$oder_tax				= $this->input->post('oder_tax');
+			$order_coupon			= $this->input->post('order_coupon');
+			$order_discount			= $this->input->post('order_discount');
+			$order_total 			= $this->input->post('order_total');
+			if(empty($order_total))
+			{
+				$data = ERROR( 0, 'Please enter the order_total');
+				$this->response($data);
+			}
+			$user_id 				= $this->input->post('user_id');
+			if(empty($user_id))
+			{
+				$data = ERROR( 0, 'Please enter the user_id');
+				$this->response($data);
+			}
+			$order_items 			= $this->input->post('order_items');
+			// if(empty($order_items))
+			// {
+			// 	$data = ERROR( 0, 'Please enter the order_items');
+			// 	$this->response($data);
+			// }
+
+			$order['vBillingFirstName'] 	= $billing_first_name;
+			$order['vBillingLastName'] 		= $billing_last_name;
+			$order['vBillingEmail'] 		= $billing_email;
+			$order['vBillingPhone'] 		= $billing_phone;
+			$order['vBillingAddressLine1'] 	= $billing_address_line1;
+			$order['vBillingAddressLine2'] 	= $billing_address_line2;
+			$order['vBillingCity'] 			= $billing_city;
+			$order['vBillingState'] 		= $billing_state;
+			$order['vBillingZip'] 			= $billing_zip;
+			$order['vBillingCountry'] 		= $billing_country;
+			$order['eOrderSubTotal'] 		= $order_sub_total;
+			$order['eOrderTax'] 			= $oder_tax;
+			$order['eOrderCoupon'] 			= $order_coupon;
+			$order['eOrderDiscount'] 		= $order_discount;
+			$order['eOrderTotal'] 			= $order_total;
+			$order['eOrderPaymentTransactionId'] = '';
+			$order['ePaymentData'] 			= '';
+			$order['eMusicCreatorId'] 		= $user_id;
+			$order['eOrderStatus'] 			= 'Pending';
+			$order['dtAddedDate'] 			= date('Y-m-d H:i:s');
+			$result = $this->CartModel->add_order($order);
+			if(!empty($result))
+			{
+				$order_item = json_decode($order_items,true);
+
+				foreach ($order_item as $key => $value) 
+				{
+					$order_items_arr[$key]['iOrderId']    		= $result;
+					$order_items_arr[$key]['iMusicCreatorId'] 	= $user_id;
+					$order_items_arr[$key]['iCelebrityId'] 	    = $value['prod_id'];
+					$order_items_arr[$key]['vItemPrice']     	= $value['price'];
+					$order_items_arr[$key]['iMusicUploadKey']   = $value['name'];
+					$order_items_arr[$key]['eItemReviewStatus']	= 'In Progress';		
+					$order_items_arr[$key]['eCelebrityPaymentStatus'] = 'Pending';		
+					$order_items_arr[$key]['dtAddedDate'] 			        = date('Y-m-d H:i:s');
+				}
+				
+				$res = $this->CartModel->add_order_items($order_items_arr);
+				if(!empty($res))
+				{
+					$data = SUCCESS( 1, 'Cart checkout successfully.',[]);
+					$this->response($data);
+				}
+				else
+				{
+					$data = ERROR( 0, 'Something went wrong...please try again.');
+					$this->response($data);
+				}
+
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
 				$this->response($data);
 			}
 		}catch(Exception $e){
