@@ -98,4 +98,18 @@ class CartModel extends CI_Model
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();		
 		return $result;
   	}
+
+  	public function add_order_items($data)
+  	{
+  		$this->db->insert_batch('order_items',$data);
+  		$result = $this->db->insert_id();
+  		return $result;
+  	}
+
+  	public function add_order($data)
+  	{
+  		$this->db->insert('orders',$data);
+  		$result = $this->db->insert_id();
+  		return $result;
+  	}
 }
