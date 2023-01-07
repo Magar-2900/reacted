@@ -2951,11 +2951,12 @@ class Wscontroller extends REST_Controller
 				$this->response($data);
 			}
 			$order_items 			= $this->input->post('order_items');
-			// if(empty($order_items))
-			// {
-			// 	$data = ERROR( 0, 'Please enter the order_items');
-			// 	$this->response($data);
-			// }
+			$music_upload_key       = $this->input->post('music_upload_key');
+			if(empty($music_upload_key))
+			{
+				$data = ERROR( 0, 'Please enter the music_upload_key');
+				$this->response($data);
+			}
 
 			$order['vBillingFirstName'] 	= $billing_first_name;
 			$order['vBillingLastName'] 		= $billing_last_name;
@@ -2988,7 +2989,7 @@ class Wscontroller extends REST_Controller
 					$order_items_arr[$key]['iMusicCreatorId'] 	= $user_id;
 					$order_items_arr[$key]['iCelebrityId'] 	    = $value['prod_id'];
 					$order_items_arr[$key]['vItemPrice']     	= $value['price'];
-					$order_items_arr[$key]['iMusicUploadKey']   = $value['name'];
+					$order_items_arr[$key]['iMusicUploadKey']   = $music_upload_key;
 					$order_items_arr[$key]['eItemReviewStatus']	= 'In Progress';		
 					$order_items_arr[$key]['eCelebrityPaymentStatus'] = 'Pending';		
 					$order_items_arr[$key]['dtAddedDate'] 			        = date('Y-m-d H:i:s');
