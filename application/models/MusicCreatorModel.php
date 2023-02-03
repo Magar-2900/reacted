@@ -52,7 +52,9 @@ class MusicCreatorModel extends CI_Model
 		$this->db->group_by('users.iUsersId');
 		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
+		//print_r($this->db->last_query());
 		return $result;
+		
   	}
 
   	public function delete_music_creator($music_creator_id = '')

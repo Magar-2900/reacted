@@ -1024,6 +1024,7 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
+
 	public function get_music_creator_get()
 	{
 		try{
@@ -1034,8 +1035,13 @@ class Wscontroller extends REST_Controller
 
 			$result = $this->MusicCreatorModel->get_music_creator_details($music_creator_id);
 
+			//print_r($result);
+
+			//print_r($result);
+
 			if(!empty($music_creator_id))
 			{
+				$result[0]['celeb_data'] = $result;
 				$result[0]['musics'] = $this->MusicCreatorModel->get_musics($result[0]['music_creator_id']);
 				
 				for ($i=0; $i < count($result[0]['musics']) ; $i++) 
