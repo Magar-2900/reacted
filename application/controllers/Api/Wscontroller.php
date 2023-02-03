@@ -970,7 +970,8 @@ class Wscontroller extends REST_Controller
 			else if($step == 'upload')
 			{
 				$music_creator_id = $this->input->post('music_creator_id');
-				
+				$category_id      = $this->input->post('category_id');
+				$music_name       = $this->input->post('music_name');
 				if(empty($music_creator_id))
 				{
 					$data = ERROR( 0, 'Please enter the music_creator_id');
@@ -999,11 +1000,13 @@ class Wscontroller extends REST_Controller
 	                }
 	            }
 				
-				$music_creator_data['dtUpdatedDate'] 	= date('Y-m-d H:i:s');
-				$music_creator_data['vUploadMusic']		= str_replace(' ', '_', $files["music"]["name"]).'_'.time();
-
-				$result = $this->MusicCreatorModel->upload_music($music_creator_data,$music_creator_id);
-
+				$music_creator_data['dtAddedDate'] 	= date('Y-m-d H:i:s');
+				$music_creator_data['vMusic']		= str_replace(' ', '_', $files["music"]["name"]).'_'.time();
+				$music_creator_data['iCreatorId']	= $music_creator_id;
+				$music_creator_data['iCategoryId']	= $category_id;
+				$music_creator_data['vMusicName']	= $music_name;
+				$result = $this->MusicCreatorModel->upload_music($music_creator_data);
+				
 				if(!empty($result))
 				{
 					$data = SUCCESS(1, 'Music uploaded successfully.',[]);
@@ -1030,6 +1033,19 @@ class Wscontroller extends REST_Controller
 			$music_creator_id = $this->input->get('music_creator_id');
 
 			$result = $this->MusicCreatorModel->get_music_creator_details($music_creator_id);
+
+			if(!empty($music_creator_id))
+			{
+				$result[0]['musics'] = $this->MusicCreatorModel->get_musics($result[0]['music_creator_id']);
+				
+				for ($i=0; $i < count($result[0]['musics']) ; $i++) 
+				{
+					if(!empty($result[0]['musics'][$i]['musics']))
+					{	
+						$result[0]['musics'][$i]['musics'] = $this->general->getImageUrl('music', $result[0]['musics'][$i]['musics']);
+					}
+				}
+			}
 
 			if(empty($music_creator_id))
 			{
@@ -1075,7 +1091,7 @@ class Wscontroller extends REST_Controller
 			
 			if(!empty($result))
 			{
-				$data = SUCCESS( 1, 'Celebrity details found successfully.',$result);
+				$data = SUCCESS( 1, 'Music_creator details found successfully.',$result);
 				$this->response($data);
 			}
 			else
@@ -2188,7 +2204,17 @@ class Wscontroller extends REST_Controller
 				$data = ERROR( 0, 'Please enter the description');
 				$this->response($data);
 			}
-					// music
+			
+			$music_creator_data['vArtistName']       = $artist_name;
+			$music_creator_data['iUsersId']          = $last_id;
+			$music_creator_data['vCategories']       = $categories;
+			$music_creator_data['vSocialMediaLinks'] = $social_media_links;
+			$music_creator_data['vDescription'] 	 = $description;
+			#$music_creator_data['vUploadMusic']		 = str_replace(' ', '_', $files["music"]["name"]).'_'.time();
+			$music_creator_data['dtAddedDate']       = date('Y-m-d H:i:s');
+			$result = $this->MusicCreatorModel->add_artist($music_creator_data);
+			#print_r($result);die;
+			// music
 			$data1 = [];  
 	  		$config1['upload_path'] 		= './public/uploads/music';
 			$config1['allowed_types'] 	= 'mp3|mpeg|mpg|mpeg3';
@@ -2209,14 +2235,12 @@ class Wscontroller extends REST_Controller
 
                 }
             }
-			$music_creator_data['vArtistName']       = $artist_name;
-			$music_creator_data['iUsersId']          = $last_id;
-			$music_creator_data['vCategories']       = $categories;
-			$music_creator_data['vSocialMediaLinks'] = $social_media_links;
-			$music_creator_data['vDescription'] 	 = $description;
-			$music_creator_data['vUploadMusic']		 = str_replace(' ', '_', $files["music"]["name"]).'_'.time();
-			$music_creator_data['dtAddedDate']       = date('Y-m-d H:i:s');
-			$result = $this->MusicCreatorModel->add_artist($music_creator_data);
+			$music_creator_data1['dtAddedDate'] 	= date('Y-m-d H:i:s');
+			$music_creator_data1['vMusic']		= str_replace(' ', '_', $files["music"]["name"]).'_'.time();
+			$music_creator_data1['iCreatorId']	= $result;
+
+			$result1 = $this->MusicCreatorModel->upload_music($music_creator_data1);
+			#print_r($result1);die;
 			if($result)
 			{
 				$data = SUCCESS( 1, 'Music Creator added successfully.',[]);
@@ -2237,9 +2261,11 @@ class Wscontroller extends REST_Controller
 	{
 		try
 		{
-			$user_id = $this->input->post('user_id');
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+			$user_id 		= $this->input->post('user_id');
 			$coupon_code    = $this->input->post('coupon_code');
-			$cart_items    = $this->input->post('cart_items');
+			$cart_items    	= $this->input->post('cart_items');
 			
 			// $prod_id = $this->input->post('prod_id');
 			// $qty 	 = $this->input->post('qty');
@@ -2332,6 +2358,8 @@ class Wscontroller extends REST_Controller
 	{
 		try
 		{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
 			$cart_item_id = $this->input->post('cart_item_id');
 			
 			$result = $this->CartModel->delete_form_cart($cart_item_id);
@@ -2357,6 +2385,8 @@ class Wscontroller extends REST_Controller
 	{
 		try
 		{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
 			$AWS_BUCKET_NAME = $this->general->get_setting('AWS_BUCKET_NAME');
 			$AWS_END_POINT   = $this->general->get_setting('AWS_END_POINT');
 			$user_id = $this->input->get('user_id');
@@ -2756,7 +2786,8 @@ class Wscontroller extends REST_Controller
 		}	
 	}
 
-	public function upload_test_image_post(){
+	public function upload_test_image_post()
+	{
 		$file = $_FILES['files']['name'];
 		$temp_name = $_FILES['files']['tmp_name'];
 
@@ -2766,11 +2797,226 @@ class Wscontroller extends REST_Controller
 		exit;
 	}
 
-	public function get_image_get(){
-		$file = 'Kesariya(PagalWorld.com.se).mp3';
-		$response = $this->general->getImageUrl('music', $file);
+	public function get_image_get()
+	{
+		$file = 'vision-exams.jpg';
+		$response = $this->general->getImageUrl('profile_image', $file);
 
 		echo $response;
 		exit;
+	}
+
+	public function upload_music_from_dashboard_post()
+	{
+		try
+		{
+			$music_creator_id = $this->input->post('music_creator_id');
+			$category_id      = $this->input->post('category_id');
+			$music_name       = $this->input->post('music_name');
+			if(empty($music_creator_id))
+			{
+				$data = ERROR( 0, 'Please enter the music_creator_id');
+				$this->response($data);
+			}
+
+			// Music Upload
+			$data = [];  
+      		$config['upload_path'] 		= './public/uploads/music';
+			$config['allowed_types'] 	= 'mp3|mpeg|mpg|mpeg3';
+			
+			$errors = [];
+			$files = $_FILES;				
+			
+			if (!empty($files["music"]["name"]))
+        	{
+                $file_path = "music";
+                $file_name = str_replace(' ', '_', $files["music"]["name"]).'_'.time();
+                $file_tmp_path = $_FILES["music"]["tmp_name"];
+                // print_r($file_tmp_path);die;
+                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
+                if (!$response)
+                {
+                    //file upload failed
+
+                }
+            }
+			
+			$music_creator_data['dtAddedDate'] 	= date('Y-m-d H:i:s');
+			$music_creator_data['vMusic']		= str_replace(' ', '_', $files["music"]["name"]).'_'.time();
+			$music_creator_data['iCreatorId']	= $music_creator_id;
+			$music_creator_data['iCategoryId']	= $category_id;
+			$music_creator_data['vMusicName']	= $music_name;
+			$result = $this->MusicCreatorModel->upload_music($music_creator_data);
+			
+			if(!empty($result))
+			{
+				$data = SUCCESS(1, 'Music uploaded successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0,  'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+		
+	}
+
+	public function checkout_post()
+	{
+		try
+		{
+			$billing_first_name 	= $this->input->post('billing_first_name');
+			if(empty($billing_first_name))
+			{
+				$data = ERROR( 0, 'Please enter the billing_first_name');
+				$this->response($data);
+			}
+			$billing_last_name 		= $this->input->post('billing_last_name');
+			if(empty($billing_last_name))
+			{
+				$data = ERROR( 0, 'Please enter the billing_last_name');
+				$this->response($data);
+			}
+			$billing_email			= $this->input->post('billing_email');	
+			if(empty($billing_email))
+			{
+				$data = ERROR( 0, 'Please enter the billing_email');
+				$this->response($data);
+			}					
+			$billing_phone			= $this->input->post('billing_phone');
+			if(empty($billing_phone))
+			{
+				$data = ERROR( 0, 'Please enter the billing_phone');
+				$this->response($data);
+			}
+			$billing_address_line1	= $this->input->post('billing_address_line1');
+			if(empty($billing_address_line1))
+			{
+				$data = ERROR( 0, 'Please enter the billing_address_line1');
+				$this->response($data);
+			}
+			$billing_address_line2	= $this->input->post('billing_address_line2');
+			if(empty($billing_address_line2))
+			{
+				$data = ERROR( 0, 'Please enter the billing_address_line2');
+				$this->response($data);
+			}
+			$billing_city			= $this->input->post('billing_city');
+			if(empty($billing_city))
+			{
+				$data = ERROR( 0, 'Please enter the billing_city');
+				$this->response($data);
+			}
+			$billing_state			= $this->input->post('billing_state');
+			if(empty($billing_state))
+			{
+				$data = ERROR( 0, 'Please enter the billing_state');
+				$this->response($data);
+			}
+			$billing_zip			= $this->input->post('billing_zip');
+			if(empty($billing_zip))
+			{
+				$data = ERROR( 0, 'Please enter the billing_zip');
+				$this->response($data);
+			}
+			$billing_country		= $this->input->post('billing_country');
+			if(empty($billing_country))
+			{
+				$data = ERROR( 0, 'Please enter the billing_country');
+				$this->response($data);
+			}
+			$order_sub_total		= $this->input->post('order_sub_total');
+			if(empty($order_sub_total))
+			{
+				$data = ERROR( 0, 'Please enter the order_sub_total');
+				$this->response($data);
+			}
+			$oder_tax				= $this->input->post('oder_tax');
+			$order_coupon			= $this->input->post('order_coupon');
+			$order_discount			= $this->input->post('order_discount');
+			$order_total 			= $this->input->post('order_total');
+			if(empty($order_total))
+			{
+				$data = ERROR( 0, 'Please enter the order_total');
+				$this->response($data);
+			}
+			$user_id 				= $this->input->post('user_id');
+			if(empty($user_id))
+			{
+				$data = ERROR( 0, 'Please enter the user_id');
+				$this->response($data);
+			}
+			$order_items 			= $this->input->post('order_items');
+			$music_upload_key       = $this->input->post('music_upload_key');
+			if(empty($music_upload_key))
+			{
+				$data = ERROR( 0, 'Please enter the music_upload_key');
+				$this->response($data);
+			}
+
+			$order['vBillingFirstName'] 	= $billing_first_name;
+			$order['vBillingLastName'] 		= $billing_last_name;
+			$order['vBillingEmail'] 		= $billing_email;
+			$order['vBillingPhone'] 		= $billing_phone;
+			$order['vBillingAddressLine1'] 	= $billing_address_line1;
+			$order['vBillingAddressLine2'] 	= $billing_address_line2;
+			$order['vBillingCity'] 			= $billing_city;
+			$order['vBillingState'] 		= $billing_state;
+			$order['vBillingZip'] 			= $billing_zip;
+			$order['vBillingCountry'] 		= $billing_country;
+			$order['eOrderSubTotal'] 		= $order_sub_total;
+			$order['eOrderTax'] 			= $oder_tax;
+			$order['eOrderCoupon'] 			= $order_coupon;
+			$order['eOrderDiscount'] 		= $order_discount;
+			$order['eOrderTotal'] 			= $order_total;
+			$order['eOrderPaymentTransactionId'] = '';
+			$order['ePaymentData'] 			= '';
+			$order['eMusicCreatorId'] 		= $user_id;
+			$order['eOrderStatus'] 			= 'Pending';
+			$order['dtAddedDate'] 			= date('Y-m-d H:i:s');
+			$result = $this->CartModel->add_order($order);
+			if(!empty($result))
+			{
+				$order_item = json_decode($order_items,true);
+
+				foreach ($order_item as $key => $value) 
+				{
+					$order_items_arr[$key]['iOrderId']    		= $result;
+					$order_items_arr[$key]['iMusicCreatorId'] 	= $user_id;
+					$order_items_arr[$key]['iCelebrityId'] 	    = $value['prod_id'];
+					$order_items_arr[$key]['vItemPrice']     	= $value['price'];
+					$order_items_arr[$key]['iMusicUploadKey']   = $music_upload_key;
+					$order_items_arr[$key]['eItemReviewStatus']	= 'In Progress';		
+					$order_items_arr[$key]['eCelebrityPaymentStatus'] = 'Pending';		
+					$order_items_arr[$key]['dtAddedDate'] 			        = date('Y-m-d H:i:s');
+				}
+				
+				$res = $this->CartModel->add_order_items($order_items_arr);
+				if(!empty($res))
+				{
+					$data = SUCCESS( 1, 'Cart checkout successfully.',[]);
+					$this->response($data);
+				}
+				else
+				{
+					$data = ERROR( 0, 'Something went wrong...please try again.');
+					$this->response($data);
+				}
+
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+		
 	}
 }
