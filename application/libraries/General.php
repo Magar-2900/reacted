@@ -191,7 +191,7 @@ Class General
             } else {
                 $object_folder = $bucket_name . "/" . $folder_name;
                 $response = $s3->putObjectFile($temp_file, $object_folder, $file_name, S3::ACL_PUBLIC_READ);
-                echo $response;
+                //echo $response;
             }
         } catch (Exception $e) {
             print_r($e->getMessage());
@@ -220,7 +220,7 @@ Class General
                 'Key' => $folder_name . '/' . $file_name
             ]);
 
-            $request = $s3->createPresignedRequest($cmd, '+20 minutes');
+            $request = $s3->createPresignedRequest($cmd, '+5 minutes');
             $presignedUrl = (string)$request->getUri();
             $response = $presignedUrl;              
         } catch (Exception $e) {

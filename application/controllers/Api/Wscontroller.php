@@ -2760,15 +2760,15 @@ class Wscontroller extends REST_Controller
 		$file = $_FILES['files']['name'];
 		$temp_name = $_FILES['files']['tmp_name'];
 
-		$response = $this->general->uploadAWSData($temp_name, 'profile_image', $file);
+		$response = $this->general->uploadAWSData($temp_name, 'music', $file);
 
 		echo $response;
 		exit;
 	}
 
 	public function get_image_get(){
-		$file = 'vision-exams.jpg';
-		$response = $this->general->getImageUrl('profile_image', $file);
+		$file = 'Kesariya(PagalWorld.com.se).mp3';
+		$response = $this->general->getImageUrl('music', $file);
 
 		echo $response;
 		exit;
