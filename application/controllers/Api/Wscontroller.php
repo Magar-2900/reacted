@@ -21,6 +21,9 @@ class Wscontroller extends REST_Controller
 		$this->load->model('WishlistModel');
 	}
 
+	/**
+	 * Validate access token
+	 */
 	public function validate_access_token($headers)
 	{
 		try{
@@ -48,6 +51,9 @@ class Wscontroller extends REST_Controller
 	    }
 	}
 
+	/**
+	 * Register User
+	 */
 	public function register_post()
 	{
 		try{
@@ -138,6 +144,9 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
+	/**
+	 * Login User
+	 */
 	public function login_post()
 	{
 		try{
@@ -235,6 +244,9 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
+	/**
+	 * My profile 
+	 */
 	public function my_profile_get()
 	{
 		try{
@@ -268,6 +280,9 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
+	/**
+	 * Update profile 
+	 */
 	public function update_profile_post()
 	{
 		try{
@@ -314,7 +329,9 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
-	
+	/**
+	 * get roles 
+	 */
 	public function get_roles_get()
 	{
 		try{
@@ -337,6 +354,9 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
+	/**
+	 * change password 
+	 */
 	public function change_password_post()
 	{
 		try{
@@ -396,6 +416,9 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
+	/**
+	 * forgot password 
+	 */
 	public function forgot_password_post()
 	{
 		try{
@@ -457,6 +480,9 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
+	/**
+	 * reset password 
+	 */
 	public function reset_password_post()
 	{
 		try{
@@ -826,6 +852,9 @@ class Wscontroller extends REST_Controller
 	public function delete_celebrity_post()
 	{
 		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+
 			$celebrity_id = $this->input->post('celebrity_id');
 
 			$result = $this->CelebrityModel->delete_celebrity($celebrity_id);
@@ -1114,6 +1143,9 @@ class Wscontroller extends REST_Controller
 	public function delete_music_creator_post()
 	{
 		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+
 			$music_creator_id = $this->input->post('music_creator_id');
 
 			$result = $this->MusicCreatorModel->delete_music_creator($music_creator_id);
@@ -1137,6 +1169,9 @@ class Wscontroller extends REST_Controller
 	public function update_music_creator_post()
 	{
 		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+
 			$music_creator_id  = $this->input->post('music_creator_id');
 			$first_name 	   = $this->input->post('first_name');
 			$last_name 		   = $this->input->post('last_name');
@@ -1504,6 +1539,9 @@ class Wscontroller extends REST_Controller
 	public function delete_social_media_platform_post()
 	{
 		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+
 			$platform_id = $this->input->post('platform_id');
 
 			if(empty($platform_id))
@@ -1532,6 +1570,9 @@ class Wscontroller extends REST_Controller
 	public function update_social_media_platform_post()
 	{
 		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+
 			$platform_id   = $this->input->post('platform_id');
 			$platform_name = $this->input->post('platform_name');
 			$link          = $this->input->post('link');
@@ -1647,6 +1688,9 @@ class Wscontroller extends REST_Controller
 	public function add_category_post()
 	{
 		try{
+			$headers = $this->input->request_headers();
+			$token = $this->validate_access_token($headers);
+
 			$category_name = $this->input->post('category_name');
 			$slug          = $this->input->post('slug');
 			$description   = $this->input->post('description');			
@@ -1665,20 +1709,12 @@ class Wscontroller extends REST_Controller
 				$this->response($data);
 			}
 
-			// $config['upload_path']    = 'public/uploads/category';
-			// $config['allowed_types']  = 'gif|jpg|png|jpeg';
-			// $config['max_size']       = 1024 * 5;
-			// $config['max_width']      = 1024;
-			// $config['max_height']     = 768;
-
 			if (!empty($_FILES["image"]["name"]))
         	{
                 $file_path = "category";
                 $file_name = str_replace(' ', '_', $_FILES["image"]["name"]).'_'.time();
                 $file_tmp_path = $_FILES["image"]["tmp_name"];
-                // print_r($file_tmp_path);die;
                 $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
-				//print_r($response);
                 if (!$response)
                 {
                     //file upload failed
@@ -1768,6 +1804,9 @@ class Wscontroller extends REST_Controller
 	public function delete_category_post()
 	{
 		try{
+			$headers = $this->input->request_headers();
+			$token = $this->validate_access_token($headers);
+
 			$category_id = $this->input->post('category_id');
 
 			if(empty($category_id))
@@ -1796,6 +1835,9 @@ class Wscontroller extends REST_Controller
 	public function update_category_post()
 	{
 		try{
+			$headers = $this->input->request_headers();
+			$token = $this->validate_access_token($headers);
+
 			$category_id   = $this->input->post('category_id');
 			$category_name = $this->input->post('category_name');
 			$slug          = $this->input->post('slug');
@@ -1859,6 +1901,9 @@ class Wscontroller extends REST_Controller
 	public function add_coupon_post()
 	{
 		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+
 			$coupon_title = $this->input->post('coupon_title');
 			$coupon_code  = $this->input->post('coupon_code');
 			$description  = $this->input->post('description');
@@ -1948,6 +1993,9 @@ class Wscontroller extends REST_Controller
 	public function get_coupon_get()
 	{
 		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+
 			$coupon_id = $this->input->get('coupon_id');
 
 			$result = $this->CouponModel->get_coupon($coupon_id);
@@ -1971,6 +2019,9 @@ class Wscontroller extends REST_Controller
 	public function delete_coupon_post()
 	{
 		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+
 			$coupon_id = $this->input->post('coupon_id');
 
 			if(empty($coupon_id))
@@ -1999,6 +2050,9 @@ class Wscontroller extends REST_Controller
 	public function update_coupon_post()
 	{
 		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+
 			$coupon_id     = $this->input->post('coupon_id');
 			$coupon_title  = $this->input->post('coupon_title');
 			$coupon_code   = $this->input->post('coupon_code');
@@ -2091,6 +2145,9 @@ class Wscontroller extends REST_Controller
 	public function add_music_creator_by_admin_post()
 	{
 		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+
 			$first_name 	   = $this->input->post('first_name');
 			$last_name 		   = $this->input->post('last_name');
 			$email             = $this->input->post('email');
@@ -2438,6 +2495,9 @@ class Wscontroller extends REST_Controller
 	public function update_celebrity_post()
 	{
 		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+
 			$celebrity_id 	   = $this->input->post('celebrity_id');
 			$first_name 	   = $this->input->post('first_name');
 			$last_name         = $this->input->post('last_name');
@@ -2483,7 +2543,7 @@ class Wscontroller extends REST_Controller
 			  	$this->response($data);
 			}
 
-			$is_exist = $this->UserModel->email_exist($email);
+			$is_exist = $this->UserModel->email_exist($email,$id);
 
 			if(!empty($is_exist)){
 				$data = ERROR( 0, 'User already exist this email');
@@ -2678,6 +2738,9 @@ class Wscontroller extends REST_Controller
 	public function add_to_wishlist_post()
 	{
 		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+
 			$user_id 	= $this->input->post('user_id');
 			$product_id = $this->input->post('product_id');
 
@@ -2726,6 +2789,9 @@ class Wscontroller extends REST_Controller
 	{
 		try
 		{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+
 			$wishlist_id = $this->input->post('wishlist_id');
 			
 			$result = $this->WishlistModel->delete_form_wishlist($wishlist_id);
@@ -2751,6 +2817,9 @@ class Wscontroller extends REST_Controller
 	{
 		try
 		{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+
 			$AWS_BUCKET_NAME = $this->general->get_setting('AWS_BUCKET_NAME');
 			$AWS_END_POINT   = $this->general->get_setting('AWS_END_POINT');
 			$user_id = $this->input->get('user_id');
@@ -2816,6 +2885,9 @@ class Wscontroller extends REST_Controller
 	{
 		try
 		{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+
 			$music_creator_id = $this->input->post('music_creator_id');
 			$category_id      = $this->input->post('category_id');
 			$music_name       = $this->input->post('music_name');
@@ -2875,6 +2947,9 @@ class Wscontroller extends REST_Controller
 	{
 		try
 		{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+
 			$billing_first_name 	= $this->input->post('billing_first_name');
 			if(empty($billing_first_name))
 			{
@@ -2979,8 +3054,8 @@ class Wscontroller extends REST_Controller
 			$order['eOrderCoupon'] 			= $order_coupon;
 			$order['eOrderDiscount'] 		= $order_discount;
 			$order['eOrderTotal'] 			= $order_total;
-			$order['eOrderPaymentTransactionId'] = '';
-			$order['ePaymentData'] 			= '';
+			$order['vOrderPaymentTransactionId'] = '';
+			$order['vPaymentData'] 			= '';
 			$order['eMusicCreatorId'] 		= $user_id;
 			$order['eOrderStatus'] 			= 'Pending';
 			$order['dtAddedDate'] 			= date('Y-m-d H:i:s');
@@ -3022,7 +3097,56 @@ class Wscontroller extends REST_Controller
 		}catch(Exception $e){
 			$data = ERROR( 0, $e->getMessage());
 			$this->response($data);
-		}
-		
+		}	
+	}
+
+	public function update_order_post()
+	{
+		try
+		{
+			$order_id       = $this->input->post('order_id');
+			$payment_status = $this->input->post('payment_status');
+			$transaction_id = $this->input->post('transaction_id');
+			$payment_data   = $this->input->post('payment_data');
+			if(empty($order_id))
+			{
+				$data = ERROR( 0, 'Please enter the order_id');
+				$this->response($data);
+			}
+			if(empty($payment_status))
+			{
+				$data = ERROR( 0, 'Please enter the payment_status');
+				$this->response($data);
+			}
+			if(empty($transaction_id))
+			{
+				$data = ERROR( 0, 'Please enter the transaction_id');
+				$this->response($data);
+			}
+			if(empty($payment_data))
+			{
+				$data = ERROR( 0, 'Please enter the payment_data');
+				$this->response($data);
+			}
+
+			$order1['eOrderStatus'] 			  = $payment_status;
+			$order1['vPaymentData'] 			  = $payment_data;
+			$order1['vOrderPaymentTransactionId'] = $transaction_id;
+
+			$res = $this->CartModel->update_order_status($order_id,$order1);
+			if(!empty($res))
+			{
+				$data = SUCCESS( 1, 'Order updated successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}	
 	}
 }

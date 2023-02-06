@@ -112,4 +112,9 @@ class CartModel extends CI_Model
   		$result = $this->db->insert_id();
   		return $result;
   	}
+
+  	public function update_order_status($order_id, $order)
+  	{
+		return $this->db->where('iOrderId', $order_id)->update("orders", $order);
+  	}
 }
