@@ -8,11 +8,15 @@ class UserModel extends CI_Model
   		parent::__construct();
   	}
 
-  	public function email_exist($email)
+  	public function email_exist($email,$id='')
   	{
   		$this->db->select('*');
 		$this->db->from('users');
 		$this->db->where('vEmail',$email);
+		if(!empty($id))
+		{
+			$this->db->where('iUsersId',$id);
+		}
 		$query_obj = $this->db->get();  
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
 		return $result;
