@@ -849,6 +849,26 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
+	public function get_all_celebrities_get(){
+		try{
+			$result = $this->CelebrityModel->get_all_celebrities();
+			if($result)
+			{
+				$data = SUCCESS( 1, 'Celebrities details found successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+		
+	}
+
 	public function delete_celebrity_post()
 	{
 		try{
@@ -1135,6 +1155,25 @@ class Wscontroller extends REST_Controller
 				$this->response($data);
 			}
 		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function get_all_music_creators_get(){
+		try{
+			$result = $this->MusicCreatorModel->get_all_music_creators();
+			if($result)
+			{
+				$data = SUCCESS( 1, 'Music Creators details found successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		} catch(Exception $e) {
 			$data = ERROR( 0, $e->getMessage());
 			$this->response($data);
 		}
