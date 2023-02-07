@@ -854,7 +854,7 @@ class Wscontroller extends REST_Controller
 			$result = $this->CelebrityModel->get_all_celebrities();
 			if($result)
 			{
-				$data = SUCCESS( 1, 'Celebrities details found successfully.',[]);
+				$data = SUCCESS( 1, 'Celebrities details found successfully.',$result);
 				$this->response($data);
 			}
 			else
@@ -1165,7 +1165,7 @@ class Wscontroller extends REST_Controller
 			$result = $this->MusicCreatorModel->get_all_music_creators();
 			if($result)
 			{
-				$data = SUCCESS( 1, 'Music Creators details found successfully.',[]);
+				$data = SUCCESS( 1, 'Music Creators details found successfully.', $result);
 				$this->response($data);
 			}
 			else
