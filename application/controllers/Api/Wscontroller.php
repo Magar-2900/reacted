@@ -2543,12 +2543,12 @@ class Wscontroller extends REST_Controller
 			  	$this->response($data);
 			}
 
-			$is_exist = $this->UserModel->email_exist($email,$id);
+			/*$is_exist = $this->UserModel->email_exist($email,$id);
 
 			if(!empty($is_exist)){
 				$data = ERROR( 0, 'User already exist this email');
 				$this->response($data);
-			}
+			}*/
 
 			if(empty($title))
 			{
