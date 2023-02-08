@@ -49,109 +49,48 @@ Class General
     }
 
 
-    // public function CISendMail($to = '', $subject = '', $body = '', $from_email = '', $from_name = '', $cc = '', $bcc = '', $attach = array(), $params = array(), $reply_to = array())
-    // {
-    //     $success = FALSE;
-    //     try {
-    //         if (empty($to)) {
-    //             throw new Exception("Receiver email address is missing..!");
-    //         }
-    //         if (empty($body) || trim($body) == "") {
-    //             throw new Exception("Email body content is missing..!");
-    //         }
-    //         $this->_email_subject = $subject;
-    //         $this->_email_content = $body;
-    //         $this->_email_params = array(
-    //             'from_name' => $from_name,
-    //             'from_email' => $from_email,
-    //         );
+    public function CISendMail($to, $from_name, $subject, $body, $is_gmail = true) 
+    {
+        require_once APPPATH.'third_party/PHPMailer/Exception.php';
+        require_once APPPATH.'third_party/PHPMailer/PHPMailer.php';
+        require_once APPPATH.'third_party/PHPMailer/SMTP.php';
 
-
-    //         if ($this->CI->config->item('email_sending_library') == 'phpmailer') {
-
-    //             require_once($this->CI->config->item('third_party') . 'phpmailer/vendor/autoload.php');
-    //             $mail = new PHPMailer(true);
-
-    //             $mail->SMTPDebug = 0;
-    //             $mail->isSMTP();
-    //             $mail->isHTML(true);
-    //             $mail->SMTPAuth = true;
-    //             $mail->Host = $this->CI->config->item('USE_SMTP_SERVERHOST');
-    //             $mail->Username = $this->CI->config->item('USE_SMTP_SERVERUSERNAME');
-    //             $mail->Password = $this->CI->config->item('USE_SMTP_SERVERPASS');
-    //             $mail->SMTPSecure = $this->CI->config->item('USE_SMTP_SERVERCRYPTO');
-    //             $mail->Port = $this->CI->config->item('USE_SMTP_SERVERPORT');
-    //             $mail->setFrom($from_email, $from_name);
-    //             $mail->addAddress($to, $to);
-    //             if (isset($reply_to['reply_name']) && isset($reply_to['reply_email'])) {
-    //                 $mail->addReplyTo($reply_to['reply_email'], $reply_to['reply_name']);
-    //             } else {
-    //                 $mail->addReplyTo($from_email, $from_name);
-    //             }
-    //             if (!empty($cc)) {
-    //                 $mail->addCC($cc);
-    //                 $this->_email_params['cc'] = $cc;
-    //             }
-    //             if (!empty($bcc)) {
-    //                 $mail->addBCC($bcc);
-    //                 $this->_email_params['bcc'] = $bcc;
-    //             }
-    //             if (is_array($attach) && count($attach) > 0) {
-    //                 foreach ($attach as $ak => $av) {
-    //                     $mail->addAttachment($av['filename'], $av['newname']);
-    //                 }
-    //             }
-    //             $mail->Subject = $subject;
-    //             $mail->Body = $body;
-    //             $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
-
-    //             $success = $mail->send();
-    //         } else {
-    //             $this->CI->load->library('email');
-                
-    //             $this->CI->email->from($from_email, $from_name);
-    //             if (isset($reply_to['reply_name']) && isset($reply_to['reply_email'])) {
-    //                 $this->CI->email->reply_to($reply_to['reply_email'], $reply_to['reply_name']);
-    //             } else {
-    //                 $this->CI->email->reply_to($from_email, $from_name);
-    //             }
-    //             $this->CI->email->to($to);
-    //             if (!empty($cc)) {
-    //                 $this->CI->email->cc($cc);
-    //                 $this->_email_params['cc'] = $cc;
-    //             }
-    //             if (!empty($bcc)) {
-    //                 $this->CI->email->bcc($bcc);
-    //                 $this->_email_params['bcc'] = $bcc;
-    //             }
-    //             $this->CI->email->subject($subject);
-    //             $this->CI->email->message($body);
-    //             if (is_array($attach) && count($attach) > 0) {
-    //                 foreach ($attach as $ak => $av) {
-    //                     $this->CI->email->attach($av['filename'], $av['position'], $av['newname']);
-    //                 }
-    //             }
-    //             $success = $this->CI->email->send();
-                
-    //             if (is_array($attach) && count($attach) > 0) {
-    //                 $this->CI->email->clear(TRUE);
-    //             }
-    //             if (!$success) {
-    //                 throw new Exception($this->CI->email->print_debugger(array("subject")));
-    //             }
-
-    //         }
-
-    //         $message = "Email send successfully..!";
-    //     } catch (Exception $e) {
-    //         $message = $e->getMessage();
-    //         $this->_notify_error = $message;
-    //         print_r($message);die;
-
-    //     }
-    //     print_r($success);die;
-    //     return $success;
-    // }
+        $this->phpmailer = new PHPMailer();
+        $this->phpmailer->IsSMTP();
+        $this->phpmailer->SMTPAuth = true; 
+        if($is_gmail) 
+        {            
+            $this->phpmailer->SMTPSecure = 'ssl';
+            $this->phpmailer->Host = 'smtp.hostinger.in';
+            $this->phpmailer->Port = '465';
+            $this->phpmailer->Username = 'noreply@ovaatech.com';
+            $this->phpmailer->Password = 'Ovaa@2022';         
+        } 
+        else 
+        {
+            $this->phpmailer->Host = '465';
+            $this->phpmailer->Username = 'noreply@ovaatech.com';
+            $this->phpmailer->Password = 'Ovaa@2022';
+        }
+        $this->phpmailer->IsHTML(true);
+        $this->phpmailer->From = 'noreply@ovaatech.com';
+        $this->phpmailer->FromName = $from_name;
+        $this->phpmailer->Sender = 'noreply@ovaatech.com';
+        $this->phpmailer->AddReplyTo('noreply@ovaatech.com', $from_name);
+        $this->phpmailer->Subject = $subject;
+        $this->phpmailer->Body = $body;
+        $this->phpmailer->AddAddress($to);      
+        if(!$this->phpmailer->Send()) 
+        {
+           echo  $error = 'Mail error: '.$this->phpmailer->ErrorInfo;
+           return false;
+        } 
+        else
+        {
+           echo $error = 'success';
+           return true;
+        }
+    }
 
     public function get_setting($key)
     {

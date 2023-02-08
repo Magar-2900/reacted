@@ -52,11 +52,11 @@ class Wscontroller extends REST_Controller
 	}
 
 
-	public function encrypt_data($data){
-		$key = $this->config->item('encryption_key');
-		$encrypt_data = $this->encrypt->encode($data, $key);
-		return $encrypt_data;
-	}
+	// public function encrypt_data($data){
+	// 	$key = $this->config->item('encryption_key');
+	// 	$encrypt_data = $this->encrypt->encode($data, $key);
+	// 	return $encrypt_data;
+	// }
 
 	/**
 	 * Register User
@@ -469,7 +469,8 @@ class Wscontroller extends REST_Controller
 			$data['iEmailVerifyOtp'] = $ret_arr[0]['reset_code'];
 
 			$this->UserModel->update_user_otp($email,$data);
-			$this->general->CISendMail($to = $email, $subject = 'Forgot Password', $body = "This is test.", $from_email = 'noreply@purecss.co.in', $from_name = 'Test', $cc = '', $bcc = '', $attach = array(), $params = array(), $reply_to = array());
+			$this->general->CISendMail($to = $email, $from_name = 'Test',$subject = 'Forgot Password', $body = "This is test.");
+			echo 'hii';die;
 			if(!empty($ret_arr))
 			{
 				$data = SUCCESS( 1, 'Email sent successfully to your email please check your inbox.',$ret_arr);
@@ -2568,6 +2569,7 @@ class Wscontroller extends REST_Controller
 	public function update_celebrity_post()
 	{
 		try{
+
 			$headers = $this->input->request_headers(); 
 			$token = $this->validate_access_token($headers);
 
@@ -2616,13 +2618,6 @@ class Wscontroller extends REST_Controller
 			  	$this->response($data);
 			}
 
-			/*$is_exist = $this->UserModel->email_exist($email,$id);
-
-			if(!empty($is_exist)){
-				$data = ERROR( 0, 'User already exist this email');
-				$this->response($data);
-			}*/
-
 			if(empty($title))
 			{
 				$data = ERROR( 0, 'Please enter the title');
@@ -2658,42 +2653,6 @@ class Wscontroller extends REST_Controller
 				$data = ERROR( 0, 'Please enter the price');
 				$this->response($data);
 			}
-
-			/*if(empty($is_featured))
-			{
-				$data = ERROR( 0, 'Please enter the is_featured');
-				$this->response($data);
-			}*/
-
-			/*if(empty($account_name))
-			{
-				$data = ERROR( 0, 'Please enter account_name');
-				$this->response($data);
-			}
-
-			if(empty($account_number))
-			{
-				$data = ERROR( 0, 'Please enter the account_number');
-				$this->response($data);
-			}
-
-			if(empty($bank_name))
-			{
-				$data = ERROR( 0, 'Please enter the bank_name');
-				$this->response($data);
-			}
-
-			if(empty($bank_code))
-			{
-				$data = ERROR( 0, 'Please enter the bank_code');
-				$this->response($data);
-			}
-
-			if(empty($bank_address))
-			{
-				$data = ERROR( 0, 'Please enter the bank_address');
-				$this->response($data);
-			}*/
 
 			$data = [];
 			
@@ -2754,7 +2713,6 @@ class Wscontroller extends REST_Controller
                 }
             }
 
-			$celebrity_data['iUsersId'] 			= $last_id;
 			$celebrity_data['vTitle'] 				= $title;
 			$celebrity_data['vTagLine'] 			= $tag_line;
 			$celebrity_data['vShortDescription'] 	= $short_description;
@@ -2791,9 +2749,6 @@ class Wscontroller extends REST_Controller
 			$celebrity_data['vSocialMediaLinks']    = json_encode($social_media_links);
 
 			$result = $this->CelebrityModel->update_celebrity($celebrity_id, $celebrity_data);
-
-			/*print_r($result);
-			exit;*/
 			if(!empty($result))
 			{
 				$data = SUCCESS(1, 'Celebrity updated successfully.',[]);
