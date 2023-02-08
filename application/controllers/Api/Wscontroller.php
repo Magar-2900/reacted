@@ -2347,10 +2347,9 @@ class Wscontroller extends REST_Controller
 			$music_creator_data['vCategories']       = $categories;
 			$music_creator_data['vSocialMediaLinks'] = $social_media_links;
 			$music_creator_data['vDescription'] 	 = $description;
-			#$music_creator_data['vUploadMusic']		 = str_replace(' ', '_', $files["music"]["name"]).'_'.time();
 			$music_creator_data['dtAddedDate']       = date('Y-m-d H:i:s');
 			$result = $this->MusicCreatorModel->add_artist($music_creator_data);
-			#print_r($result);die;
+
 			// music
 			$data1 = [];  
 	  		$config1['upload_path'] 		= './public/uploads/music';
@@ -2377,9 +2376,24 @@ class Wscontroller extends REST_Controller
 			$music_creator_data1['iCreatorId']	= $result;
 
 			$result1 = $this->MusicCreatorModel->upload_music($music_creator_data1);
-			#print_r($result1);die;
+
 			if($result)
 			{
+				$digits    = array_flip(range('0', '9'));
+                $lowercase = array_flip(range('a', 'z'));
+                $uppercase = array_flip(range('A', 'Z')); 
+                $special   = array_flip(str_split('~!@#$%^&*(){}[],./?'));
+                $combined  = array_merge($digits, $lowercase, $uppercase, $special);
+                $str_pass  = array_rand($lowercase).array_rand($uppercase).array_rand($digits).array_rand($special).implode(array_rand($combined, rand(4, 4)));
+
+                $password = str_shuffle($str_pass);
+                $mail_body = login_credentials_content($email,$password);
+                $subject = 'Login Credentials';
+                $mail_sent = $this->general->CISendMail($to = $email, $from_name = 'Reacted',$subject = 'Login Credentials', $body = $mail_body);
+                $this->db->set('vPassword',password_hash($password, PASSWORD_DEFAULT));
+                $this->db->where('iUsersId',$last_id);
+                $this->db->update('users');
+
 				$data = SUCCESS( 1, 'Music Creator added successfully.',[]);
 				$this->response($data);
 			}
