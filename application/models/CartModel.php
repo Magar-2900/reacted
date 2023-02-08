@@ -43,7 +43,7 @@ class CartModel extends CI_Model
   	{
   		$this->db->where('iCartItemId', $cart_item_id);
     	$result1 = $this->db->delete('cart_items');
-    	return $result;
+    	return $result1;
   	}
 
   	public function get_cart_items($cart_item_id)
