@@ -2625,11 +2625,11 @@ class Wscontroller extends REST_Controller
 				$this->response($data);
 			}
 
-			if(empty($is_featured))
+			/*if(empty($is_featured))
 			{
 				$data = ERROR( 0, 'Please enter the is_featured');
 				$this->response($data);
-			}
+			}*/
 
 			if(empty($account_name))
 			{
