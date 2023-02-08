@@ -913,7 +913,8 @@ class Wscontroller extends REST_Controller
 				$last_name 	   	   = $this->input->post('last_name');
 				$email             = $this->input->post('email');
 				$phone             = $this->input->post('phone');
-				$role_id           = '2';
+				$password		   = $this->input->post('password');
+ 				$role_id           = '2';
 				$registration_type = 'Other';
 
 				// validation
@@ -940,15 +941,16 @@ class Wscontroller extends REST_Controller
 					$this->response($data);
 				}
 
-				if(empty($phone)){
+				/*if(empty($phone)){
 					$data = ERROR( 0, 'Please enter the phone');
 					$this->response($data);
-				}
+				}*/
 				$user_data['vFirstName']= $first_name;
 				$user_data['vLastName'] = $last_name;
 				$user_data['vEmail'] 	= $email;
 				$user_data['vPhone'] 	= $phone;
 				$user_data['iRoleId'] 	= $role_id;
+				$user_data['vPassword'] = password_hash($password, PASSWORD_DEFAULT);
 				$user_data['eRegistrationType'] = $registration_type;
 
 				$last_id = $this->UserModel->register_user($user_data);
