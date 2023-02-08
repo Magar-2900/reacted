@@ -1059,8 +1059,8 @@ class Wscontroller extends REST_Controller
 				$music_creator_data['iCategoryId']	= $category_id;
 				$music_creator_data['vMusicName']	= $music_name;
 
-				print_r($music_creator_data);
-				exit;
+				/*print_r($music_creator_data);
+				exit;*/
 
 				$result = $this->MusicCreatorModel->upload_music($music_creator_data);
 				
