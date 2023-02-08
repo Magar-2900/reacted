@@ -1179,6 +1179,25 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
+	public function get_musics(){
+		try{
+			$music_creator_id = $this->input->get('music_creator_id');
+			$result = $this->musicCreatorModel->get_musics($music_creator_id);
+			if(!empty($result)){
+				$data = SUCCESS( 1, 'Music Found Successfully');
+				$this->response($data);
+			} else {
+				$data = SUCCESS( 1, 'No data for musics found for this music creator : '.$music_creator_id);
+				$this->response($data);
+			}
+		} catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+		
+
+	}
+
 	public function delete_music_creator_post()
 	{
 		try{
