@@ -2756,7 +2756,7 @@ class Wscontroller extends REST_Controller
 			$celebrity_data['vW9Form'] 		        = str_replace(' ', '_', $_FILES["w9_form"]["name"]).'_'.time();
 			$celebrity_data['vSocialMediaLinks']    = json_encode($social_media_links);
 
-			$result = $this->CelebrityModel->register_celebrity($celebrity_data);
+			$result = $this->CelebrityModel->update_celebrity($celebrity_data);
 
 			if(!empty($result))
 			{
