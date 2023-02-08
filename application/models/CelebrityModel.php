@@ -19,7 +19,6 @@
 	  	{	  		
 	  		$this->db->where('iUsersId', $user_id);
 			$result = $this->db->update('user_celebrity', $data);
-			print_r($result);
 			return $result;
 	  	}
 

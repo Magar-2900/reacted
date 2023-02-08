@@ -2758,6 +2758,8 @@ class Wscontroller extends REST_Controller
 
 			$result = $this->CelebrityModel->update_celebrity($celebrity_id, $celebrity_data);
 
+			print_r($result);
+			exit;
 			if(!empty($result))
 			{
 				$data = SUCCESS(1, 'Celebrity updated successfully.',[]);
