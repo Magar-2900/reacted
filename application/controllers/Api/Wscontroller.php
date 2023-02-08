@@ -1037,11 +1037,13 @@ class Wscontroller extends REST_Controller
 				$errors = [];
 				$files = $_FILES;				
 				
-				if (!empty($files["music"]["name"]))
+				if (!empty($_FILES["music"]["name"]))
             	{
 	                $file_path = "music";
-	                $file_name = str_replace(' ', '_', $files["music"]["name"]).'_'.time();
-	                $file_tmp_path = $_FILES["music"]["tmp_name"];
+	                echo $file_name = str_replace(' ', '_', $_FILES["music"]["name"]).'_'.time();
+					
+	                echo $file_tmp_path = $_FILES["music"]["tmp_name"];
+					exit;
 	                // print_r($file_tmp_path);die;
 	                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
 	                if (!$response)
@@ -1052,7 +1054,7 @@ class Wscontroller extends REST_Controller
 	            }
 				
 				$music_creator_data['dtAddedDate'] 	= date('Y-m-d H:i:s');
-				$music_creator_data['vMusic']		= str_replace(' ', '_', $files["music"]["name"]).'_'.time();
+				$music_creator_data['vMusic']		= str_replace(' ', '_', $_FILES["music"]["name"]).'_'.time();
 				$music_creator_data['iCreatorId']	= $music_creator_id;
 				$music_creator_data['iCategoryId']	= $category_id;
 				$music_creator_data['vMusicName']	= $music_name;
