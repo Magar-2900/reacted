@@ -2514,7 +2514,7 @@ class Wscontroller extends REST_Controller
 						$result[0]['cart_items'][$i]['images'] = $img1;
 					}
 				}
-				$data = SUCCESS( 1, 'Item deleted form cart successfully.',$result);
+				$data = SUCCESS( 1, 'Cart Items fetched successfully.',$result);
 				$this->response($data);
 			}
 			else
