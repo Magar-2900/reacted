@@ -2631,7 +2631,7 @@ class Wscontroller extends REST_Controller
 				$this->response($data);
 			}*/
 
-			if(empty($account_name))
+			/*if(empty($account_name))
 			{
 				$data = ERROR( 0, 'Please enter account_name');
 				$this->response($data);
@@ -2659,7 +2659,7 @@ class Wscontroller extends REST_Controller
 			{
 				$data = ERROR( 0, 'Please enter the bank_address');
 				$this->response($data);
-			}
+			}*/
 
 			$data = [];
 			
