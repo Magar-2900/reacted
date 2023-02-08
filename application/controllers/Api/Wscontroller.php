@@ -1192,7 +1192,7 @@ class Wscontroller extends REST_Controller
 			$music_creator_id = $this->input->get('music_creator_id');
 			$result = $this->MusicCreatorModel->get_musics($music_creator_id);
 			if(!empty($result)){
-				$data = SUCCESS( 1, 'Music Found Successfully');
+				$data = SUCCESS( 1, 'Music Found Successfully', $result);
 				$this->response($data);
 			} else {
 				$data = SUCCESS( 1, 'No data for musics found for this music creator : '.$music_creator_id);
