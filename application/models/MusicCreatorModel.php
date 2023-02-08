@@ -102,7 +102,7 @@ class MusicCreatorModel extends CI_Model
 
   	public function get_musics($music_creator_id)
   	{
-  		$this->db->select('mu.iMusicUploadId   as music_upload_id,mu.iCreatorId as creator_id,mu.vMusic as musics,mu.dtAddedDate as added_date,mu.eStatus as status');
+  		$this->db->select('mu.iMusicUploadId   as music_upload_id,mu.iCreatorId as creator_id, mu.vMusicName as music_name, mu.vMusic as musics,mu.dtAddedDate as added_date,mu.eStatus as status');
 		$this->db->from('music_uploads as mu');
 
 		if(!empty($music_creator_id))
