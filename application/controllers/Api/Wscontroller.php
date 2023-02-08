@@ -1190,7 +1190,7 @@ class Wscontroller extends REST_Controller
 	public function get_musics_get(){
 		try{
 			$music_creator_id = $this->input->get('music_creator_id');
-			$result = $this->musicCreatorModel->get_musics($music_creator_id);
+			$result = $this->MusicCreatorModel->get_musics($music_creator_id);
 			if(!empty($result)){
 				$data = SUCCESS( 1, 'Music Found Successfully');
 				$this->response($data);
