@@ -51,6 +51,13 @@ class Wscontroller extends REST_Controller
 	    }
 	}
 
+
+	public function encrypt_data($data){
+		$key = $this->config->item('encryption_key');
+		$encrypt_data = $this->encrypt->encode($data, $key);
+		return $encrypt_data;
+	}
+
 	/**
 	 * Register User
 	 */

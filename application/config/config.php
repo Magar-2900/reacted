@@ -537,3 +537,4 @@ $config['site_url'] = $site_url;
 $config['email_sending_library'] = 'system';//phpmailer
 $config['third_party'] = APPPATH . 'third_party/';
 
+$config['encryption_key'] = "REACTED_2022_ENCRYPT_KEY";
