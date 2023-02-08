@@ -1179,7 +1179,7 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
-	public function get_musics(){
+	public function get_musics_get(){
 		try{
 			$music_creator_id = $this->input->get('music_creator_id');
 			$result = $this->musicCreatorModel->get_musics($music_creator_id);
