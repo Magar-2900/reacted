@@ -3196,10 +3196,9 @@ class Wscontroller extends REST_Controller
 	{
 		try
 		{
-			// $headers = $this->input->request_headers(); 
-			// $token = $this->validate_access_token($headers);			
-			// $user_id = $token['user_id'];
-			$user_id = 12;
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);			
+			$user_id = $token['user_id'];
 			$res = $this->UserModel->get_music_creator_orders($user_id);
 			for ($i=0; $i < count($res) ; $i++) 
 			{
@@ -3212,8 +3211,6 @@ class Wscontroller extends REST_Controller
 					{
 						foreach($images as $val)
 						{
-							//$img1[] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/profile_image/".$val;
-							// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
 							$img1[] = $this->general->getImageUrl('profile_image', $val);
 						}
 					}
@@ -3230,7 +3227,6 @@ class Wscontroller extends REST_Controller
 				}
 				
 			}
-			
 			
 			if(!empty($res))
 			{
@@ -3252,10 +3248,10 @@ class Wscontroller extends REST_Controller
 	{
 		try
 		{
-			// $headers = $this->input->request_headers(); 
-			// $token = $this->validate_access_token($headers);			
-			// $user_id = $token['user_id'];
-			$user_id = 42;
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);			
+			$user_id = $token['user_id'];
+			// $user_id = 42;
 			$res = $this->UserModel->get_celebrity_orders($user_id);
 
 			for ($i=0; $i < count($res) ; $i++) 
@@ -3270,7 +3266,6 @@ class Wscontroller extends REST_Controller
 					}
 				}				
 			}
-
 
 			if(!empty($res))
 			{
