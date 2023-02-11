@@ -52,11 +52,11 @@ class Wscontroller extends REST_Controller
 	}
 
 
-	public function encrypt_data($data){
-		$key = $this->config->item('encryption_key');
-		$encrypt_data = $this->encrypt->encode($data, $key);
-		return $encrypt_data;
-	}
+	// public function encrypt_data($data){
+	// 	$key = $this->config->item('encryption_key');
+	// 	$encrypt_data = $this->encrypt->encode($data, $key);
+	// 	return $encrypt_data;
+	// }
 
 	/**
 	 * Register User
@@ -469,7 +469,8 @@ class Wscontroller extends REST_Controller
 			$data['iEmailVerifyOtp'] = $ret_arr[0]['reset_code'];
 
 			$this->UserModel->update_user_otp($email,$data);
-			$this->general->CISendMail($to = $email, $subject = 'Forgot Password', $body = "This is test.", $from_email = 'noreply@purecss.co.in', $from_name = 'Test', $cc = '', $bcc = '', $attach = array(), $params = array(), $reply_to = array());
+			$this->general->CISendMail($to = $email, $from_name = 'Test',$subject = 'Forgot Password', $body = "This is test.");
+			echo 'hii';die;
 			if(!empty($ret_arr))
 			{
 				$data = SUCCESS( 1, 'Email sent successfully to your email please check your inbox.',$ret_arr);
@@ -2346,10 +2347,9 @@ class Wscontroller extends REST_Controller
 			$music_creator_data['vCategories']       = $categories;
 			$music_creator_data['vSocialMediaLinks'] = $social_media_links;
 			$music_creator_data['vDescription'] 	 = $description;
-			#$music_creator_data['vUploadMusic']		 = str_replace(' ', '_', $files["music"]["name"]).'_'.time();
 			$music_creator_data['dtAddedDate']       = date('Y-m-d H:i:s');
 			$result = $this->MusicCreatorModel->add_artist($music_creator_data);
-			#print_r($result);die;
+
 			// music
 			$data1 = [];  
 	  		$config1['upload_path'] 		= './public/uploads/music';
@@ -2376,9 +2376,24 @@ class Wscontroller extends REST_Controller
 			$music_creator_data1['iCreatorId']	= $result;
 
 			$result1 = $this->MusicCreatorModel->upload_music($music_creator_data1);
-			#print_r($result1);die;
+
 			if($result)
 			{
+				$digits    = array_flip(range('0', '9'));
+                $lowercase = array_flip(range('a', 'z'));
+                $uppercase = array_flip(range('A', 'Z')); 
+                $special   = array_flip(str_split('~!@#$%^&*(){}[],./?'));
+                $combined  = array_merge($digits, $lowercase, $uppercase, $special);
+                $str_pass  = array_rand($lowercase).array_rand($uppercase).array_rand($digits).array_rand($special).implode(array_rand($combined, rand(4, 4)));
+
+                $password = str_shuffle($str_pass);
+                $mail_body = login_credentials_content($email,$password);
+                $subject = 'Login Credentials';
+                $mail_sent = $this->general->CISendMail($to = $email, $from_name = 'Reacted',$subject = 'Login Credentials', $body = $mail_body);
+                $this->db->set('vPassword',password_hash($password, PASSWORD_DEFAULT));
+                $this->db->where('iUsersId',$last_id);
+                $this->db->update('users');
+
 				$data = SUCCESS( 1, 'Music Creator added successfully.',[]);
 				$this->response($data);
 			}
@@ -2568,6 +2583,7 @@ class Wscontroller extends REST_Controller
 	public function update_celebrity_post()
 	{
 		try{
+
 			$headers = $this->input->request_headers(); 
 			$token = $this->validate_access_token($headers);
 
@@ -2616,13 +2632,6 @@ class Wscontroller extends REST_Controller
 			  	$this->response($data);
 			}
 
-			/*$is_exist = $this->UserModel->email_exist($email,$id);
-
-			if(!empty($is_exist)){
-				$data = ERROR( 0, 'User already exist this email');
-				$this->response($data);
-			}*/
-
 			if(empty($title))
 			{
 				$data = ERROR( 0, 'Please enter the title');
@@ -2658,42 +2667,6 @@ class Wscontroller extends REST_Controller
 				$data = ERROR( 0, 'Please enter the price');
 				$this->response($data);
 			}
-
-			/*if(empty($is_featured))
-			{
-				$data = ERROR( 0, 'Please enter the is_featured');
-				$this->response($data);
-			}*/
-
-			/*if(empty($account_name))
-			{
-				$data = ERROR( 0, 'Please enter account_name');
-				$this->response($data);
-			}
-
-			if(empty($account_number))
-			{
-				$data = ERROR( 0, 'Please enter the account_number');
-				$this->response($data);
-			}
-
-			if(empty($bank_name))
-			{
-				$data = ERROR( 0, 'Please enter the bank_name');
-				$this->response($data);
-			}
-
-			if(empty($bank_code))
-			{
-				$data = ERROR( 0, 'Please enter the bank_code');
-				$this->response($data);
-			}
-
-			if(empty($bank_address))
-			{
-				$data = ERROR( 0, 'Please enter the bank_address');
-				$this->response($data);
-			}*/
 
 			$data = [];
 			
@@ -2754,7 +2727,6 @@ class Wscontroller extends REST_Controller
                 }
             }
 
-			$celebrity_data['iUsersId'] 			= $last_id;
 			$celebrity_data['vTitle'] 				= $title;
 			$celebrity_data['vTagLine'] 			= $tag_line;
 			$celebrity_data['vShortDescription'] 	= $short_description;
@@ -2791,9 +2763,6 @@ class Wscontroller extends REST_Controller
 			$celebrity_data['vSocialMediaLinks']    = json_encode($social_media_links);
 
 			$result = $this->CelebrityModel->update_celebrity($celebrity_id, $celebrity_data);
-
-			/*print_r($result);
-			exit;*/
 			if(!empty($result))
 			{
 				$data = SUCCESS(1, 'Celebrity updated successfully.',[]);
