@@ -51,4 +51,6 @@ class WsModels extends CI_Model {
 		$result = $this->db->update('users', $data);
 		return $result;
 	}
+
+	
 }

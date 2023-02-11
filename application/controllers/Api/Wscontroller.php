@@ -3193,4 +3193,52 @@ class Wscontroller extends REST_Controller
 			$this->response($data);
 		}	
 	}
+
+	public function get_music_creator_orders_get()
+	{
+		try
+		{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);			
+			$user_id = $token['user_id'];
+			$res = $this->UserModel->get_music_creator_orders($user_id);
+			if(!empty($res))
+			{
+				$data = SUCCESS( 1, 'Orders found successfully.',$res);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function get_celebrity_orders_get()
+	{
+		try
+		{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);			
+			$user_id = $token['user_id'];
+			$res = $this->UserModel->get_celebrity_orders($user_id);
+			if(!empty($res))
+			{
+				$data = SUCCESS( 1, 'Orders found successfully.',$res);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
 }
