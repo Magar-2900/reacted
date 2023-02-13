@@ -3318,7 +3318,7 @@ class Wscontroller extends REST_Controller
 		{
 			$headers = $this->input->request_headers(); 
 			$token = $this->validate_access_token($headers);		
-			echo $user_id = $token['user_id'];
+			$user_id = $token['user_id'];
 			$res = $this->UserModel->get_music_creator_orders($user_id);
 			for ($i=0; $i < count($res) ; $i++) 
 			{
