@@ -54,7 +54,7 @@ class UserModel extends CI_Model
 		$this->db->join('user_roles','user_roles.iRoleId = users.iRoleId','left');
 		if(!empty($user_id))
 		{
-			$this->db->where('users.iUsersId',$user_id);	
+			$this->db->where('users.iUsersId',99);
 		}
 		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();

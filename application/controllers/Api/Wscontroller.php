@@ -3193,4 +3193,125 @@ class Wscontroller extends REST_Controller
 			$this->response($data);
 		}	
 	}
+
+	public function create_paymentintent_post()
+	{
+
+		try {
+			$secret_key = $this->config->item('secret_key');
+			$stripe = new \Stripe\StripeClient($secret_key);
+
+			$amount = $this->input->post('amount');
+			$user_id = $this->input->post('user_id');
+
+			if(empty($amount)){
+				$data = ERROR(0, 'Amount Field is missing in the payload');
+				$this->response($data);
+			}
+			if(empty($user_id)){
+				$data = ERROR(0, 'User ID is missing in the payload');
+				$this->response($data);
+			}
+
+			$user_details = $this->UserModel->get_user(99);
+
+			$payment_intent_key = 'user_id_'.$user_details[0]['user_id'];
+			$is_paymentintent_set = $this->session->$payment_intent_key;
+
+			// IF PAYMENT INTENT ALREADY CREATED UPDATE THE PAYMENT INTENT OR CREATE A NEW PAYMENT INTENT
+
+			if(!empty($is_paymentintent_set) && $payment_intent_user_id == $user_id){
+				try{
+					$result = $stripe->paymentIntents->update([
+						'amount' => $amount,
+						'currency' => 'usd',
+						'confirm' => false,
+						'receipt_email' => $user_details[0]['email'],
+						'automatic_payment_methods' => [
+						'enabled' => true,
+						],
+						'metadata' => [
+							'coupon' => 'FREE100',
+							'discount' => 10,
+							'discountValue' => 50,
+						],
+						'shipping' => [
+							'name' => 'Reacted Test 1',
+							'address' => [
+							'line1' => '510 Townsend St',
+							'postal_code' => '98140',
+							'city' => 'San Francisco',
+							'state' => 'CA',
+							'country' => 'US',
+							],
+						],
+						'statement_descriptor' => 'Order For User ID 2',
+					]);
+	
+					if(!empty($result)){
+						$data = SUCCESS(1, 'Payment Intent Created Successfully', $result);
+						$this->response($data);
+					} else {
+						$data = ERROR(1, 'Something went wrong', []);
+						$this->response($data);
+					}
+				} catch(Exception $e){
+					$data = ERROR(1, $e->getMessage(), []);
+					$this->response($data);
+				}
+			} else {
+				try{
+					$result = $stripe->paymentIntents->create([
+						'amount' => $amount,
+						'currency' => 'usd',
+						'confirm' => false,
+						'receipt_email' => $user_details[0]['email'],
+						'automatic_payment_methods' => [
+						'enabled' => true,
+						],
+						'metadata' => [
+							'coupon' => 'FREE100',
+							'discount' => 10,
+							'discountValue' => 50,
+						],
+						'shipping' => [
+							'name' => 'Reacted Test 1',
+							'address' => [
+							'line1' => '510 Townsend St',
+							'postal_code' => '98140',
+							'city' => 'San Francisco',
+							'state' => 'CA',
+							'country' => 'US',
+							],
+						],
+						'statement_descriptor' => 'Order For User ID 2',
+					]);
+	
+					if(!empty($result)){
+						$pi_data = array(
+							'user_id_'.$user_details[0]['user_id']  => $result->id,
+						);
+						$this->session->set_userdata($pi_data);
+						$data = SUCCESS(1, 'Payment Intent Created Successfully', $result);
+						$this->response($data);
+					} else {
+						$data = ERROR(1, 'Something went wrong', []);
+						$this->response($data);
+					}
+				} catch(\Stripe\Exception\InvalidRequestException $e){
+					ERROR(0, $e->getError()->message);
+					$this->response($data);
+				}
+			}			
+
+		} catch(\Stripe\Exception\InvalidRequestException $e){
+			ERROR(0, $e->getError()->message);
+			$this->response($data);
+		}
+	}
+
+	public function stripe_webhook_get(){
+		
+	}
+	
 }

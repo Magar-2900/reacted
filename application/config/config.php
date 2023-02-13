@@ -23,7 +23,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://localhost/reacted/';
+$config['base_url'] = 'http://localhost:1010/reacted/';
 
 /*
 |--------------------------------------------------------------------------
@@ -139,7 +139,7 @@ $config['subclass_prefix'] = 'MY_';
 |	autoloading (application/config/autoload.php)
 */
 $config['composer_autoload'] = TRUE;
-$config['composer_autoload'] = 'vendor/autoload.php';
+$config['composer_autoload'] = FCPATH .'vendor/autoload.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -539,3 +539,6 @@ $config['email_sending_library'] = 'system';//phpmailer
 $config['third_party'] = APPPATH . 'third_party/';
 
 $config['encryption_key'] = "REACTED_2022_ENCRYPT_KEY";
+
+$config['publishable_key'] = 'pk_test_51MMufsSBkuhk1xmVt8cWOSDxnU8Q5R7EK20f9TKwbo5BpFqbOEaZayyoTMemFSetRJT6DPAXvFSLKmVi5rBMfysS00PrVRlQtU';
+$config['secret_key'] = 'sk_test_51MMufsSBkuhk1xmVvwSrCUaHAgGUgUYH8ztbVGglv5wT4X60Gb927w7K8yP964Ilfk49yeWHXwDjZ6Vd8b83fXRB00ed7K8MeW';
