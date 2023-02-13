@@ -1048,12 +1048,13 @@ class Wscontroller extends REST_Controller
 				if (!empty($_FILES["music"]["name"]))
             	{
 	                $file_path = "music";
-	                $file_name = str_replace(' ', '_', $_FILES["music"]["name"]).'_'.time();
-					
+	                $file = str_replace(' ', '_', $_FILES["music"]["name"]);
+					$filename= pathinfo($file,PATHINFO_FILENAME);
+					$file_ext = pathinfo($file,PATHINFO_EXTENSION);
 	                $file_tmp_path = $_FILES["music"]["tmp_name"];
-					//exit;
-	                // print_r($file_tmp_path);die;
-	                //$response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
+	                $file_name = $filename.'_'.time().'.'.$file_ext;
+	                
+	                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
 	                if (!$response)
 	                {
 	                    //file upload failed
@@ -1062,7 +1063,7 @@ class Wscontroller extends REST_Controller
 	            }
 				
 				$music_creator_data['dtAddedDate'] 	= date('Y-m-d H:i:s');
-				$music_creator_data['vMusic']		= str_replace(' ', '_', $_FILES["music"]["name"]).'_'.time();
+				$music_creator_data['vMusic']		= $file_name;
 				$music_creator_data['iCreatorId']	= $music_creator_id;
 				$music_creator_data['iCategoryId']	= $category_id;
 				$music_creator_data['vMusicName']	= $music_name;
@@ -1097,13 +1098,7 @@ class Wscontroller extends REST_Controller
 			$AWS_BUCKET_NAME = $this->general->get_setting('AWS_BUCKET_NAME');
 			$AWS_END_POINT   = $this->general->get_setting('AWS_END_POINT');
 			$music_creator_id = $this->input->get('music_creator_id');
-
 			$result = $this->MusicCreatorModel->get_music_creator_details($music_creator_id);
-
-			//print_r($result);
-
-			//print_r($result);
-
 			if(!empty($music_creator_id))
 			{
 				$result[0]['celeb_data'] = $result;
@@ -1131,8 +1126,6 @@ class Wscontroller extends REST_Controller
 						{
 							foreach($images as $val)
 							{
-								//$img1[] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/profile_image/".$val;
-								// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
 								$img1[] = $this->general->getImageUrl('profile_image', $val);
 							}
 						}
@@ -1150,8 +1143,6 @@ class Wscontroller extends REST_Controller
 					{
 						foreach($images as $val)
 						{
-							//$img1[] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/profile_image/".$val;
-							// $img1[] = $this->config->item('base_url').'public/uploads/profile/'.$val;
 							$img1[] = $this->general->getImageUrl('profile_image', $val);
 						}
 					}
@@ -1318,8 +1309,11 @@ class Wscontroller extends REST_Controller
 			if (!empty($files["music"]["name"]))
         	{
                 $file_path = "music";
-                $file_name = str_replace(' ', '_', $files["music"]["name"]).'_'.time();
+                $file = str_replace(' ', '_', $_FILES["music"]["name"]);
+				$filename= pathinfo($file,PATHINFO_FILENAME);
+				$file_ext = pathinfo($file,PATHINFO_EXTENSION);
                 $file_tmp_path = $_FILES["music"]["tmp_name"];
+                $file_name = $filename.'_'.time().'.'.$file_ext;
                 // print_r($file_tmp_path);die;
                 $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
             }
@@ -1327,7 +1321,7 @@ class Wscontroller extends REST_Controller
 			$music_creator_data['vArtistName'] 		= $artist_name;
 			$music_creator_data['vCategories'] 		= $categories;
 			$music_creator_data['vSocialMediaLinks']= json_encode($social_media_links);
-			$music_creator_data['vUploadMusic']		= str_replace(' ', '_', $files["music"]["name"]).'_'.time();
+			$music_creator_data['vUploadMusic']		= $file_name;
 			$music_creator_data['dtUpdatedDate'] 	= date('Y-m-d H:i:s');
 
 			$result = $this->MusicCreatorModel->update_music_creator($music_creator_data,$music_creator_id);
@@ -2361,9 +2355,11 @@ class Wscontroller extends REST_Controller
 			if (!empty($files["music"]["name"]))
         	{
                 $file_path = "music";
-                $file_name = str_replace(' ', '_', $files["music"]["name"]).'_'.time();
+                $file = str_replace(' ', '_', $_FILES["music"]["name"]);
+				$filename= pathinfo($file,PATHINFO_FILENAME);
+				$file_ext = pathinfo($file,PATHINFO_EXTENSION);
                 $file_tmp_path = $_FILES["music"]["tmp_name"];
-                // print_r($file_tmp_path);die;
+                $file_name = $filename.'_'.time().'.'.$file_ext;
                 $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
                 if (!$response)
                 {
@@ -2372,7 +2368,7 @@ class Wscontroller extends REST_Controller
                 }
             }
 			$music_creator_data1['dtAddedDate'] 	= date('Y-m-d H:i:s');
-			$music_creator_data1['vMusic']		= str_replace(' ', '_', $files["music"]["name"]).'_'.time();
+			$music_creator_data1['vMusic']		= $file_name;
 			$music_creator_data1['iCreatorId']	= $result;
 
 			$result1 = $this->MusicCreatorModel->upload_music($music_creator_data1);
@@ -2952,9 +2948,11 @@ class Wscontroller extends REST_Controller
 			if (!empty($files["music"]["name"]))
         	{
                 $file_path = "music";
-                $file_name = str_replace(' ', '_', $files["music"]["name"]).'_'.time();
+                $file = str_replace(' ', '_', $_FILES["music"]["name"]);
+				$filename= pathinfo($file,PATHINFO_FILENAME);
+				$file_ext = pathinfo($file,PATHINFO_EXTENSION);
                 $file_tmp_path = $_FILES["music"]["tmp_name"];
-                // print_r($file_tmp_path);die;
+                $file_name = $filename.'_'.time().'.'.$file_ext;
                 $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
                 if (!$response)
                 {
@@ -2964,7 +2962,7 @@ class Wscontroller extends REST_Controller
             }
 			
 			$music_creator_data['dtAddedDate'] 	= date('Y-m-d H:i:s');
-			$music_creator_data['vMusic']		= str_replace(' ', '_', $files["music"]["name"]).'_'.time();
+			$music_creator_data['vMusic']		= $file_name;
 			$music_creator_data['iCreatorId']	= $music_creator_id;
 			$music_creator_data['iCategoryId']	= $category_id;
 			$music_creator_data['vMusicName']	= $music_name;
@@ -3314,4 +3312,94 @@ class Wscontroller extends REST_Controller
 		
 	}
 	
+	public function get_music_creator_orders_get()
+	{
+		try
+		{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);		
+			echo $user_id = $token['user_id'];
+			$res = $this->UserModel->get_music_creator_orders($user_id);
+			for ($i=0; $i < count($res) ; $i++) 
+			{
+				if(!empty($res[$i]['image']))
+				{
+					$images = json_decode($res[$i]['image']);
+
+					$img1 = [];
+					if(!empty($images))
+					{
+						foreach($images as $val)
+						{
+							$img1[] = $this->general->getImageUrl('profile_image', $val);
+						}
+					}
+					$res[$i]['image'] = $img1;
+				}
+				$res[$i]['musics'] = $this->MusicCreatorModel->get_musics($res[$i]['music_creator_id']);
+				
+				for ($j=0; $j < count($res[$i]['musics']); $j++) 
+				{
+					if(!empty($res[$i]['musics']))
+					{	
+						$res[$i]['musics'][$j]['musics'] = $this->general->getImageUrl('music', $res[$i]['musics'][$j]['musics']);
+					}
+				}
+				
+			}
+			
+			if(!empty($res))
+			{
+				$data = SUCCESS( 1, 'Orders found successfully.',$res);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	public function get_celebrity_orders_get()
+	{
+		try
+		{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);			
+			$user_id = $token['user_id'];
+			// $user_id = 42;
+			$res = $this->UserModel->get_celebrity_orders($user_id);
+
+			for ($i=0; $i < count($res) ; $i++) 
+			{
+				$res[$i]['musics'] = $this->MusicCreatorModel->get_musics($res[$i]['music_creator_id']);
+							
+				for ($j=0; $j < count($res[$i]['musics']); $j++) 
+				{
+					if(!empty($res[$i]['musics']))
+					{	
+						$res[$i]['musics'][$j]['musics'] = $this->general->getImageUrl('music', $res[$i]['musics'][$j]['musics']);
+					}
+				}				
+			}
+
+			if(!empty($res))
+			{
+				$data = SUCCESS( 1, 'Orders found successfully.',$res);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
 }
