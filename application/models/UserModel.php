@@ -31,7 +31,7 @@ class UserModel extends CI_Model
 
   	public function login_action($data)
     {
-		$this->db->select('iUsersId as user_id,users.vFirstName as first_name,users.vLastName as last_name,vEmail as email,vPassword as password');
+		$this->db->select('iUsersId as user_id,users.vFirstName as first_name,users.vLastName as last_name,vEmail as email,vPassword as password, iRoleId as role_id');
 		$this->db->from('users');
 		$this->db->where('vEmail',$data['vEmail']);
 		$query_obj = $this->db->get();  
@@ -130,14 +130,14 @@ class UserModel extends CI_Model
 		return $result;
 	}
 
-	public function get_music_creator_orders($user_id)
+	public function get_music_creator_orders($user_id, $order_id)
 	{
-		$this->db->select('order_items.iOrderId as order_id,order_items.iMusicCreatorId as music_creator_id,order_items.iCelebrityId as celebrity_id,order_items.iMusicUploadKey as music_key,order_items.vItemPrice as item_price,order_items.eItemReviewStatus as item_review_status,order_items.eCelebrityPaymentStatus as celebrity_payment_status,order_items.dtAddedDate as added_date,order_items.dtUpdatedDate as updated_date,users.iUsersId as user_id,users.vFirstName as first_name,users.vLastName as last_name,users.vEmail as email,users.vPhone as phone,users.vAccessToken as access_token,users.vImage as image,users.eStatus as status,user_celebrity.vTitle as title,user_celebrity.vTagLine as tag_line,user_celebrity.vShortDescription as short_description ,user_celebrity.vLongDescription as long_description,user_celebrity.vCategories as categories,user_celebrity.vSocialMediaLinks as social_media_links,user_celebrity.dPrice as price,user_celebrity.vAccountName as account_name,user_celebrity.vAccountNumber as account_number,user_celebrity.vBankName as bank_name,user_celebrity.vBankCode as bank_code,user_celebrity.vBankAddress as bank_address,user_celebrity.vPaypalId as paypal_id,user_celebrity.eIsFeatured as is_featured');
+		$this->db->select('order_items.iOrderItemId as order_item_id, order_items.iOrderId as order_id, order_items.iMusicCreatorId as music_creator_id,order_items.iCelebrityId as celebrity_id,order_items.iMusicUploadKey as music_key,order_items.vItemPrice as item_price,order_items.eItemReviewStatus as item_review_status,order_items.eCelebrityPaymentStatus as celebrity_payment_status,order_items.dtAddedDate as added_date,order_items.dtUpdatedDate as updated_date,users.iUsersId as user_id,users.vFirstName as first_name,users.vLastName as last_name,users.vEmail as email,users.vPhone as phone,users.vAccessToken as access_token,users.vImage as image,users.eStatus as status,user_celebrity.vTitle as title,user_celebrity.vTagLine as tag_line,user_celebrity.vShortDescription as short_description ,user_celebrity.vLongDescription as long_description,user_celebrity.vCategories as categories,user_celebrity.vSocialMediaLinks as social_media_links,user_celebrity.dPrice as price,user_celebrity.vAccountName as account_name,user_celebrity.vAccountNumber as account_number,user_celebrity.vBankName as bank_name,user_celebrity.vBankCode as bank_code,user_celebrity.vBankAddress as bank_address,user_celebrity.vPaypalId as paypal_id,user_celebrity.eIsFeatured as is_featured');
   		$this->db->from('order_items');
   		$this->db->join('users','users.iUsersId = order_items.iCelebrityId','left');
   		$this->db->join('user_celebrity','user_celebrity.iUsersId = users.iUsersId','left');
-   		$this->db->where('order_items.iMusicCreatorId',$user_id);
-		$this->db->group_by('order_items.iOrderId'); 
+   		$this->db->where(array('order_items.iMusicCreatorId' => $user_id, 'order_items.iOrderId' => $order_id));
+		//$this->db->group_by('order_items.iOrderId'); 
   		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
 		//print_r($this->db->last_query());die;

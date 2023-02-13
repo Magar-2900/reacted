@@ -188,6 +188,7 @@ class Wscontroller extends REST_Controller
 					$token['user_id'] = $record[0]['user_id'];
 					$token['name'] = $record[0]['first_name'];
 					$token['email'] = $record[0]['email'];
+					$token['role_id'] = $record[0]['role_id'];
 					$enc_token = $this->authorization_token->generateToken($token);
 					$this->UserModel->update_token($enc_token,$token['user_id']);
 
@@ -3196,12 +3197,37 @@ class Wscontroller extends REST_Controller
 	{
 
 		try {
+
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+
 			$secret_key = $this->config->item('secret_key');
 			$stripe = new \Stripe\StripeClient($secret_key);
 
 			$amount = $this->input->post('amount');
-			$user_id = $this->input->post('user_id');
+			$user_id = $token['user_id'];
+			$role_id = $token['role_id'];
+			$coupon_code = (!empty($this->input->post('coupon_code'))) ? $this->input->post('coupon_code') : 'no_coupon';
+			$coupon_discount = (!empty($this->input->post('coupon_discount'))) ? $this->input->post('coupon_discount') : 0;
+			$counpon_discount_value = (!empty($this->input->post('counpon_discount_value'))) ? $this->input->post('counpon_discount_value') : 0;
+			$order_id = $this->input->post('order_id');
 
+			$shipping_first_name = $this->input->post('shipping_name');
+			$shipping_address = $this->input->post('shipping_address');
+			$shipping_postal_code = $this->input->post('shipping_postal_code');
+			$shipping_city = $this->input->post('shipping_city');
+			$shipping_state = $this->input->post('shipping_state');
+			$shipping_country = $this->input->post('shipping_country');
+
+
+			if($role_id !== 2){
+				$data = ERROR(0, 'Only Music creators can checkout and pay');
+				$this->response($data);
+			}
+			if(empty($order_id)){
+				$data = ERROR(0, 'Order ID is missing in the payload');
+				$this->response($data);
+			}
 			if(empty($amount)){
 				$data = ERROR(0, 'Amount Field is missing in the payload');
 				$this->response($data);
@@ -3210,44 +3236,73 @@ class Wscontroller extends REST_Controller
 				$data = ERROR(0, 'User ID is missing in the payload');
 				$this->response($data);
 			}
+			if(empty($shipping_first_name)){
+				$data = ERROR(0, 'Shipping First name is missing in the payload');
+				$this->response($data);
+			}
+			if(empty($shipping_address)){
+				$data = ERROR(0, 'Shipping Address is missing in the payload');
+				$this->response($data);
+			}
+			if(empty($shipping_postal_code)){
+				$data = ERROR(0, 'Shipping Postal Code is missing in the payload');
+				$this->response($data);
+			}
+			if(empty($shipping_city)){
+				$data = ERROR(0, 'Shipping City is missing in the payload');
+				$this->response($data);
+			}
+			if(empty($shipping_state)){
+				$data = ERROR(0, 'Shipping State is missing in the payload');
+				$this->response($data);
+			}
+			if(empty($shipping_country)){
+				$data = ERROR(0, 'Shipping Country is missing in the payload');
+				$this->response($data);
+			}
+			
+			
 
 			$user_details = $this->UserModel->get_user(99);
 
 			$payment_intent_key = 'user_id_'.$user_details[0]['user_id'];
 			$is_paymentintent_set = $this->session->$payment_intent_key;
+			/*print_r($_SESSION);
+			exit;*/
+
+
 
 			// IF PAYMENT INTENT ALREADY CREATED UPDATE THE PAYMENT INTENT OR CREATE A NEW PAYMENT INTENT
 
-			if(!empty($is_paymentintent_set) && $payment_intent_user_id == $user_id){
+			if(!empty($is_paymentintent_set)){
+				echo 'inside update';
 				try{
-					$result = $stripe->paymentIntents->update([
-						'amount' => $amount,
+					$result = $stripe->paymentIntents->update(
+						$is_paymentintent_set,
+						['amount' => $amount,
 						'currency' => 'usd',
-						'confirm' => false,
 						'receipt_email' => $user_details[0]['email'],
-						'automatic_payment_methods' => [
-						'enabled' => true,
-						],
 						'metadata' => [
-							'coupon' => 'FREE100',
-							'discount' => 10,
-							'discountValue' => 50,
+							'coupon' => $coupon_code,
+							'discount' => $coupon_discount,
+							'discountValue' => $counpon_discount_value,
+							'order_id' => $order_id
 						],
 						'shipping' => [
-							'name' => 'Reacted Test 1',
+							'name' => $shipping_first_name,
 							'address' => [
-							'line1' => '510 Townsend St',
-							'postal_code' => '98140',
-							'city' => 'San Francisco',
-							'state' => 'CA',
-							'country' => 'US',
+							'line1' => $shipping_address,
+							'postal_code' => $shipping_postal_code,
+							'city' => $shipping_city,
+							'state' => $shipping_state,
+							'country' => $shipping_country,
 							],
 						],
-						'statement_descriptor' => 'Order For User ID 2',
+						'statement_descriptor' => 'Order For User ID '.$order_id,
 					]);
 	
 					if(!empty($result)){
-						$data = SUCCESS(1, 'Payment Intent Created Successfully', $result);
+						$data = SUCCESS(1, 'Payment Intent Updated Successfully', $result);
 						$this->response($data);
 					} else {
 						$data = ERROR(1, 'Something went wrong', []);
@@ -3259,6 +3314,7 @@ class Wscontroller extends REST_Controller
 				}
 			} else {
 				try{
+					
 					$result = $stripe->paymentIntents->create([
 						'amount' => $amount,
 						'currency' => 'usd',
@@ -3268,21 +3324,22 @@ class Wscontroller extends REST_Controller
 						'enabled' => true,
 						],
 						'metadata' => [
-							'coupon' => 'FREE100',
-							'discount' => 10,
-							'discountValue' => 50,
+							'coupon' => $coupon_code,
+							'discount' => $coupon_discount,
+							'discountValue' => $counpon_discount_value,
+							'order_id' => $order_id
 						],
 						'shipping' => [
-							'name' => 'Reacted Test 1',
+							'name' => $shipping_first_name,
 							'address' => [
-							'line1' => '510 Townsend St',
-							'postal_code' => '98140',
-							'city' => 'San Francisco',
-							'state' => 'CA',
-							'country' => 'US',
+							'line1' => $shipping_address,
+							'postal_code' => $shipping_postal_code,
+							'city' => $shipping_city,
+							'state' => $shipping_state,
+							'country' => $shipping_country,
 							],
 						],
-						'statement_descriptor' => 'Order For User ID 2',
+						'statement_descriptor' => 'Order For User ID '.$order_id,
 					]);
 	
 					if(!empty($result)){
@@ -3342,7 +3399,8 @@ class Wscontroller extends REST_Controller
 			$headers = $this->input->request_headers(); 
 			$token = $this->validate_access_token($headers);		
 			$user_id = $token['user_id'];
-			$res = $this->UserModel->get_music_creator_orders($user_id);
+			$order_id = $this->input->get('order_id');
+			$res = $this->UserModel->get_music_creator_orders($user_id, $order_id);
 			for ($i=0; $i < count($res) ; $i++) 
 			{
 				if(!empty($res[$i]['image']))
@@ -3378,7 +3436,7 @@ class Wscontroller extends REST_Controller
 			}
 			else
 			{
-				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$data = ERROR( 0, 'No order found for this order Id...please try again.');
 				$this->response($data);
 			}
 		}catch(Exception $e){
