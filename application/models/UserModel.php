@@ -123,7 +123,7 @@ class UserModel extends CI_Model
 	{
 		$this->db->select('*');
   		$this->db->from('orders');
-   		$this->db->where('iMusicCreatorId',$user_id);
+   		$this->db->where('eMusicCreatorId',$user_id);
   		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
 		//print_r($this->db->last_query());die;
