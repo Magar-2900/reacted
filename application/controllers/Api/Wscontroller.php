@@ -236,8 +236,8 @@ class Wscontroller extends REST_Controller
 							$user_details[0]['celebrity_details'][0]['w9form'] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/w9_form/".$user_details[0]['w9form'];
 						}
 					}
-					print_r($user_details);
-					exit;
+					/*print_r($user_details);
+					exit;*/
 					$data = SUCCESS( 1,  'You have logged in successfully. ', $user_details);
 					$this->response($data);
 				}else{
