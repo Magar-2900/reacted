@@ -3233,10 +3233,10 @@ class Wscontroller extends REST_Controller
 			$shipping_country = $this->input->post('shipping_country');
 
 
-			if($role_id !== 2){
+			/*if($role_id !== 2){
 				$data = ERROR(0, 'Only Music creators can checkout and pay');
 				$this->response($data);
-			}
+			}*/
 			if(empty($order_id)){
 				$data = ERROR(0, 'Order ID is missing in the payload');
 				$this->response($data);
