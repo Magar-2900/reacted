@@ -3288,7 +3288,7 @@ class Wscontroller extends REST_Controller
 			// IF PAYMENT INTENT ALREADY CREATED UPDATE THE PAYMENT INTENT OR CREATE A NEW PAYMENT INTENT
 
 			if(!empty($is_paymentintent_set)){
-				echo 'inside update';
+				//echo 'inside update';
 				try{
 					$result = $stripe->paymentIntents->update(
 						$is_paymentintent_set,
