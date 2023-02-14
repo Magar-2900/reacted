@@ -254,6 +254,16 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
+
+	/*public function logout(){
+		try{
+			$this->input->post('user_id');
+			if()
+		} catch(Exception $e){
+
+		}
+	}*/
+
 	/**
 	 * My profile 
 	 */
