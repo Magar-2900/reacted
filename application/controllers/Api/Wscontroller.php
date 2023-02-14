@@ -3105,6 +3105,7 @@ class Wscontroller extends REST_Controller
 			$order['eOrderStatus'] 			= 'Pending';
 			$order['dtAddedDate'] 			= date('Y-m-d H:i:s');
 			$result = $this->CartModel->add_order($order);
+			//print_r($result);
 			if(!empty($result))
 			{
 				$order_item = json_decode($order_items,true);
@@ -3124,7 +3125,7 @@ class Wscontroller extends REST_Controller
 				$res = $this->CartModel->add_order_items($order_items_arr);
 				if(!empty($res))
 				{
-					$data = SUCCESS( 1, 'Cart checkout successfully.',$res);
+					$data = SUCCESS( 1, 'Cart checkout successfully.',array('order_id' => $result));
 					$this->response($data);
 				}
 				else
