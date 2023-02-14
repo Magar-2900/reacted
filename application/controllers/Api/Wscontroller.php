@@ -3080,7 +3080,7 @@ class Wscontroller extends REST_Controller
 			$music_upload_key       = $this->input->post('music_upload_key');
 			if(empty($music_upload_key))
 			{
-				$data = ERROR( 0, 'Please enter the music_upload_key');
+				$data = ERROR( 0, 'Please select music_upload_key');
 				$this->response($data);
 			}
 
@@ -3124,7 +3124,7 @@ class Wscontroller extends REST_Controller
 				$res = $this->CartModel->add_order_items($order_items_arr);
 				if(!empty($res))
 				{
-					$data = SUCCESS( 1, 'Cart checkout successfully.',[]);
+					$data = SUCCESS( 1, 'Cart checkout successfully.',$res);
 					$this->response($data);
 				}
 				else
