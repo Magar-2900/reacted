@@ -55,5 +55,6 @@ $route['WS'] = "Api/Wscontroller/index";
 $route['WS/(:any)'] = "Api/wscontroller/$1";
 $route['WS/(:any)/(:any)'] = "Api/wscontroller/$1/$2";
 $route['reset-password.html'] = "Authentication/reset_password";
+$route['stripe/stripewebhook'] = "StripeWebhook/stripe_webhook";
 $route['404_override'] = '';
-$route['translate_uri_dashes'] = FALSE;
+$route['translate_uri_dashes'] = TRUE;
