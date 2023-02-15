@@ -3387,7 +3387,7 @@ class Wscontroller extends REST_Controller
 		// This is your Stripe CLI webhook secret for testing your endpoint locally.
 		$endpoint_secret = 'whsec_c0afa0a7f8319c5c31dd789424e3d9c255600697dedb50fad89df66db37ea63d';
 
-		echo $payload = @file_get_contents('php://input');
+		echo 'Payload : '.$payload = @file_get_contents('php://input');
 		$sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
 		$event = null;
 
