@@ -3397,10 +3397,12 @@ class Wscontroller extends REST_Controller
 		);
 		} catch(\UnexpectedValueException $e) {
 		// Invalid payload
+		echo 'Invalid Payload';
 		http_response_code(400);
 		exit();
 		} catch(\Stripe\Exception\SignatureVerificationException $e) {
 		// Invalid signature
+		echo 'Invalid Signature';
 		http_response_code(400);
 		exit();
 		}
