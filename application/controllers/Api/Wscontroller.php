@@ -3276,7 +3276,7 @@ class Wscontroller extends REST_Controller
 			
 			
 
-			$user_details = $this->UserModel->get_user(99);
+			$user_details = $this->UserModel->get_user($user_id);
 
 			$payment_intent_key = 'user_id_'.$user_details[0]['user_id'];
 			$is_paymentintent_set = $this->session->$payment_intent_key;
@@ -3288,6 +3288,7 @@ class Wscontroller extends REST_Controller
 			// IF PAYMENT INTENT ALREADY CREATED UPDATE THE PAYMENT INTENT OR CREATE A NEW PAYMENT INTENT
 
 			if(!empty($is_paymentintent_set)){
+				echo 'inside update';
 				//echo 'inside update';
 				try{
 					$result = $stripe->paymentIntents->update(
@@ -3327,6 +3328,7 @@ class Wscontroller extends REST_Controller
 					$this->response($data);
 				}
 			} else {
+				echo 'inside create';
 				try{
 					
 					$result = $stripe->paymentIntents->create([
