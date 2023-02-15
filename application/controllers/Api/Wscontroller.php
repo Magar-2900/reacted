@@ -3383,7 +3383,57 @@ class Wscontroller extends REST_Controller
 	}
 
 	public function stripe_webhook_get(){
-		
+		// This is your Stripe CLI webhook secret for testing your endpoint locally.
+		$endpoint_secret = 'whsec_c0afa0a7f8319c5c31dd789424e3d9c255600697dedb50fad89df66db37ea63d';
+
+		$payload = @file_get_contents('php://input');
+		$sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
+		$event = null;
+
+		try {
+		$event = \Stripe\Webhook::constructEvent(
+			$payload, $sig_header, $endpoint_secret
+		);
+		} catch(\UnexpectedValueException $e) {
+		// Invalid payload
+		http_response_code(400);
+		exit();
+		} catch(\Stripe\Exception\SignatureVerificationException $e) {
+		// Invalid signature
+		http_response_code(400);
+		exit();
+		}
+
+		// Handle the event
+		switch ($event->type) {
+		case 'payment_intent.amount_capturable_updated':
+			$paymentIntent = $event->data->object;
+			print_r($paymentIntent);
+		case 'payment_intent.canceled':
+			$paymentIntent = $event->data->object;
+			print_r($paymentIntent);
+		case 'payment_intent.created':
+			$paymentIntent = $event->data->object;
+			print_r($paymentIntent);
+		case 'payment_intent.partially_funded':
+			$paymentIntent = $event->data->object;
+			print_r($paymentIntent);
+		case 'payment_intent.payment_failed':
+			$paymentIntent = $event->data->object;
+			print_r($paymentIntent);
+		case 'payment_intent.processing':
+			$paymentIntent = $event->data->object;
+			print_r($paymentIntent);
+		case 'payment_intent.requires_action':
+			$paymentIntent = $event->data->object;
+			print_r($paymentIntent);
+		case 'payment_intent.succeeded':
+			$paymentIntent = $event->data->object;
+			print_r($paymentIntent);
+		// ... handle other event types
+		default:
+			echo 'Received unknown event type ' . $event->type;
+		}
 	}
 
 	public function get_music_creator_individual_orders_get(){
