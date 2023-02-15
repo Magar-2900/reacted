@@ -3312,6 +3312,7 @@ class Wscontroller extends REST_Controller
 							],
 						],
 						'statement_descriptor' => 'Order For User ID '.$order_id,
+						'description' => 'Order For User ID '.$order_id,
 					]);
 	
 					if(!empty($result)){
@@ -3353,6 +3354,7 @@ class Wscontroller extends REST_Controller
 							],
 						],
 						'statement_descriptor' => 'Order For User ID '.$order_id,
+						'description' => 'Order For User ID '.$order_id,
 					]);
 	
 					if(!empty($result)){
