@@ -3382,7 +3382,7 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
-	public function stripe_webhook_post(){
+	/*public function stripe_webhook_post(){
 		//echo 'hii';
 		// This is your Stripe CLI webhook secret for testing your endpoint locally.
 		\Stripe\Stripe::setApiKey('sk_test_51MMufsSBkuhk1xmVvwSrCUaHAgGUgUYH8ztbVGglv5wT4X60Gb927w7K8yP964Ilfk49yeWHXwDjZ6Vd8b83fXRB00ed7K8MeW');
@@ -3451,7 +3451,7 @@ class Wscontroller extends REST_Controller
 		default:
 			echo 'Received unknown event type ' . $event->type;
 		}
-	}
+	}*/
 
 	public function get_music_creator_individual_orders_get(){
 		try{
