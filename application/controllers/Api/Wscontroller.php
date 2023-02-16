@@ -3409,6 +3409,9 @@ class Wscontroller extends REST_Controller
 		exit();
 		}
 
+		echo $event->type;
+		exit;
+
 		// Handle the event
 		switch ($event->type) {
 		case 'payment_intent.amount_capturable_updated':
