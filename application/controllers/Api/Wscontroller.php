@@ -3385,10 +3385,12 @@ class Wscontroller extends REST_Controller
 	public function stripe_webhook_post(){
 		//echo 'hii';
 		// This is your Stripe CLI webhook secret for testing your endpoint locally.
+		\Stripe\Stripe::setApiKey('sk_test_51MMufsSBkuhk1xmVvwSrCUaHAgGUgUYH8ztbVGglv5wT4X60Gb927w7K8yP964Ilfk49yeWHXwDjZ6Vd8b83fXRB00ed7K8MeW');
 		$endpoint_secret = 'whsec_c0afa0a7f8319c5c31dd789424e3d9c255600697dedb50fad89df66db37ea63d';
 
-		echo 'Payload : '.$payload = @file_get_contents('php://input');
+		$payload = @file_get_contents('php://input');
 		$sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
+		//echo $sig_header = print_r($this->input->request_headers());
 		$event = null;
 
 		try {
