@@ -3389,7 +3389,7 @@ class Wscontroller extends REST_Controller
 		$endpoint_secret = 'whsec_D3zaVAE8AaipMxiEeVnakmAdk2VYtUID';
 
 		$payload = @file_get_contents('php://input');
-		$sig_header = print_r($_SERVER);
+		$sig_header = $_SERVER['HTTP_STRIPE_SIGNATURE'];
 		//echo $sig_header = print_r($this->input->request_headers());
 		$event = null;
 
