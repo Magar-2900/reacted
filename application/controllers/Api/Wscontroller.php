@@ -3409,8 +3409,8 @@ class Wscontroller extends REST_Controller
 		exit();
 		}
 
-		echo $event->type;
-		exit;
+		/*echo $event->type;
+		exit;*/
 
 		// Handle the event
 		switch ($event->type) {
@@ -3436,6 +3436,7 @@ class Wscontroller extends REST_Controller
 			$paymentIntent = $event->data->object;
 			print_r($paymentIntent);
 		case 'payment_intent.succeeded':
+			echo 'Case Succedded';
 			$paymentIntent = $event->data->object;
 			$orderId = $event->data->object->metadata->order_id;
 			$email = $event->data->object->metadata->email;
@@ -3452,6 +3453,7 @@ class Wscontroller extends REST_Controller
 			$this->session->sess_destroy();
 		// ... handle other event types
 		default:
+		echo 'Case Default';
 			echo 'Received unknown event type ' . $event->type;
 		}
 	}
