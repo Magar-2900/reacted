@@ -1204,6 +1204,15 @@ class Wscontroller extends REST_Controller
 			$music_creator_id = $this->input->get('music_creator_id');
 
 			$result = $this->MusicCreatorModel->get_musics($music_creator_id);
+			$res_arr = array();
+			foreach($result as $res){
+				$res_arr['music_label'] = $res->music_name;
+				$music_url = $this->general->getImageUrl('music', $res->musics);
+				$res_array['music_url'] = $music_url;
+				$res_arr['added_date'] = $res->added_date;
+				$res_arr['status'] = $res->status;
+
+			}
 
 			if(!empty($result)){
 				$data = SUCCESS( 1, 'Music Found Successfully', $result);
