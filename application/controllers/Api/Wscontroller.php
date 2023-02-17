@@ -3133,12 +3133,12 @@ class Wscontroller extends REST_Controller
 			$order['dtAddedDate'] 			= date('Y-m-d H:i:s');
 			$result = $this->CartModel->add_order($order);
 
-			$user_details['vBillingAddressLine1'] 	= $billing_address_line1;
-			$user_details['vBillingAddressLine2'] 	= $billing_address_line2;
-			$user_details['vBillingCity'] 			= $billing_city;
-			$user_details['vBillingState'] 		= $billing_state;
-			$user_details['vBillingZip'] 			= $billing_zip;
-			$user_details['vBillingCountry'] 		= $billing_country;
+			$user_details['vAddressLine1'] 	= $billing_address_line1;
+			$user_details['vAddressLine2'] 	= $billing_address_line2;
+			$user_details['vCity'] 			= $billing_city;
+			$user_details['vState'] 		= $billing_state;
+			$user_details['vZipCode'] 			= $billing_zip;
+			$user_details['vCountry'] 		= $billing_country;
 
 			$this->UserModel->update_user_data($user_details, $user_id);
 
