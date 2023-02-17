@@ -1207,6 +1207,7 @@ class Wscontroller extends REST_Controller
 			//print_r($result);
 			$res_arr = array();
 			foreach($result as $res){
+				print_r($res);
 				$music_url = $this->general->getImageUrl('music', $res['musics']);
 				$res_array[] = array(
 					'music_label' => $res['music_name'],
@@ -1216,7 +1217,7 @@ class Wscontroller extends REST_Controller
 				);
 			}
 
-			if(!empty($result)){
+			if(!empty($res_array)){
 				$data = SUCCESS( 1, 'Music Found Successfully', $res_arr);
 				$this->response($data);
 			} else {
