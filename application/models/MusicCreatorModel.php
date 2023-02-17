@@ -107,7 +107,6 @@ class MusicCreatorModel extends CI_Model
 
 		if(!empty($music_creator_id))
 		{
-			echo 'inside if';
 			$this->db->where('mu.iCreatorId ',$music_creator_id);	
 		}
 

@@ -1201,23 +1201,15 @@ class Wscontroller extends REST_Controller
 
 	public function get_musics_get(){
 		try{
-			echo $music_creator_id = $this->input->get('music_creator_id');
-			
-			
+			$music_creator_id = $this->input->get('music_creator_id');
+
 			if(!empty($music_creator_id))
 			{
-				$result = $this->MusicCreatorModel->get_musics($music_creator_id);
-				print_r($result);
-				$result[0]['musics'] = $this->MusicCreatorModel->get_musics($result[0]['music_creator_id']);
-				
-				for ($i=0; $i < count($result[0]['musics']) ; $i++)
-				{
-					if(!empty($result[0]['musics'][$i]['musics']))
-					{	
-						$result[0]['musics'][$i]['musics'] = $this->general->getImageUrl('music', $result[0]['musics'][$i]['musics']);
-					}
-				}
+				$data = ERROR( 0, 'Music Creator ID not found in the payload');
+				$this->response($data);				
 			}
+
+			$result = $this->MusicCreatorModel->get_musics($music_creator_id);
 
 			if(!empty($result)){
 				$data = SUCCESS( 1, 'Music Found Successfully', $result);
