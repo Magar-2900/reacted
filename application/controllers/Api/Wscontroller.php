@@ -1205,9 +1205,9 @@ class Wscontroller extends REST_Controller
 
 			$result = $this->MusicCreatorModel->get_musics($music_creator_id);
 			//print_r($result);
-			$res_arr = array();
+			$res_array = array();
 			foreach($result as $res){
-				print_r($res);
+				//print_r($res);
 				$music_url = $this->general->getImageUrl('music', $res['musics']);
 				$res_array[] = array(
 					'music_label' => $res['music_name'],
@@ -1218,7 +1218,7 @@ class Wscontroller extends REST_Controller
 			}
 
 			if(!empty($res_array)){
-				$data = SUCCESS( 1, 'Music Found Successfully', $res_arr);
+				$data = SUCCESS( 1, 'Music Found Successfully', $res_array);
 				$this->response($data);
 			} else {
 				$data = SUCCESS( 1, 'No data for musics found for this music creator : '.$music_creator_id);
