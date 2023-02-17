@@ -1207,6 +1207,7 @@ class Wscontroller extends REST_Controller
 			if(!empty($music_creator_id))
 			{
 				$result = $this->MusicCreatorModel->get_musics($music_creator_id);
+				print_r($result);
 				$result[0]['musics'] = $this->MusicCreatorModel->get_musics($result[0]['music_creator_id']);
 				
 				for ($i=0; $i < count($result[0]['musics']) ; $i++)
