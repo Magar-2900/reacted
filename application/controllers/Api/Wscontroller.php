@@ -1204,6 +1204,7 @@ class Wscontroller extends REST_Controller
 			$music_creator_id = $this->input->get('music_creator_id');
 
 			$result = $this->MusicCreatorModel->get_musics($music_creator_id);
+			print_r($result);
 			$res_arr = array();
 			foreach($result as $res){
 				$res_arr['music_label'] = $res->music_name;
