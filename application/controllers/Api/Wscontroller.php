@@ -1202,7 +1202,22 @@ class Wscontroller extends REST_Controller
 	public function get_musics_get(){
 		try{
 			$music_creator_id = $this->input->get('music_creator_id');
-			$result = $this->MusicCreatorModel->get_musics($music_creator_id);
+			
+			
+			if(!empty($music_creator_id))
+			{
+				$result = $this->MusicCreatorModel->get_musics($music_creator_id);
+				$result[0]['musics'] = $this->MusicCreatorModel->get_musics($result[0]['music_creator_id']);
+				
+				for ($i=0; $i < count($result[0]['musics']) ; $i++)
+				{
+					if(!empty($result[0]['musics'][$i]['musics']))
+					{	
+						$result[0]['musics'][$i]['musics'] = $this->general->getImageUrl('music', $result[0]['musics'][$i]['musics']);
+					}
+				}
+			}
+
 			if(!empty($result)){
 				$data = SUCCESS( 1, 'Music Found Successfully', $result);
 				$this->response($data);
@@ -2589,6 +2604,8 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
+	
+
 	public function update_celebrity_post()
 	{
 		try{
@@ -3115,6 +3132,16 @@ class Wscontroller extends REST_Controller
 			$order['eOrderStatus'] 			= 'Pending';
 			$order['dtAddedDate'] 			= date('Y-m-d H:i:s');
 			$result = $this->CartModel->add_order($order);
+
+			$user_details['vBillingAddressLine1'] 	= $billing_address_line1;
+			$user_details['vBillingAddressLine2'] 	= $billing_address_line2;
+			$user_details['vBillingCity'] 			= $billing_city;
+			$user_details['vBillingState'] 		= $billing_state;
+			$user_details['vBillingZip'] 			= $billing_zip;
+			$user_details['vBillingCountry'] 		= $billing_country;
+
+			$this->CartModel->update_user_data($user_details, $user_id);
+
 			//print_r($result);
 			if(!empty($result))
 			{
@@ -3206,6 +3233,15 @@ class Wscontroller extends REST_Controller
 		}	
 	}
 
+	public function delete_cart_data_on_payment_success($cart_id, $user_id){
+		try{
+			$res = $this->CartModel->delete_cart_data($cart_id, $user_id);
+			return $res;
+		} catch(Exception $e){
+			return false;
+		}
+	}
+
 	public function create_paymentintent_post()
 	{
 
@@ -3224,6 +3260,7 @@ class Wscontroller extends REST_Controller
 			$coupon_discount = (!empty($this->input->post('coupon_discount'))) ? $this->input->post('coupon_discount') : 0;
 			$counpon_discount_value = (!empty($this->input->post('counpon_discount_value'))) ? $this->input->post('counpon_discount_value') : 0;
 			$order_id = $this->input->post('order_id');
+			$cart_id = $this->input->post('cart_id');
 
 			$shipping_first_name = $this->input->post('shipping_name');
 			$shipping_address = $this->input->post('shipping_address');
@@ -3247,6 +3284,10 @@ class Wscontroller extends REST_Controller
 			}
 			if(empty($user_id)){
 				$data = ERROR(0, 'User ID is missing in the payload');
+				$this->response($data);
+			}
+			if(empty($cart_id)){
+				$data = ERROR(0, 'Cart Id ( cart_id ) is missing in the payload');
 				$this->response($data);
 			}
 			if(empty($shipping_first_name)){
@@ -3300,7 +3341,9 @@ class Wscontroller extends REST_Controller
 							'coupon' => $coupon_code,
 							'discount' => $coupon_discount,
 							'discountValue' => $counpon_discount_value,
-							'order_id' => $order_id
+							'order_id' => $order_id,
+							'cart_id' => $cart_id,
+							'platform_user_id' => $user_id
 						],
 						'shipping' => [
 							'name' => $shipping_first_name,
@@ -3312,8 +3355,8 @@ class Wscontroller extends REST_Controller
 							'country' => $shipping_country,
 							],
 						],
-						'statement_descriptor' => 'Order For User ID '.$order_id,
-						'description' => 'Order For User ID '.$order_id,
+						'statement_descriptor' => 'Payment for Order ID'.$order_id,
+						'description' => 'Payment for Order ID'.$order_id,
 					]);
 	
 					if(!empty($result)){
@@ -3343,7 +3386,9 @@ class Wscontroller extends REST_Controller
 							'coupon' => $coupon_code,
 							'discount' => $coupon_discount,
 							'discountValue' => $counpon_discount_value,
-							'order_id' => $order_id
+							'order_id' => $order_id,
+							'cart_id' => $cart_id,
+							'platform_user_id' => $user_id
 						],
 						'shipping' => [
 							'name' => $shipping_first_name,
@@ -3355,8 +3400,8 @@ class Wscontroller extends REST_Controller
 							'country' => $shipping_country,
 							],
 						],
-						'statement_descriptor' => 'Order For User ID '.$order_id,
-						'description' => 'Order For User ID '.$order_id,
+						'statement_descriptor' => 'Payment for Order ID '.$order_id,
+						'description' => 'Payment for Order ID '.$order_id,
 					]);
 	
 					if(!empty($result)){
@@ -3439,6 +3484,8 @@ class Wscontroller extends REST_Controller
 			echo 'Case Succedded';
 			$paymentIntent = $event->data->object;
 			$orderId = $event->data->object->metadata->order_id;
+			$cartId = $event->data->object->metadata->cart_id;
+			$userId = $event->data->object->metadata->user_id;
 			$email = $event->data->object->metadata->email;
 			$paymentIntentId = $event->data->object->id;
 			$amount = $event->data->object->amount;
@@ -3450,6 +3497,7 @@ class Wscontroller extends REST_Controller
 			$order1['vOrderPaymentTransactionId'] = $paymentIntentId;
 
 			$res = $this->CartModel->update_order_status($order_id,$order1);
+			$this->delete_cart_data_on_payment_success($cartId, $userId);
 			$this->session->sess_destroy();
 		// ... handle other event types
 		default:

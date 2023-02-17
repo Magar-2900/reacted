@@ -38,7 +38,7 @@ class MusicCreatorModel extends CI_Model
 
   	public function get_music_creator_details($music_creator_id = '')
   	{
-  		$this->db->select("users.iUsersId as user_id,users.vFirstName as first_name,users.vLastName as last_name,users.vEmail as email,users.vPhone as phone,user_roles.vRole as role,user_music_creator.vArtistName as artist_name,user_music_creator.vDescription as description,user_music_creator.vUploadMusic as music,user_music_creator.dtAddedDate as added_date,user_music_creator.dtUpdatedDate as updated_date,GROUP_CONCAT(category_master.vCategoryName SEPARATOR ',') as categories,users.vImage as images,user_music_creator.iMusicCreatorid as music_creator_id,user_music_creator.vSocialMediaLinks as social_media_links,users.vCountry as country");
+  		$this->db->select("users.iUsersId as user_id,users.vFirstName as first_name,users.vLastName as last_name,users.vEmail as email,users.vPhone as phone,user_roles.vRole as role, vAddressLine1 as address_line_1, vAddressLine2 as address_line_2, vCity as user_city, vState as user_state, vCountry as user_country, vZipCode as user_zip_code, user_music_creator.vArtistName as artist_name,user_music_creator.vDescription as description,user_music_creator.vUploadMusic as music,user_music_creator.dtAddedDate as added_date,user_music_creator.dtUpdatedDate as updated_date,GROUP_CONCAT(category_master.vCategoryName SEPARATOR ',') as categories,users.vImage as images,user_music_creator.iMusicCreatorid as music_creator_id,user_music_creator.vSocialMediaLinks as social_media_links,users.vCountry as country");
 		$this->db->from('users');
 		$this->db->join('user_roles','user_roles.iRoleId = users.iRoleId','left');
 		$this->db->join('user_music_creator','user_music_creator.iUsersId = users.iUsersId','left');
@@ -59,7 +59,7 @@ class MusicCreatorModel extends CI_Model
 
 	  public function get_all_music_creators($music_creator_id = '')
   	{
-  		$this->db->select("users.iUsersId as user_id,users.vFirstName as first_name,users.vLastName as last_name,users.vEmail as email,users.vPhone as phone,user_roles.vRole as role,user_music_creator.vArtistName as artist_name,user_music_creator.vDescription as description,user_music_creator.vUploadMusic as music,user_music_creator.dtAddedDate as added_date,user_music_creator.dtUpdatedDate as updated_date,GROUP_CONCAT(category_master.vCategoryName SEPARATOR ',') as categories,users.vImage as images,user_music_creator.iMusicCreatorid as music_creator_id,user_music_creator.vSocialMediaLinks as social_media_links,users.vCountry as country");
+  		$this->db->select("users.iUsersId as user_id,users.vFirstName as first_name,users.vLastName as last_name,users.vEmail as email,users.vPhone as phone,user_roles.vRole as role, vAddressLine1 as address_line_1, vAddressLine2 as address_line_2, vCity as user_city, vState as user_state, vCountry as user_country, vZipCode as user_zip_code, user_music_creator.vArtistName as artist_name,user_music_creator.vDescription as description,user_music_creator.vUploadMusic as music,user_music_creator.dtAddedDate as added_date,user_music_creator.dtUpdatedDate as updated_date,GROUP_CONCAT(category_master.vCategoryName SEPARATOR ',') as categories,users.vImage as images,user_music_creator.iMusicCreatorid as music_creator_id,user_music_creator.vSocialMediaLinks as social_media_links,users.vCountry as country");
 		$this->db->from('users');
 		$this->db->join('user_roles','user_roles.iRoleId = users.iRoleId','left');
 		$this->db->join('user_music_creator','user_music_creator.iUsersId = users.iUsersId','left');

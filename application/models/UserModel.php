@@ -49,7 +49,7 @@ class UserModel extends CI_Model
 
   	public function get_user($user_id = '')
 	{
-		$this->db->select('users.iUsersId as user_id,users.vFirstName as first_name,users.vLastName as last_name,users.vEmail as email,users.vPhone as phone,user_roles.vRole as role_id,users.vAccessToken as access_token,users.iRoleId as role_id1');
+		$this->db->select('users.iUsersId as user_id,users.vFirstName as first_name,users.vLastName as last_name,users.vEmail as email,users.vPhone as phone,user_roles.vRole as role_id,users.vAccessToken as access_token,users.iRoleId as role_id1, vAddressLine1 as address_line_1, vAddressLine2 as address_line_2, vCity as user_city, vState as user_state, vCountry as user_country, vZipCode as user_zip_code');
 		$this->db->from('users');
 		$this->db->join('user_roles','user_roles.iRoleId = users.iRoleId','left');
 		if(!empty($user_id))
