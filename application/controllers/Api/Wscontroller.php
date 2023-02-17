@@ -1207,12 +1207,13 @@ class Wscontroller extends REST_Controller
 			//print_r($result);
 			$res_arr = array();
 			foreach($result as $res){
-				$res_arr[]['music_label'] = $res['music_name'];
 				$music_url = $this->general->getImageUrl('music', $res['musics']);
-				$res_array[]['music_url'] = $music_url;
-				$res_arr[]['added_date'] = $res['added_date'];
-				$res_arr[]['status'] = $res['status'];
-
+				$res_array[] = array(
+					'music_label' => $res['music_name'],
+					'music_url' => $music_url,
+					'added_date' => $res['added_date'],
+					'status' => $res['status']
+				);
 			}
 
 			if(!empty($result)){
