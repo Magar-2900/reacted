@@ -1215,7 +1215,7 @@ class Wscontroller extends REST_Controller
 			}
 
 			if(!empty($result)){
-				$data = SUCCESS( 1, 'Music Found Successfully', $result);
+				$data = SUCCESS( 1, 'Music Found Successfully', $res_arr);
 				$this->response($data);
 			} else {
 				$data = SUCCESS( 1, 'No data for musics found for this music creator : '.$music_creator_id);
