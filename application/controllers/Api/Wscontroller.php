@@ -3140,7 +3140,7 @@ class Wscontroller extends REST_Controller
 			$user_details['vBillingZip'] 			= $billing_zip;
 			$user_details['vBillingCountry'] 		= $billing_country;
 
-			$this->CartModel->update_user_data($user_details, $user_id);
+			$this->UserModel->update_user_data($user_details, $user_id);
 
 			//print_r($result);
 			if(!empty($result))
