@@ -1203,12 +1203,6 @@ class Wscontroller extends REST_Controller
 		try{
 			$music_creator_id = $this->input->get('music_creator_id');
 
-			if(!empty($music_creator_id))
-			{
-				$data = ERROR( 0, 'Music Creator ID not found in the payload');
-				$this->response($data);				
-			}
-
 			$result = $this->MusicCreatorModel->get_musics($music_creator_id);
 
 			if(!empty($result)){
