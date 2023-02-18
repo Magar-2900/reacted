@@ -2953,6 +2953,8 @@ class Wscontroller extends REST_Controller
 
 	public function upload_music_from_dashboard_post()
 	{
+		print_r($_POST);
+		exit;
 		try
 		{
 			$headers = $this->input->request_headers(); 
