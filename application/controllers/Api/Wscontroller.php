@@ -3419,7 +3419,7 @@ class Wscontroller extends REST_Controller
 						$this->response($data);
 					}
 				} catch(\Stripe\Exception\InvalidRequestException $e){
-					ERROR(0, $e->getError()->message);
+					$data = ERROR(0, $e->getError()->message);
 					$this->response($data);
 				}
 			}			
