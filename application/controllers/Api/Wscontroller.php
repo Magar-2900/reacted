@@ -3263,8 +3263,8 @@ class Wscontroller extends REST_Controller
 			$coupon_discount = (!empty($this->input->post('coupon_discount'))) ? $this->input->post('coupon_discount') : 0;
 			$counpon_discount_value = (!empty($this->input->post('counpon_discount_value'))) ? $this->input->post('counpon_discount_value') : 0;
 			$order_id = $this->input->post('order_id');
-			echo $cart_id = $this->input->post('cart_id');
-			exit;
+			$cart_id = $this->input->post('cart_id');
+			//exit;
 			$shipping_first_name = $this->input->post('shipping_name');
 			$shipping_address = $this->input->post('shipping_address');
 			$shipping_postal_code = $this->input->post('shipping_postal_code');
