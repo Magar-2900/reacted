@@ -1210,6 +1210,7 @@ class Wscontroller extends REST_Controller
 				//print_r($res);
 				$music_url = $this->general->getImageUrl('music', $res['musics']);
 				$res_array[] = array(
+					'music_id' => $res['music_upload_id'],
 					'music_label' => $res['music_name'],
 					'music_url' => $music_url,
 					'added_date' => $res['added_date'],
