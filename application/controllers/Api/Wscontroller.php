@@ -2954,6 +2954,7 @@ class Wscontroller extends REST_Controller
 	public function upload_music_from_dashboard_post()
 	{
 		print_r($_POST);
+		print_r($_FILES);
 		exit;
 		try
 		{
