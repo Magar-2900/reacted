@@ -3358,8 +3358,8 @@ class Wscontroller extends REST_Controller
 							'country' => $shipping_country,
 							],
 						],
-						'statement_descriptor' => 'Payment for Order ID'.$order_id,
-						'description' => 'Payment for Order ID'.$order_id,
+						'statement_descriptor' => 'Order ID'.$order_id,
+						'description' => 'Order ID'.$order_id,
 					]);
 	
 					if(!empty($result)){
@@ -3403,8 +3403,8 @@ class Wscontroller extends REST_Controller
 							'country' => $shipping_country,
 							],
 						],
-						'statement_descriptor' => 'Payment for Order ID '.$order_id,
-						'description' => 'Payment for Order ID '.$order_id,
+						'statement_descriptor' => 'Order ID '.$order_id,
+						'description' => 'Order ID '.$order_id,
 					]);
 	
 					if(!empty($result)){
