@@ -3159,7 +3159,8 @@ class Wscontroller extends REST_Controller
 					$order_items_arr[$key]['iMusicUploadKey']   = $music_upload_key;
 					$order_items_arr[$key]['eItemReviewStatus']	= 'In Progress';		
 					$order_items_arr[$key]['eCelebrityPaymentStatus'] = 'Pending';		
-					$order_items_arr[$key]['dtAddedDate'] 			        = date('Y-m-d H:i:s');
+					$order_items_arr[$key]['dtAddedDate'] 	    = date('Y-m-d H:i:s');
+					$order_items_arr[$key]['dtExpiryDate'] 		= date('Y-m-d', strtotime('+5 days'));
 				}
 				
 				$res = $this->CartModel->add_order_items($order_items_arr);
@@ -3509,7 +3510,8 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
-	public function get_music_creator_individual_orders_get(){
+	public function get_music_creator_individual_orders_get()
+	{
 		try{
 			$headers = $this->input->request_headers(); 
 			$token = $this->validate_access_token($headers);		
@@ -3539,6 +3541,7 @@ class Wscontroller extends REST_Controller
 			$headers = $this->input->request_headers(); 
 			$token = $this->validate_access_token($headers);		
 			$user_id = $token['user_id'];
+			// $user_id = 12;
 			$order_id = $this->input->get('order_id');
 			$res = $this->UserModel->get_music_creator_orders($user_id, $order_id);
 			for ($i=0; $i < count($res) ; $i++) 
@@ -3566,7 +3569,6 @@ class Wscontroller extends REST_Controller
 						$res[$i]['musics'][$j]['musics'] = $this->general->getImageUrl('music', $res[$i]['musics'][$j]['musics']);
 					}
 				}
-				
 			}
 			
 			if(!empty($res))
@@ -3623,4 +3625,50 @@ class Wscontroller extends REST_Controller
 			$this->response($data);
 		}
 	}
+
+	public function get_order_details_get()
+	{
+		try
+		{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+			$order_id = $this->input->get('order__item_id');
+			if(empty($order_id))
+			{
+				$data = ERROR( 0, 'Please enter the order_id');
+				$this->response($data);
+			}
+
+			$res = $this->UserModel->get_order_details($order_id);			
+			if(!empty($res[0]['celebrity_image']))
+			{
+				$images = json_decode($res[0]['celebrity_image']);
+				$img1 = [];
+				if(!empty($images))
+				{
+					foreach($images as $val)
+					{
+						$img1[] = $this->general->getImageUrl('profile_image', $val);
+					}
+				}
+				$res[0]['celebrity_image'] = $img1;
+			}
+
+			if(!empty($res))
+			{
+				$data = SUCCESS( 1, 'Orders details found successfully.',$res);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+
 }
