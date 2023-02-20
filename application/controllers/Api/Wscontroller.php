@@ -481,11 +481,9 @@ class Wscontroller extends REST_Controller
 			$ret_arr[0]['reset_code'] = $reset_code;
 			$data['iEmailVerifyOtp'] = $ret_arr[0]['reset_code'];
 
-			$email_body = `
-			<p>Hey $email, we have received a request to reset your password</p>
+			$email_body = `<p>Hey $email, we have received a request to reset your password</p>
 			<p>Please click on the link below to reset your password: https://reacted-fe-d61c.vercel.app/forgot-password?rsp=$reset_code</p>
-			<p>If you didn't request to to reset your password. Please ignore this email.</p>
-			`;
+			<p>If you didn't request to to reset your password. Please ignore this email.</p>`;
 
 			$this->UserModel->update_user_otp($email,$data);
 			$this->general->CISendMail($to = $email, $from_name = 'Reacted',$subject = 'Forgot Password', $body = $email_body);
