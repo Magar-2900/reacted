@@ -3545,13 +3545,26 @@ class Wscontroller extends REST_Controller
 			$order_id = $this->input->get('order_id');
 			$res = $this->UserModel->get_music_creator_orders($user_id, $order_id);
 
-			/*$res_array = array();
-			$res['billing_details'] = array(
-				''
-			)
-			foreach($res as $res_data){
-				
-			}*/
+			$res_array = array();
+			$res_array['billing_details'] = array(
+				'billing_first_name' => $res['0']['billing_first_name'],
+				'billing_last_name' => $res['0']['billing_last_name'],
+				'billing_phone' => $res['0']['billing_phone'],
+				'billing_address_line_1' => $res['0']['billing_address_line_1'],
+				'address_line_2' => $res['0']['address_line_2'],
+				'billing_city' => $res['0']['billing_city'],
+				'billing_state' => $res['0']['billing_state'],
+				'billing_zip_code' => $res['0']['billing_zip_code'],
+				'billing_country' => $res['0']['billing_country'],
+				'order_sub_total' => $res['0']['order_sub_total'],
+				'order_tax' => $res['0']['order_tax'],
+				'order_coupon' => $res['0']['order_coupon'],
+				'order_discount' => $res['0']['order_discount'],
+				'order_total' => $res['0']['order_total'],
+				'payment_intent_id' => $res['0']['payment_intent_id'],
+				'order_status' => $res['0']['order_status']
+			);
+
 
 			for ($i=0; $i < count($res) ; $i++) 
 			{
@@ -3579,6 +3592,25 @@ class Wscontroller extends REST_Controller
 					}
 				}
 			}
+
+
+
+			foreach($res as $res_data){
+				$res_array['order_item_details'][] = array(
+					'order_item_id' => $res_data['order_item_id'],
+					'celebrity_first_name' => $res_data['first_name'],
+					'celebrity_last_name' => $res_data['last_name'],
+					'celebrity_image' => $img1,
+					'item_price' => $res_data['item_price'],
+					'item_review_status' => $res_data['item_review_status'],
+					'celebrity_payment_status' => $res_data['celebrity_payment_status']
+
+				);
+			}
+
+			print_r($res_array);
+			exit;
+			
 			
 			if(!empty($res))
 			{
