@@ -483,7 +483,7 @@ class Wscontroller extends REST_Controller
 
 			$this->UserModel->update_user_otp($email,$data);
 			$this->general->CISendMail($to = $email, $from_name = 'Test',$subject = 'Forgot Password', $body = "This is test.");
-			echo 'hii';die;
+			//echo 'hii';die;
 			if(!empty($ret_arr))
 			{
 				$data = SUCCESS( 1, 'Email sent successfully to your email please check your inbox.',$ret_arr);
