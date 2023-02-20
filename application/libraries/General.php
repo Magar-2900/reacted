@@ -87,7 +87,7 @@ Class General
         } 
         else
         {
-           echo $error = 'success';
+           //echo $error = 'success';
            return true;
         }
     }
