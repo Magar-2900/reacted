@@ -51,9 +51,9 @@ Class General
 
     public function CISendMail($to, $from_name, $subject, $body, $is_gmail = true) 
     {
-        require_once APPPATH.'third_party/PHPMailer/Exception.php';
-        require_once APPPATH.'third_party/PHPMailer/PHPMailer.php';
-        require_once APPPATH.'third_party/PHPMailer/SMTP.php';
+        require_once APPPATH.'third_party/phpmailer/Exception.php';
+        require_once APPPATH.'third_party/phpmailer/PHPMailer.php';
+        require_once APPPATH.'third_party/phpmailer/SMTP.php';
 
         $this->phpmailer = new PHPMailer();
         $this->phpmailer->IsSMTP();
