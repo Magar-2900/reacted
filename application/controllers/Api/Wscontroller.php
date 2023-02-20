@@ -3544,6 +3544,15 @@ class Wscontroller extends REST_Controller
 			// $user_id = 12;
 			$order_id = $this->input->get('order_id');
 			$res = $this->UserModel->get_music_creator_orders($user_id, $order_id);
+
+			/*$res_array = array();
+			$res['billing_details'] = array(
+				''
+			)
+			foreach($res as $res_data){
+				
+			}*/
+
 			for ($i=0; $i < count($res) ; $i++) 
 			{
 				if(!empty($res[$i]['image']))
