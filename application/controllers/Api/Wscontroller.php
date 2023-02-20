@@ -3612,9 +3612,9 @@ class Wscontroller extends REST_Controller
 			//exit;
 			
 			
-			if(!empty($res))
+			if(!empty($res_array))
 			{
-				$data = SUCCESS( 1, 'Orders found successfully.',$res);
+				$data = SUCCESS( 1, 'Orders found successfully.',$res_array);
 				$this->response($data);
 			}
 			else
