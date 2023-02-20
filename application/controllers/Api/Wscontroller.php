@@ -3608,8 +3608,8 @@ class Wscontroller extends REST_Controller
 				);
 			}
 
-			print_r($res_array);
-			exit;
+			//print_r($res_array);
+			//exit;
 			
 			
 			if(!empty($res))
