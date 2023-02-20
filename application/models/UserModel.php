@@ -139,6 +139,8 @@ class UserModel extends CI_Model
    		$this->db->where(array('order_items.iMusicCreatorId' => $user_id, 'order_items.iOrderId' => $order_id));
   		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
+		echo $this->db->last_query();
+		exit;
 		return $result;
 	}
 

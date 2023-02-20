@@ -3240,7 +3240,7 @@ class Wscontroller extends REST_Controller
 	public function delete_cart_data_on_payment_success($cart_id, $user_id){
 		try{
 			$res = $this->CartModel->delete_cart_data($cart_id, $user_id);
-			return $res;
+			return true;
 		} catch(Exception $e){
 			return false;
 		}
@@ -3501,8 +3501,8 @@ class Wscontroller extends REST_Controller
 			$order1['vOrderPaymentTransactionId'] = $paymentIntentId;
 
 			$res = $this->CartModel->update_order_status($order_id,$order1);
-			$this->delete_cart_data_on_payment_success($cartId, $userId);
 			$this->session->sess_destroy();
+			$this->delete_cart_data_on_payment_success($cartId, $userId);
 		// ... handle other event types
 		default:
 		echo 'Case Default';
