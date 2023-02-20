@@ -124,6 +124,7 @@ class UserModel extends CI_Model
 		$this->db->select('*');
   		$this->db->from('orders');
    		$this->db->where('eMusicCreatorId',$user_id);
+		$this->db->order_by("iOrderId", "desc");
   		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
 		//print_r($this->db->last_query());die;
@@ -138,6 +139,7 @@ class UserModel extends CI_Model
   		$this->db->join('users','users.iUsersId = order_items.iCelebrityId','left');
   		$this->db->join('user_celebrity','user_celebrity.iUsersId = users.iUsersId','left');
    		$this->db->where(array('order_items.iMusicCreatorId' => $user_id, 'order_items.iOrderId' => $order_id));
+		$this->db->order_by("order_items.iOrderItemId", "desc");
   		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
 		//echo $this->db->last_query();
@@ -152,6 +154,7 @@ class UserModel extends CI_Model
   		$this->db->join('users','users.iUsersId = order_items.iMusicCreatorId','left');
   		$this->db->join('user_music_creator','user_music_creator.iUsersId = users.iUsersId','left');
   		$this->db->where('order_items.iCelebrityId',$user_id);
+		$this->db->order_by("order_items.iOrderItemId", "desc");
   		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
 		return $result;
@@ -165,6 +168,7 @@ class UserModel extends CI_Model
   		$this->db->join('users u1','u1.iUsersId = order_items.iCelebrityId','left');
   		$this->db->join('user_music_creator','user_music_creator.iUsersId = users.iUsersId','left');
   		$this->db->where('order_items.iOrderItemId',$order_id);
+		$this->db->order_by("order_items.iOrderItemId", "desc");
   		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
 		return $result;
