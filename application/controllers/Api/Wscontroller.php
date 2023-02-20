@@ -482,7 +482,7 @@ class Wscontroller extends REST_Controller
 			$data['iEmailVerifyOtp'] = $ret_arr[0]['reset_code'];
 
 			$email_body = '<p>Hey '.$email.', we have received a request to reset your password</p>
-			<p>Please click on the link below to reset your password: https://reacted-fe-d61c.vercel.app/forgot-password?rsp=$reset_code</p>
+			<p>Please click on the link below to reset your password: https://reacted-fe-d61c.vercel.app/forgot-password?rsp='.$reset_code.'</p>
 			<p>If you didn\'t request to to reset your password. Please ignore this email.</p>';
 
 			//echo $email_body;
