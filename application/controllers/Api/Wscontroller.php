@@ -518,7 +518,7 @@ class Wscontroller extends REST_Controller
 	{
 		try{
 			$email 				= base64_decode($this->input->post('rsp'));
-			//$security_code 		= $this->input->post('security_code');
+			$security_code 		= $this->input->post('security_code');
 			$new_password 		= $this->input->post('new_password');
 			$confirm_password 	= $this->input->post('confirm_password');
 
