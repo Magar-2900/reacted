@@ -3522,7 +3522,7 @@ class Wscontroller extends REST_Controller
 			$amount = $event->data->object->amount;
 			$stripePaymentStatus = $event->data->object->status;
 			$order_id = $orderId;
-			$order1['eOrderStatus'] 			  = 'Completed';
+			$order1['eOrderStatus'] 			  = 'In Progress';
 			$order1['vPaymentData'] 			  = $paymentIntent;
 			$order1['vOrderPaymentTransactionId'] = $paymentIntentId;
 
@@ -3541,7 +3541,7 @@ class Wscontroller extends REST_Controller
 			$stripePaymentStatus = $event->data->object->status;
 
 			$order_id = $orderId;
-			$order1['eOrderStatus'] 			  = 'Completed';
+			$order1['eOrderStatus'] 			  = 'In Progress';
 			$order1['vPaymentData'] 			  = $paymentIntent;
 			$order1['vOrderPaymentTransactionId'] = $paymentIntentId;
 
