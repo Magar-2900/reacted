@@ -3255,7 +3255,7 @@ class Wscontroller extends REST_Controller
 	public function delete_cart_data_on_payment_success($cart_id, $user_id){
 		try{
 			$res = $this->CartModel->delete_cart_data($cart_id, $user_id);
-			return true;
+			//return $res;
 		} catch(Exception $e){
 			return false;
 		}
@@ -3524,6 +3524,7 @@ class Wscontroller extends REST_Controller
 			$order1['vOrderPaymentTransactionId'] = $paymentIntentId;
 
 			$res = $this->CartModel->update_order_status($order_id,$order1);
+			break;
 		case 'payment_intent.requires_action':
 			//echo 'Case Succedded';
 			$paymentIntent = $event->data->object;
@@ -3541,6 +3542,7 @@ class Wscontroller extends REST_Controller
 			$order1['vOrderPaymentTransactionId'] = $paymentIntentId;
 
 			$res = $this->CartModel->update_order_status($order_id,$order1);
+			break;
 
 		case 'payment_intent.succeeded':
 			echo 'Case Succedded';
@@ -3562,9 +3564,11 @@ class Wscontroller extends REST_Controller
 			$this->session->sess_destroy();
 			$this->delete_cart_data_on_payment_success($cartId, $userId);
 		// ... handle other event types
+		break;
 		default:
 		echo 'Case Default';
 			echo 'Received unknown event type ' . $event->type;
+			break;
 		}
 	}
 
