@@ -3562,8 +3562,9 @@ class Wscontroller extends REST_Controller
 
 			$res = $this->CartModel->update_order_status($order_id,$order1);
 			$this->session->sess_destroy();
-			print_r($_SESSION);
-			echo $this->delete_cart_data_on_payment_success($cartId, $userId);
+			//print_r($_SESSION);
+			$this->CartModel->delete_cart_data($cartId, $cartId);
+			//echo $this->delete_cart_data_on_payment_success($cartId, $cartId);
 		// ... handle other event types
 		break;
 		default:
