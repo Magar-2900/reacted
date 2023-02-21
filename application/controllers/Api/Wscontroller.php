@@ -515,20 +515,26 @@ class Wscontroller extends REST_Controller
 	{
 		try{
 			$email 				= base64_decode($this->input->post('rsp'));
-			$security_code 		= $this->input->post('security_code');
+			//$security_code 		= $this->input->post('security_code');
 			$new_password 		= $this->input->post('new_password');
 			$confirm_password 	= $this->input->post('confirm_password');
 
 
 			if(empty($email)){
-	            $data = array('status' => 0, 'msg' => 'Please enter your rsp');
+	            $data = array('status' => 0, 'msg' => 'Your security code is missing');
 	            $this->response($data);
 	        }
 
-			if(empty($security_code)){
+			$is_exist = $this->UserModel->email_exist($email);
+			if(!$is_exist){
+				$data = array('status' => 0, 'msg' => 'Your security code doesn\'t match. Please try resetting your password again.');
+	            $this->response($data);
+			}
+
+			/*if(empty($security_code)){
 	            $data = array('status' => 0, 'msg' => 'Please enter your security_code');
 	            $this->response($data);
-	        }
+	        }*/
 
 	        if(empty($new_password)){
 	            $data = array('status' => 0, 'msg' => 'Please enter your new_password');
