@@ -484,6 +484,7 @@ class Wscontroller extends REST_Controller
 			$data['iEmailVerifyOtp'] = $ret_arr[0]['reset_code'];
 
 			$email_body = '<p>Hey '.$email.', we have received a request to reset your password</p>
+			<p><strong>One Time Password:</strong> '.$reset_code.'</p>
 			<p>Please click on the link below to reset your password: https://reacted-fe-d61c.vercel.app/forgot-password?token='.$reset_param.'</p>
 			<p>If you didn\'t request to to reset your password. Please ignore this email.</p>';
 
@@ -527,16 +528,16 @@ class Wscontroller extends REST_Controller
 	            $this->response($data);
 	        }
 
-			$is_exist = $this->UserModel->email_exist($email);
-			if(!$is_exist){
-				$data = array('status' => 0, 'msg' => 'Your security code doesn\'t match. Please try resetting your password again.');
-	            $this->response($data);
-			}
+			// $is_exist = $this->UserModel->email_exist($email);
+			// if(!$is_exist){
+			// 	$data = array('status' => 0, 'msg' => 'Your security code doesn\'t match. Please try resetting your password again.');
+	        //     $this->response($data);
+			// }
 
-			/*if(empty($security_code)){
+			if(empty($security_code)){
 	            $data = array('status' => 0, 'msg' => 'Please enter your security_code');
 	            $this->response($data);
-	        }*/
+	        }
 
 	        if(empty($new_password)){
 	            $data = array('status' => 0, 'msg' => 'Please enter your new_password');
@@ -559,7 +560,7 @@ class Wscontroller extends REST_Controller
 	        if(!empty($is_exist)){
 	        	$data1['iEmailVerifyOtp'] ='';	
 				$res = $this->UserModel->update_password($email,$data1);
-				$data = array('status' => 1, 'meassage' => 'Password chnaged successfully.');
+				$data = array('status' => 1, 'meassage' => 'Password changed successfully.');
 				echo json_encode($data);die;
 			}else{
 				$data = array('status' => 0, 'meassage' => 'Security code does not match.'); 
