@@ -3358,7 +3358,7 @@ class Wscontroller extends REST_Controller
 				try{
 					$result = $stripe->paymentIntents->update(
 						$is_paymentintent_set,
-						['amount' => $amount*100,
+						['amount' => $amount,
 						'currency' => 'usd',
 						'receipt_email' => $user_details[0]['email'],
 						'metadata' => [
@@ -3399,7 +3399,7 @@ class Wscontroller extends REST_Controller
 				try{
 					
 					$result = $stripe->paymentIntents->create([
-						'amount' => $amount*100,
+						'amount' => $amount,
 						'currency' => 'usd',
 						'confirm' => false,
 						'receipt_email' => $user_details[0]['email'],
