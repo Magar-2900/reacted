@@ -3492,13 +3492,56 @@ class Wscontroller extends REST_Controller
 			print_r($paymentIntent);
 		case 'payment_intent.payment_failed':
 			$paymentIntent = $event->data->object;
-			print_r($paymentIntent);
+			//echo 'Case Succedded';
+			$paymentIntent = $event->data->object;
+			$orderId = $event->data->object->metadata->order_id;
+			$cartId = $event->data->object->metadata->cart_id;
+			$userId = $event->data->object->metadata->user_id;
+			$email = $event->data->object->metadata->email;
+			$paymentIntentId = $event->data->object->id;
+			$amount = $event->data->object->amount;
+			$stripePaymentStatus = $event->data->object->status;
+			$order_id = $orderId;
+			$order1['eOrderStatus'] 			  = 'Completed';
+			$order1['vPaymentData'] 			  = $paymentIntent;
+			$order1['vOrderPaymentTransactionId'] = $paymentIntentId;
+
+			$res = $this->CartModel->update_order_status($order_id,$order1);
 		case 'payment_intent.processing':
 			$paymentIntent = $event->data->object;
-			print_r($paymentIntent);
-		case 'payment_intent.requires_action':
+			//echo 'Case Succedded';
 			$paymentIntent = $event->data->object;
-			print_r($paymentIntent);
+			$orderId = $event->data->object->metadata->order_id;
+			$cartId = $event->data->object->metadata->cart_id;
+			$userId = $event->data->object->metadata->user_id;
+			$email = $event->data->object->metadata->email;
+			$paymentIntentId = $event->data->object->id;
+			$amount = $event->data->object->amount;
+			$stripePaymentStatus = $event->data->object->status;
+			$order_id = $orderId;
+			$order1['eOrderStatus'] 			  = 'Completed';
+			$order1['vPaymentData'] 			  = $paymentIntent;
+			$order1['vOrderPaymentTransactionId'] = $paymentIntentId;
+
+			$res = $this->CartModel->update_order_status($order_id,$order1);
+		case 'payment_intent.requires_action':
+			//echo 'Case Succedded';
+			$paymentIntent = $event->data->object;
+			$orderId = $event->data->object->metadata->order_id;
+			$cartId = $event->data->object->metadata->cart_id;
+			$userId = $event->data->object->metadata->user_id;
+			$email = $event->data->object->metadata->email;
+			$paymentIntentId = $event->data->object->id;
+			$amount = $event->data->object->amount;
+			$stripePaymentStatus = $event->data->object->status;
+
+			$order_id = $orderId;
+			$order1['eOrderStatus'] 			  = 'Completed';
+			$order1['vPaymentData'] 			  = $paymentIntent;
+			$order1['vOrderPaymentTransactionId'] = $paymentIntentId;
+
+			$res = $this->CartModel->update_order_status($order_id,$order1);
+
 		case 'payment_intent.succeeded':
 			echo 'Case Succedded';
 			$paymentIntent = $event->data->object;
