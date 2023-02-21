@@ -3560,7 +3560,7 @@ class Wscontroller extends REST_Controller
 			$order1['vPaymentData'] 			  = $paymentIntent;
 			$order1['vOrderPaymentTransactionId'] = $paymentIntentId;
 
-			$res = $this->CartModel->update_order_status($order_id,$order1);
+			//$res = $this->CartModel->update_order_status($order_id,$order1);
 			$this->CartModel->delete_cart_data($cartId, $userId);
 			$this->session->sess_destroy();
 			//print_r($_SESSION);
