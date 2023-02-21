@@ -3353,7 +3353,7 @@ class Wscontroller extends REST_Controller
 				try{
 					$result = $stripe->paymentIntents->update(
 						$is_paymentintent_set,
-						['amount' => $amount,
+						['amount' => $amount*100,
 						'currency' => 'usd',
 						'receipt_email' => $user_details[0]['email'],
 						'metadata' => [
@@ -3562,7 +3562,7 @@ class Wscontroller extends REST_Controller
 
 			$res = $this->CartModel->update_order_status($order_id,$order1);
 			$this->session->sess_destroy();
-			$this->delete_cart_data_on_payment_success($cartId, $userId);
+			echo $this->delete_cart_data_on_payment_success($cartId, $userId);
 		// ... handle other event types
 		break;
 		default:
