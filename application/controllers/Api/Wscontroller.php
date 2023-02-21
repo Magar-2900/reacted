@@ -379,8 +379,8 @@ class Wscontroller extends REST_Controller
 	 */
 	public function change_password_post()
 	{
-		print_r($_POST);
-		exit;
+		/*print_r($_POST);
+		exit;*/
 		try{
 			$headers = $this->input->request_headers(); 
 			$token = $this->validate_access_token($headers);			
