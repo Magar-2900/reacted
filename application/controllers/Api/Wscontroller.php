@@ -3561,8 +3561,7 @@ class Wscontroller extends REST_Controller
 			$order1['vOrderPaymentTransactionId'] = $paymentIntentId;
 
 			$res = $this->CartModel->update_order_status($order_id,$order1);
-			echo $sql = `DELETE cart, cart_items FROM cart INNER JOIN cart_items  
-			WHERE cart.iCartId = cart_items.iCartId and cart.iCartId = $cartId and cart.iUsersId = $userId`;
+			echo $sql = 'DELETE cart, cart_items FROM cart INNER JOIN cart_items WHERE cart.iCartId = cart_items.iCartId and cart.iCartId = '.$cartId.' and cart.iUsersId = '.$userId;
 			$this->db->query($sql);
 		//	$this->CartModel->delete_cart_data($cartId, $userId);
 			$this->session->sess_destroy();
