@@ -524,8 +524,8 @@ class Wscontroller extends REST_Controller
 
 
 			if(empty($email)){
-	            $data = array('status' => 0, 'msg' => 'Your security code is missing');
-	            $this->response($data);
+				$data = ERROR(0, 'Your security code is missing');
+				$this->response($data);
 	        }
 
 			// $is_exist = $this->UserModel->email_exist($email);
@@ -535,23 +535,23 @@ class Wscontroller extends REST_Controller
 			// }
 
 			if(empty($security_code)){
-	            $data = array('status' => 0, 'msg' => 'Please enter your security_code');
-	            $this->response($data);
+				$data = ERROR(0, 'Please enter your security_code');
+				$this->response($data);
 	        }
 
 	        if(empty($new_password)){
-	            $data = array('status' => 0, 'msg' => 'Please enter your new_password');
-	            $this->response($data);
+				$data = ERROR(0, 'Please enter your new_password');
+				$this->response($data);
 	        }
 
 	        if(empty($confirm_password)){
-	            $data = array('status' => 0, 'msg' => 'Please enter your confirm_password');
-	            $this->response($data);
+				$data = ERROR(0, 'Please enter your confirm_password');
+				$this->response($data);
 	        }
 	        
 	        if($confirm_password !== $new_password){
-	            $data = array('status' => 0, 'msg' => 'Your new_password & confirm_password does not match');
-	            $this->response($data);
+				$data = ERROR(0, 'Your new_password & confirm_password does not match.');
+				$this->response($data);
 	        }
 
 	        $is_exist = $this->UserModel->check_security_code($email,$security_code);
@@ -560,11 +560,15 @@ class Wscontroller extends REST_Controller
 	        if(!empty($is_exist)){
 	        	$data1['iEmailVerifyOtp'] ='';	
 				$res = $this->UserModel->update_password($email,$data1);
-				$data = array('status' => 1, 'meassage' => 'Password changed successfully.');
-				echo json_encode($data);die;
-			}else{
-				$data = array('status' => 0, 'meassage' => 'Security code does not match.'); 
-				echo json_encode($data);die;
+				$data = SUCCESS(1, 'Password changed successfully.');
+				$this->response($data);
+				//$data = array('status' => 1, 'meassage' => 'Password changed successfully.');
+				//echo json_encode($data);die;
+			} else {
+				//$data = array('status' => 0, 'meassage' => 'Security code does not match.'); 
+				//echo json_encode($data);die;
+				$data = ERROR(0, 'Security code does not match.');
+				$this->response($data);
 			}
 
 		}catch(Exception $e){
