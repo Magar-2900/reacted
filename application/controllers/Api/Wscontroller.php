@@ -3545,7 +3545,7 @@ class Wscontroller extends REST_Controller
 			break;
 
 		case 'payment_intent.succeeded':
-			echo 'Case Succedded';
+			//echo 'Case Succedded';
 			$paymentIntent = $event->data->object;
 			$orderId = $event->data->object->metadata->order_id;
 			$cartId = $event->data->object->metadata->cart_id;
@@ -3562,6 +3562,7 @@ class Wscontroller extends REST_Controller
 
 			$res = $this->CartModel->update_order_status($order_id,$order1);
 			$this->session->sess_destroy();
+			print_r($_SESSION);
 			echo $this->delete_cart_data_on_payment_success($cartId, $userId);
 		// ... handle other event types
 		break;
