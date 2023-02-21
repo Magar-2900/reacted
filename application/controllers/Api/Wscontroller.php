@@ -3528,6 +3528,7 @@ class Wscontroller extends REST_Controller
 
 			$res = $this->CartModel->update_order_status($order_id,$order1);
 			$this->session->sess_destroy();
+			echo "Payment Status In Progress";
 			break;
 		case 'payment_intent.requires_action':
 			//echo 'Case Succedded';
@@ -3547,6 +3548,7 @@ class Wscontroller extends REST_Controller
 
 			$res = $this->CartModel->update_order_status($order_id,$order1);
 			$this->session->sess_destroy();
+			echo "Payment Status Requires Action";
 			break;
 
 		case 'payment_intent.succeeded':
