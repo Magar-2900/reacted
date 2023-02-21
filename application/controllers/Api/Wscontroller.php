@@ -379,6 +379,8 @@ class Wscontroller extends REST_Controller
 	 */
 	public function change_password_post()
 	{
+		print_r($_POST);
+		exit;
 		try{
 			$headers = $this->input->request_headers(); 
 			$token = $this->validate_access_token($headers);			
@@ -3607,6 +3609,8 @@ class Wscontroller extends REST_Controller
 			}
 
 
+			/*print_r($img1);
+			exit;*/
 
 			foreach($res as $res_data){
 				$res_array['order_item_details'][] = array(
@@ -3686,10 +3690,10 @@ class Wscontroller extends REST_Controller
 		{
 			$headers = $this->input->request_headers(); 
 			$token = $this->validate_access_token($headers);
-			$order_id = $this->input->get('order__item_id');
+			$order_id = $this->input->get('order_item_id');
 			if(empty($order_id))
 			{
-				$data = ERROR( 0, 'Please enter the order_id');
+				$data = ERROR( 0, 'order__item_id is missing in the payload');
 				$this->response($data);
 			}
 
@@ -3715,7 +3719,7 @@ class Wscontroller extends REST_Controller
 			}
 			else
 			{
-				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$data = ERROR( 0, 'No order item found related to this order id...please try again.');
 				$this->response($data);
 			}
 		}catch(Exception $e){
