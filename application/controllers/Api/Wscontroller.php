@@ -3482,15 +3482,19 @@ class Wscontroller extends REST_Controller
 		case 'payment_intent.amount_capturable_updated':
 			$paymentIntent = $event->data->object;
 			print_r($paymentIntent);
+			break;
 		case 'payment_intent.canceled':
 			$paymentIntent = $event->data->object;
 			print_r($paymentIntent);
+			break;
 		case 'payment_intent.created':
 			$paymentIntent = $event->data->object;
 			print_r($paymentIntent);
+			break;
 		case 'payment_intent.partially_funded':
 			$paymentIntent = $event->data->object;
 			print_r($paymentIntent);
+			break;
 		case 'payment_intent.payment_failed':
 			$paymentIntent = $event->data->object;
 			//echo 'Case Succedded';
@@ -3510,6 +3514,7 @@ class Wscontroller extends REST_Controller
 			$res = $this->CartModel->update_order_status($order_id,$order1);
 			$this->session->sess_destroy();
 			echo "Payment Status Failed Updated";
+			break;
 		case 'payment_intent.processing':
 			$paymentIntent = $event->data->object;
 			//echo 'Case Succedded';
@@ -3572,11 +3577,7 @@ class Wscontroller extends REST_Controller
 			$this->db->query($sql);
 			$this->session->sess_destroy();
 			echo "Payment Status Failed Updated";
-			//print_r($_SESSION);
-			
-			//echo $this->delete_cart_data_on_payment_success($cartId, $cartId);
-		// ... handle other event types
-		break;
+			break;
 		default:
 		echo 'Case Default';
 			echo 'Received unknown event type ' . $event->type;
