@@ -3508,6 +3508,7 @@ class Wscontroller extends REST_Controller
 			$order1['vOrderPaymentTransactionId'] = $paymentIntentId;
 
 			$res = $this->CartModel->update_order_status($order_id,$order1);
+			$this->session->sess_destroy();
 			echo "Payment Status Failed Updated";
 		case 'payment_intent.processing':
 			$paymentIntent = $event->data->object;
@@ -3526,6 +3527,7 @@ class Wscontroller extends REST_Controller
 			$order1['vOrderPaymentTransactionId'] = $paymentIntentId;
 
 			$res = $this->CartModel->update_order_status($order_id,$order1);
+			$this->session->sess_destroy();
 			break;
 		case 'payment_intent.requires_action':
 			//echo 'Case Succedded';
@@ -3544,6 +3546,7 @@ class Wscontroller extends REST_Controller
 			$order1['vOrderPaymentTransactionId'] = $paymentIntentId;
 
 			$res = $this->CartModel->update_order_status($order_id,$order1);
+			$this->session->sess_destroy();
 			break;
 
 		case 'payment_intent.succeeded':
