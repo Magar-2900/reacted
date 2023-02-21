@@ -3395,7 +3395,7 @@ class Wscontroller extends REST_Controller
 				try{
 					
 					$result = $stripe->paymentIntents->create([
-						'amount' => $amount,
+						'amount' => $amount*100,
 						'currency' => 'usd',
 						'confirm' => false,
 						'receipt_email' => $user_details[0]['email'],
