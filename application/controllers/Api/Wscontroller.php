@@ -3671,7 +3671,7 @@ class Wscontroller extends REST_Controller
 			}
 			else
 			{
-				$data = ERROR( 0, 'Something went wrong...please try again.');
+				$data = ERROR( 0, 'You have no orders yet. Please try again later.');
 				$this->response($data);
 			}
 		}catch(Exception $e){
