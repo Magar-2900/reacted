@@ -3257,7 +3257,7 @@ class Wscontroller extends REST_Controller
 			$res = $this->CartModel->delete_cart_data($cart_id, $user_id);
 			//return $res;
 		} catch(Exception $e){
-			return false;
+			return $e->getMessage();
 		}
 	}
 
