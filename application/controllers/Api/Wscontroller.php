@@ -3497,7 +3497,7 @@ class Wscontroller extends REST_Controller
 			$paymentIntent = $event->data->object;
 			$orderId = $event->data->object->metadata->order_id;
 			$cartId = $event->data->object->metadata->cart_id;
-			$userId = $event->data->object->metadata->user_id;
+			$userId = $event->data->object->metadata->platform_user_id;
 			$email = $event->data->object->metadata->email;
 			$paymentIntentId = $event->data->object->id;
 			$amount = $event->data->object->amount;
@@ -3508,13 +3508,14 @@ class Wscontroller extends REST_Controller
 			$order1['vOrderPaymentTransactionId'] = $paymentIntentId;
 
 			$res = $this->CartModel->update_order_status($order_id,$order1);
+			echo "Payment Status Failed Updated";
 		case 'payment_intent.processing':
 			$paymentIntent = $event->data->object;
 			//echo 'Case Succedded';
 			$paymentIntent = $event->data->object;
 			$orderId = $event->data->object->metadata->order_id;
 			$cartId = $event->data->object->metadata->cart_id;
-			$userId = $event->data->object->metadata->user_id;
+			$userId = $event->data->object->metadata->platform_user_id;
 			$email = $event->data->object->metadata->email;
 			$paymentIntentId = $event->data->object->id;
 			$amount = $event->data->object->amount;
@@ -3531,7 +3532,7 @@ class Wscontroller extends REST_Controller
 			$paymentIntent = $event->data->object;
 			$orderId = $event->data->object->metadata->order_id;
 			$cartId = $event->data->object->metadata->cart_id;
-			$userId = $event->data->object->metadata->user_id;
+			$userId = $event->data->object->metadata->platform_user_id;
 			$email = $event->data->object->metadata->email;
 			$paymentIntentId = $event->data->object->id;
 			$amount = $event->data->object->amount;
@@ -3565,6 +3566,7 @@ class Wscontroller extends REST_Controller
 			$sql = 'DELETE cart, cart_items FROM cart INNER JOIN cart_items WHERE cart.iCartId = cart_items.iCartId and cart.iCartId = '.$cartId.' and cart.iUsersId = '.$userId;
 			$this->db->query($sql);
 			$this->session->sess_destroy();
+			echo "Payment Status Failed Updated";
 			//print_r($_SESSION);
 			
 			//echo $this->delete_cart_data_on_payment_success($cartId, $cartId);
