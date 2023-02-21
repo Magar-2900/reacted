@@ -3432,7 +3432,7 @@ class Wscontroller extends REST_Controller
 						$data = SUCCESS(1, 'Payment Intent Created Successfully', $result);
 						$this->response($data);
 					} else {
-						$data = ERROR(1, 'Something went wrong', []);
+						$data = ERROR(0, 'Something went wrong', []);
 						$this->response($data);
 					}
 				} catch(\Stripe\Exception\InvalidRequestException $e){
