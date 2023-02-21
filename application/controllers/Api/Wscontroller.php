@@ -3547,10 +3547,10 @@ class Wscontroller extends REST_Controller
 		case 'payment_intent.succeeded':
 			//echo 'Case Succedded';
 			$paymentIntent = $event->data->object;
-			echo $orderId = $event->data->object->metadata->order_id;
-			echo $cartId = $event->data->object->metadata->cart_id;
-			echo $userId = $event->data->object->metadata->user_id;
-			echo $email = $event->data->object->metadata->email;
+			$orderId = $event->data->object->metadata->order_id;
+			$cartId = $event->data->object->metadata->cart_id;
+			$userId = $event->data->object->metadata->platform_user_id;
+			$email = $event->data->object->metadata->email;
 			$paymentIntentId = $event->data->object->id;
 			$amount = $event->data->object->amount;
 			$stripePaymentStatus = $event->data->object->status;
@@ -3561,7 +3561,7 @@ class Wscontroller extends REST_Controller
 			$order1['vOrderPaymentTransactionId'] = $paymentIntentId;
 
 			$res = $this->CartModel->update_order_status($order_id,$order1);
-			echo $this->CartModel->delete_cart_data($cartId, $userId);
+			$this->CartModel->delete_cart_data($cartId, $userId);
 			$this->session->sess_destroy();
 			//print_r($_SESSION);
 			
