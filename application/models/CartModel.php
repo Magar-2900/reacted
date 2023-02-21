@@ -119,8 +119,8 @@ class CartModel extends CI_Model
   	}
 
 	public function delete_cart_data($cart_id, $user_id){
-		echo $res = $this->db->query(`DELETE cart, cart_items FROM cart INNER JOIN cart_items  
+		$res = $this->db->query(`DELETE cart, cart_items FROM cart INNER JOIN cart_items  
 		WHERE cart.iCartId = cart_items.iCartId and cart.iCartId = $cart_id and cart.iUsersId = $user_id`);
-		//echo $this->db->last_query();
+		echo $this->db->last_query();
 	}
 }
