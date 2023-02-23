@@ -123,7 +123,7 @@ class UserModel extends CI_Model
 	{
 		$this->db->select('or.*, oi.iMusicUploadKey, mu.vMusicName');
   		$this->db->from('orders as or');
-		$this->db->join('order_items as oi', 'or.iOrderId = oi.OrderId');
+		$this->db->join('order_items as oi', 'or.iOrderId = oi.iOrderId');
 		$this->db->join('music_uploads as mu', 'oi.iMusicUploadKey = mu.iMusicUploadId');
    		$this->db->where('or.eMusicCreatorId',$user_id);
 		$this->db->order_by("or.iOrderId", "desc");
