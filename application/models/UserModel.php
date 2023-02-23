@@ -125,8 +125,8 @@ class UserModel extends CI_Model
   		$this->db->from('orders as or');
 		$this->db->join('order_items as oi', 'or.iOrderId = oi.OrderId');
 		$this->db->join('music_uploads as mu', 'oi.iMusicUploadKey = mu.iMusicUploadId');
-   		$this->db->where('eMusicCreatorId',$user_id);
-		$this->db->order_by("iOrderId", "desc");
+   		$this->db->where('or.eMusicCreatorId',$user_id);
+		$this->db->order_by("or.iOrderId", "desc");
   		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
 		//print_r($this->db->last_query());die;
