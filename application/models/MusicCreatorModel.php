@@ -114,4 +114,20 @@ class MusicCreatorModel extends CI_Model
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
 		return $result;
   	}
+
+
+	public function get_music_creator_reviews($user_id){
+		$this->db->select('mr.iOrderItemId as order_item_id, mr.iOrderId as order_id, mr.vMusicReviewKey as music_key, mr.iCelebrityId as celebrity_id, mr.eItemReviewStatus as review_status, cr.vTitle as celebrity_name');
+		$this->db->from('order_items as mr');
+		$this->db->join('user_celebrity as cr', 'mr.iCelebrityId = cr.iUserCelebrityId', 'left');
+		$this->db->where(array('mr.iMusicCreatorId'=> $user_id, 'mr.eItemReviewStatus' => 'Completed'));
+
+		$query_obj = $this->db->get();
+		$result = is_object($query_obj) ? $query_obj->result_array() : array();
+		return $result;
+	}
+
+
+
+
 }

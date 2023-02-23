@@ -3796,6 +3796,8 @@ class Wscontroller extends REST_Controller
 	public function upload_celebrity_music_review_video_post(){
 
 		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
 			$order_item_id = $this->input->post('order_item_id');
 			$music_review_video = $_FILES['music_review_video']['name'];
 			$file_tmp_path = $_FILES['music_review_video']['tmp_name'];
@@ -3851,6 +3853,42 @@ class Wscontroller extends REST_Controller
 		} catch (Exception $e){
 			ERROR(0, $e->getMessage());
 			$this->response();
+		}
+	}
+
+	public function get_music_reviews_for_creators_get(){
+		try{
+			//print_r($_GET);
+			/*$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+			$user_id = $token['user_id'];*/
+
+			$music_reviews_res = $this->MusicCreatorModel->get_music_creator_reviews(1);
+
+			//print_r($music_reviews_res);
+			$music_reviews_final_arr = array();
+			foreach($music_reviews_res as $res){
+				$review_url = $this->general->getImageUrl('music-reviews', $res['music_key']);
+				$music_reviews_final_arr[] = array(
+					'order_item_details' => $res,
+					'review_url' => $review_url
+				);
+				
+			}
+
+			//print_r($music_reviews_final_arr);
+			if(!empty($res)){
+				$data = SUCCESS(1, 'Music Reviews Found Successfully', $music_reviews_final_arr);
+				$this->response($data);
+			} else {
+				$data = ERROR(0, 'No Music Reviews Found for this music creator');
+				$this->response($data);
+			}
+			
+			
+		} catch(Exception $e){
+			$data = ERROR(0, $e->getMessage());
+			$this->response($data);
 		}
 	}
 	
