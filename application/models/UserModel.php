@@ -121,8 +121,10 @@ class UserModel extends CI_Model
 
 	public function get_music_creator_individual_orders($user_id)
 	{
-		$this->db->select('*');
-  		$this->db->from('orders');
+		$this->db->select('or.*, oi.iMusicUploadKey, mu.vMusicName');
+  		$this->db->from('orders as or');
+		$this->db->join('order_items as oi', 'or.iOrderId = oi.OrderId');
+		$this->db->join('music_uploads as mu', 'oi.iMusicUploadKey = mu.iMusicUploadId');
    		$this->db->where('eMusicCreatorId',$user_id);
 		$this->db->order_by("iOrderId", "desc");
   		$query_obj = $this->db->get();

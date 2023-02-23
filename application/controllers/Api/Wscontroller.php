@@ -3859,11 +3859,11 @@ class Wscontroller extends REST_Controller
 	public function get_music_reviews_for_creators_get(){
 		try{
 			//print_r($_GET);
-			/*$headers = $this->input->request_headers(); 
+			$headers = $this->input->request_headers(); 
 			$token = $this->validate_access_token($headers);
-			$user_id = $token['user_id'];*/
+			$user_id = $token['user_id'];
 
-			$music_reviews_res = $this->MusicCreatorModel->get_music_creator_reviews(1);
+			$music_reviews_res = $this->MusicCreatorModel->get_music_creator_reviews($user_id);
 
 			//print_r($music_reviews_res);
 			$music_reviews_final_arr = array();
