@@ -118,6 +118,11 @@ class CartModel extends CI_Model
 		return $this->db->where('iOrderId', $order_id)->update("orders", $order);
   	}
 
+	public function update_order_item_status($order_item_id, $order_item_details)
+  	{
+		return $this->db->where('iOrderItemId', $order_item_id)->update("order_items", $order_item_details);
+  	}
+
 	public function delete_cart_data($cart_id, $user_id){
 		echo $sql = `DELETE cart, cart_items FROM cart INNER JOIN cart_items  
 		WHERE cart.iCartId = cart_items.iCartId and cart.iCartId = $cart_id and cart.iUsersId = $user_id`;

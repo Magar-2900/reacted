@@ -3793,4 +3793,74 @@ class Wscontroller extends REST_Controller
 	}
 
 
+	public function upload_celebrity_music_review_video_post(){
+
+		try{
+			$order_item_id = $this->input->post('order_item_id');
+			$music_review_video = $_FILES['music_review_video']['name'];
+			$file_tmp_path = $_FILES['music_review_video']['tmp_name'];
+			$ext = pathinfo($music_review_video, PATHINFO_EXTENSION);
+			$file_name = 'music_review_for_order_item_id_'.$order_item_id.'.'.$ext;
+			$filessize = $_FILES['music_review_video']['size'];
+
+
+			if(empty($order_item_id)){
+				$data = ERROR(0, 'order_item_id is missing in the payload');
+				$this->response($data);
+			}
+			if(empty($music_review_video)){
+				$data = ERROR(0, 'Please upload a music review');
+				$this->response($data);
+			}
+			
+			if($ext !== 'mp4'){
+				$data = ERROR(0, 'Please upload a video with mp4 extension');
+				$this->response($data);
+			}
+
+			if($this->formatSizeUnits($filessize) > 100){
+				$data = ERROR(0, 'File size exceeds 100MB. Please upload a review which is less that 100MB');
+				$this->response($data);
+			}
+			
+			$file_path = 'music-reviews';
+
+
+			$response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
+
+			//echo 'Input File Name: '.$file_name.'<br>';
+			$is_img_uploaded = parse_url($this->general->getImageUrl('music-reviews', $file_name));
+			$upload_file_name = basename($is_img_uploaded['path']);
+
+			if(!empty($upload_file_name) && $upload_file_name == $file_name){
+				$order1['vMusicReviewKey'] 			  = $file_name;
+				$order1['eItemReviewStatus'] 			  = 'Completed';
+				$res = $this->CartModel->update_order_item_status($order_item_id,$order1);
+				$data = SUCCESS(1, 'Music Reviewed Successfully.');
+				$this->response($data);
+			} else {
+				$order1['vMusicReviewKey'] 			  = $file_name;
+				$order1['eItemReviewStatus'] 			  = 'In Progress';
+				$data = ERROR(0, 'Music Reviewed Upload Failed for some reson. Please try again');
+				$res = $this->CartModel->update_order_item_status($order_item_id,$order1);
+				$this->response($data);
+			}
+					
+			
+
+		} catch (Exception $e){
+			ERROR(0, $e->getMessage());
+			$this->response();
+		}
+	}
+	
+	public function formatSizeUnits($bytes)
+	{
+
+		$bytes = number_format($bytes / 1048576, 2);
+
+		return $bytes;
+	}
+
+
 }
