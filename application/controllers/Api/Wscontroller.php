@@ -3900,5 +3900,18 @@ class Wscontroller extends REST_Controller
 		return $bytes;
 	}
 
+	public function get_all_orders_get(){
+		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+			$res = $this->WsModels->get_all_orders();
+			$data = ERROR(1, 'Orders Fetched Successfully');
+			$this->response(1, $data );
+		} catch(Exception $e){
+			$data = ERROR(0, 'No Orders Found');
+			$this->response(1, $data );
+		}
+	}
+
 
 }
