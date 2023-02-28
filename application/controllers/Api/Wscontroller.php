@@ -19,6 +19,7 @@ class Wscontroller extends REST_Controller
 		$this->load->model('CouponModel');
 		$this->load->model('CartModel');
 		$this->load->model('WishlistModel');
+		$this->load->model('WsModels');
 	}
 
 	/**
