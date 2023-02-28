@@ -164,10 +164,11 @@ class UserModel extends CI_Model
 
 	public function get_order_details($order_id)
 	{
-		$this->db->select('order_items.iOrderId as order_id,order_items.iMusicCreatorId as music_creator_id,order_items.iCelebrityId as celebrity_id,order_items.iMusicUploadKey as music_key,order_items.vItemPrice as item_price,order_items.eItemReviewStatus as item_review_status,order_items.eCelebrityPaymentStatus as celebrity_payment_status,order_items.dtAddedDate as added_date,order_items.dtUpdatedDate as updated_date,order_items.dtExpiryDate as expiry_date,users.iUsersId as user_id,users.vFirstName as first_name,users.vLastName as last_name,users.vEmail as email,users.vPhone as phone,users.vAccessToken as access_token,users.vImage as image,users.eStatus as status,user_music_creator.vArtistName as artist_name,user_music_creator.vDescription as description,user_music_creator.vSocialMediaLinks social_media_links,user_music_creator.vUploadMusic as upload_music,u1.vFirstName as celebrity_first_name,u1.vLastName as celebrity_last_name,u1.vImage as celebrity_image');
+		$this->db->select('order_items.iOrderId as order_id,order_items.iMusicCreatorId as music_creator_id,order_items.iCelebrityId as celebrity_id,order_items.iMusicUploadKey as music_key,order_items.vItemPrice as item_price,order_items.eItemReviewStatus as item_review_status,order_items.eCelebrityPaymentStatus as celebrity_payment_status,order_items.dtAddedDate as added_date,order_items.dtUpdatedDate as updated_date,order_items.dtExpiryDate as expiry_date,users.iUsersId as user_id,users.vFirstName as first_name,users.vLastName as last_name,users.vEmail as email,users.vPhone as phone,users.vAccessToken as access_token,users.vImage as image,users.eStatus as status,user_music_creator.vArtistName as artist_name,user_music_creator.vDescription as description,user_music_creator.vSocialMediaLinks social_media_links,user_music_creator.vUploadMusic as upload_music,u1.vFirstName as celebrity_first_name,u1.vLastName as celebrity_last_name,u1.vImage as celebrity_image, mu.vMusic as music_name');
   		$this->db->from('order_items');
   		$this->db->join('users','users.iUsersId = order_items.iMusicCreatorId','left');
   		$this->db->join('users u1','u1.iUsersId = order_items.iCelebrityId','left');
+		$this->db->join('music_uploads mu', 'order_items.iMusicUploadKey = mu.iMusicUploadId');
   		$this->db->join('user_music_creator','user_music_creator.iUsersId = users.iUsersId','left');
   		$this->db->where('order_items.iOrderItemId',$order_id);
 		$this->db->order_by("order_items.iOrderItemId", "desc");
