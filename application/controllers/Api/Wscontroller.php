@@ -3757,10 +3757,10 @@ class Wscontroller extends REST_Controller
 		{
 			$headers = $this->input->request_headers(); 
 			$token = $this->validate_access_token($headers);
-			$order_id = $this->input->get('order_item_id');
+			$order_id = $this->input->get('order_id');
 			if(empty($order_id))
 			{
-				$data = ERROR( 0, 'order__item_id is missing in the payload');
+				$data = ERROR( 0, 'order_id is missing in the payload');
 				$this->response($data);
 			}
 
