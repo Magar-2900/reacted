@@ -3764,7 +3764,12 @@ class Wscontroller extends REST_Controller
 				$this->response($data);
 			}
 
-			$res = $this->UserModel->get_order_details($order_id);			
+			$res = $this->UserModel->get_order_details($order_id);
+			
+			foreach($res as $od_res){
+				$res['music_url'][] = $this->general->getImageUrl('music', $od_res['music_name']);
+			}
+			
 			if(!empty($res[0]['celebrity_image']))
 			{
 				$images = json_decode($res[0]['celebrity_image']);
