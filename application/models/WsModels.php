@@ -52,7 +52,7 @@ class WsModels extends CI_Model {
 		return $result;
 	}
 
-	public function get_all_orders(){
+	public function get_all_orders()
 	{
 		$this->db->select('or.*, oi.iMusicUploadKey, mu.vMusicName');
   		$this->db->from('orders as or');
