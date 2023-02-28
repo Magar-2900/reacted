@@ -3906,7 +3906,7 @@ class Wscontroller extends REST_Controller
 			$headers = $this->input->request_headers(); 
 			$token = $this->validate_access_token($headers);
 			$res = $this->WsModels->get_all_orders();
-			$data = SUCCESS(1, 'Orders Fetched Successfully');
+			$data = SUCCESS(1, 'Orders Fetched Successfully', $res);
 			$this->response($data);
 		} catch(Exception $e){
 			$data = ERROR(0, 'No Orders Found');
