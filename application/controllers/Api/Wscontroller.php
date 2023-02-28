@@ -3723,7 +3723,7 @@ class Wscontroller extends REST_Controller
 			for ($i=0; $i < count($res) ; $i++) 
 			{
 				$res[$i]['musics'] = $this->MusicCreatorModel->get_musics($res[$i]['music_creator_id']);
-				$res[$i]['music_url'] = $this->general->getImageUrl('music',$res[$i]['music_key']);
+				$res[$i]['music_url'][] = $this->general->getImageUrl('music',$res[$i]['music_key']);
 				
 							
 				for ($j=0; $j < count($res[$i]['musics']); $j++) 
