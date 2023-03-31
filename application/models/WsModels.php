@@ -87,8 +87,8 @@ class WsModels extends CI_Model {
 		$order_items = $this->db->get();
 		
 		$result_arr = array(
-			'order_details' => $order_details,
-			'order_items' => $order_items
+			'order_details' => $order_details->result_array(),
+			'order_items' => $order_items->result_array()
 		);
 
   		//$query_obj = $this->db->get();
