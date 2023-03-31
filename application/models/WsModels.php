@@ -81,8 +81,9 @@ class WsModels extends CI_Model {
 		$this->db->where('orders.iOrderId',$order_id);
 		$order_details = $this->db->get();
 
-		$this->db->select('order_items.*');
+		$this->db->select('order_items.*, user_celebrity.*');
 		$this->db->from('order_items');
+		$this->db->join( 'user_celebrity', 'user_celebrity.iCelebrityId = order_items.iCelebrityId' );
 		$this->db->where('order_items.iOrderId',$order_id);
 		$order_items = $this->db->get();
 		
