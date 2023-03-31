@@ -77,6 +77,7 @@ class WsModels extends CI_Model {
 		$this->db->order_by("order_items.iOrderItemId", "desc");
   		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
+		print_r($this->db->last_query());die;
 		return $result;
 	}
 
