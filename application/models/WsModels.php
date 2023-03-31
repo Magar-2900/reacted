@@ -70,8 +70,8 @@ class WsModels extends CI_Model {
   		$this->db->from('order_items');
   		$this->db->join('users','users.iUsersId = order_items.iMusicCreatorId','left');
 		$this->db->join('orders', 'order_item.iOrderId = orders.iOrderId');
-  		$this->db->join('users u1','u1.iUsersId = order_items.iCelebrityId','left');
-		$this->db->join('music_uploads mu', 'order_items.iMusicUploadKey = mu.iMusicUploadId');
+  		$this->db->join('users as u1','u1.iUsersId = order_items.iCelebrityId','left');
+		$this->db->join('music_uploads as mu', 'order_items.iMusicUploadKey = mu.iMusicUploadId');
   		$this->db->join('user_music_creator','user_music_creator.iUsersId = users.iUsersId','left');
   		$this->db->where('order.iOrderId',$order_id);
 		$this->db->order_by("order_items.iOrderItemId", "desc");
