@@ -77,5 +77,14 @@ class WsModels extends CI_Model {
 		//print_r($this->db->last_query());die;
 		return $result;
 	}
+
+	public function update_order_item_review_status($status, $order_item_id){
+		$data = array(
+			'eItemReviewStatus' => $status,
+		);
+		$this->db->where('iOrderItemId', $order_item_id);
+		$result = $this->db->update('order_items', $data);
+		return $result;
+	}
 	
 }
