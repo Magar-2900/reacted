@@ -78,21 +78,22 @@ class WsModels extends CI_Model {
 
 		$this->db->select('orders.*');
 		$this->db->from('orders');
-		$this->db->where('orders.iOrderItemId',$order_id);
+		$this->db->where('orders.iOrderId',$order_id);
 		$order_details = $this->db->get();
 
 		$this->db->select('order_items.*');
 		$this->db->from('order_items');
-		$order_items = $this->db->where('order_items.iOrderItemId',$order_id);
-
+		$this->db->where('order_items.iOrderItemId',$order_id);
+		$order_items = $this->db->get();
+		
 		$result_arr = array(
 			'order_details' => $order_details,
 			'order_items' => $order_items
 		);
 
   		//$query_obj = $this->db->get();
-		$result = is_object($result_arr) ? $result_arr->result_array() : array();
-		return $result;
+		//$result = is_object($result_arr) ? $result_arr->result_array() : array();
+		return $result_arr;
 	}
 
 	public function update_order_item_review_status($status, $order_item_id){
