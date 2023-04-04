@@ -3625,6 +3625,9 @@ class Wscontroller extends REST_Controller
 			$order_id = $this->input->get('order_id');
 			$res = $this->UserModel->get_music_creator_orders($user_id, $order_id);
 
+			print_r($res);
+			exit;
+
 			$res_array = array();
 			$res_array['billing_details'] = array(
 				'billing_first_name' => $res['0']['billing_first_name'],
@@ -3674,8 +3677,8 @@ class Wscontroller extends REST_Controller
 			}
 
 
-			print_r($img1);
-			exit;
+			/*print_r($img1);
+			exit;*/
 
 			foreach($res as $res_data){
 				$res_array['order_item_details'][] = array(
