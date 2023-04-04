@@ -57,7 +57,7 @@ class WsModels extends CI_Model {
 		$this->db->select('or.*, oi.iMusicUploadKey, mu.vMusicName');
   		$this->db->from('orders as or');
 		//$this->db->join('order_items as oi', 'or.iOrderId = oi.iOrderId');
-		$this->db->join('music_uploads as mu', 'oi.iMusicUploadKey = mu.iMusicUploadId');
+		//$this->db->join('music_uploads as mu', 'oi.iMusicUploadKey = mu.iMusicUploadId');
 		$this->db->order_by("or.iOrderId", "desc");
   		$query_obj = $this->db->get();
 		$result = is_object($query_obj) ? $query_obj->result_array() : array();
