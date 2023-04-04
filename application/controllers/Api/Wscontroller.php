@@ -3674,8 +3674,8 @@ class Wscontroller extends REST_Controller
 			}
 
 
-			/*print_r($img1);
-			exit;*/
+			print_r($img1);
+			exit;
 
 			foreach($res as $res_data){
 				$res_array['order_item_details'][] = array(
