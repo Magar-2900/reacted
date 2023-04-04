@@ -118,7 +118,7 @@ class MusicCreatorModel extends CI_Model
 	public function get_music_creator_reviews($user_id){
 		$this->db->select('mr.iOrderItemId as order_item_id, mr.iOrderId as order_id, mr.vMusicReviewKey as music_key, mr.iCelebrityId as celebrity_id, mr.eItemReviewStatus as review_status, cr.vTitle as celebrity_name, mr.dtAddedDate as added_date, mr.dtUpdatedDate as updated_date');
 		$this->db->from('order_items as mr');
-		$this->db->join('user_celebrity as cr', 'mr.iCelebrityId = cr.iUserCelebrityId', 'left');
+		$this->db->join('user_celebrity as cr', 'mr.iCelebrityId = cr.iUsersId', 'left');
 		$this->db->where(array('mr.iMusicCreatorId'=> $user_id));
 
 		$query_obj = $this->db->get();
