@@ -54,7 +54,7 @@ class WsModels extends CI_Model {
 
 	public function get_all_orders()
 	{
-		$this->db->select('or.*, oi.iMusicUploadKey, mu.vMusicName');
+		$this->db->select('or.*');
   		$this->db->from('orders as or');
 		//$this->db->join('order_items as oi', 'or.iOrderId = oi.iOrderId');
 		//$this->db->join('music_uploads as mu', 'oi.iMusicUploadKey = mu.iMusicUploadId');
