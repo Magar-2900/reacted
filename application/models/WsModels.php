@@ -97,7 +97,7 @@ class WsModels extends CI_Model {
 		return $result_arr;
 	}
 
-	public function update_order_item_review_status($status, $order_item_id){
+	public function update_order_item_review_status($order_item_id, $status){
 		$data = array(
 			'eItemReviewStatus' => $status,
 		);
