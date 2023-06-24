@@ -3955,8 +3955,36 @@ class Wscontroller extends REST_Controller
 	}
 
 	public function celebrity_set_is_featured_post(){
-		print_r($_POST);
-		exit;
+		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+
+			$celebrity_id = $this->input->post('celebrity_id');
+			$featured_status = $this->input->post('featured_status');
+
+			if(empty($celebrity_id)){
+				$data = ERROR(0, 'Celebrity ID not be null');
+				$this->response($data);
+			}
+			if(empty($featured_status)){
+				$data = ERROR(0, 'Featured Status cannot be null');
+				$this->response($data);
+			}
+
+			$data = $this->CelebrityModel->set_featured_status($celebrity_id, $featured_status);
+
+			if($data){
+				$data = SUCCESS(1, 'Celebrity Status Updated Successfully', $res);
+				$this->response($data);
+			}
+
+			
+
+		} catch(Exception $e){
+			$data = ERROR(0, $e->getMessage());
+			$this->response($data);
+		}
+		
 	}
 
 

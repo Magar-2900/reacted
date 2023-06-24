@@ -119,5 +119,16 @@
 			return $result;
 		}
 
+		public function set_featured_status($id, $is_featured){
+			if($is_featured){
+				$data['eIsFeatured'] = 'Yes';
+			} else {
+				$data['eIsFeatured'] = 'No';
+			}
+	    	$this->db->where('iUsersId', $id);
+	    	$result = $this->db->update('user_celebrity',$data);
+	    	return $result;
+		}
+
 		
 	}
