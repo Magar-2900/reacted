@@ -3954,5 +3954,10 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
+	public function celebrity_set_is_featured_post(){
+		print_r($_POST);
+		exit;
+	}
+
 
 }
