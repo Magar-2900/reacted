@@ -3966,7 +3966,7 @@ class Wscontroller extends REST_Controller
 				$data = ERROR(0, 'Celebrity ID not be null');
 				$this->response($data);
 			}
-			if(empty($featured_status)){
+			if($featured_status == ''){
 				$data = ERROR(0, 'Featured Status cannot be null');
 				$this->response($data);
 			}
