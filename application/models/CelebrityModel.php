@@ -120,7 +120,7 @@
 		}
 
 		public function set_featured_status($id, $is_featured){
-			if($is_featured == 'true'){
+			if($is_featured == 1){
 				$data['eIsFeatured'] = 'Yes';
 			} else {
 				$data['eIsFeatured'] = 'No';
