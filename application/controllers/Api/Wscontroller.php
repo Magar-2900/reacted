@@ -3974,15 +3974,15 @@ class Wscontroller extends REST_Controller
 			$data = $this->CelebrityModel->set_featured_status($celebrity_id, $featured_status);
 
 			if($data){
-				$data = SUCCESS(1, 'Celebrity Status Updated Successfully', $res);
-				$this->response($data);
+				$res_data = SUCCESS(1, 'Celebrity Status Updated Successfully', $data);
+				$this->response($res_data);
 			}
 
 			
 
 		} catch(Exception $e){
-			$data = ERROR(0, $e->getMessage());
-			$this->response($data);
+			$res_data = ERROR(0, $e->getMessage());
+			$this->response($res_data);
 		}
 		
 	}
