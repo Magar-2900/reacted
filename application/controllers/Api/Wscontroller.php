@@ -3990,8 +3990,8 @@ class Wscontroller extends REST_Controller
 	public function add_celebrity_as_special_post(){
 
 		try{
-			//$headers = $this->input->request_headers(); 
-			//$token = $this->validate_access_token($headers);
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
 	
 			$celebrity_id = $this->input->post('celebrity_id');
 			$start_data = $this->input->post('start_date');
@@ -4044,6 +4044,8 @@ class Wscontroller extends REST_Controller
 	public function add_user_admin_post()
 	{
 		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
 			$first_name = $this->input->post('first_name');
 			$last_name = $this->input->post('last_name');
 			$email = $this->input->post('email');
@@ -4108,5 +4110,26 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
+
+	public function get_special_celebrities_get(){
+		try {
+			//$headers = $this->input->request_headers(); 
+			//$token = $this->validate_access_token($headers);
+
+			$res = $this->CelebrityModel->get_special_celebrities();
+
+			if(!empty($res)) {
+				$data = SUCCESS( 1, 'Celebrities Fetched Successfully', $res );
+				$this->response($data);
+			} else {
+				$data = ERROR( 0, 'No Celebrities Found', $res );
+				$this->response($data);
+			}
+
+		} catch(Exception $e){
+			$data = ERROR( 0, $e->get_Message());
+			$this->response($data);
+		}
+	}
 
 }
