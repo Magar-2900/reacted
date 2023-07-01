@@ -3995,7 +3995,7 @@ class Wscontroller extends REST_Controller
 	
 			$celebrity_id = $this->input->post('celebrity_id');
 			$start_data = $this->input->post('start_date');
-			$end_data = $this->input->post('end_data');
+			$end_data = $this->input->post('end_date');
 			$percent_off = $this->input->post('percent_off');
 	
 			if($celebrity_id == ''){
