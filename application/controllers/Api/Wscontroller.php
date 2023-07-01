@@ -4116,7 +4116,32 @@ class Wscontroller extends REST_Controller
 			//$headers = $this->input->request_headers(); 
 			//$token = $this->validate_access_token($headers);
 
-			$res = $this->CelebrityModel->get_special_celebrities();
+			$result = $this->CelebrityModel->get_special_celebrities();
+
+			for ($i=0; $i < count($result) ; $i++) 
+			{
+				if(!empty($result[$i]['images']))
+				{
+					$images = json_decode($result[$i]['images']);
+
+					$img1 = [];
+					if(!empty($images))
+					{
+						foreach($images as $val)
+						{
+							//$img1[] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/profile_image/".$val;
+							$img1[] = $this->general->getImageUrl('profile_image', $val);							
+						}
+					}
+					$result[$i]['images'] = $img1;
+				}
+				if(!empty($result[$i]['w9form']))
+				{
+					//$result[$i]['w9form'] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/w9_form/".$result[$i]['w9form'];
+					$result[$i]['w9form'] = $this->general->getImageUrl('w9_form', $result[$i]['w9form']);
+				}
+			}
+
 
 			if(!empty($res)) {
 				$data = SUCCESS( 1, 'Celebrities Fetched Successfully', $res );
