@@ -130,5 +130,11 @@
 	    	return $result;
 		}
 
+		public function set_celebrity_as_special($id, $is_featured){
+			$this->db->insert('user_celebrity',$data);
+	  		$result = $this->db->insert_id();
+	  		return $result;
+		}
+
 		
 	}

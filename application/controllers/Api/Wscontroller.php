@@ -3987,5 +3987,55 @@ class Wscontroller extends REST_Controller
 		
 	}
 
+	public function add_celebrity_as_special_post(){
+
+		try{
+			//$headers = $this->input->request_headers(); 
+			//$token = $this->validate_access_token($headers);
+	
+			$celebrity_id = $this->input->post('celebrity_id');
+			$start_data = $this->input->post('start_date');
+			$end_data = $this->input->post('end_data');
+			$percent_off = $this->input->post('percent_off');
+	
+			if($celebrity_id == ''){
+				$data = ERROR(0, 'No celebrity id found in the payload');
+				$this->response($data);
+			}
+			if($start_data == ''){
+				$data = ERROR(0, 'Start Date Cannot be empty');
+				$this->response($data);
+			}
+			if($end_data == ''){
+				$data = ERROR(0, 'End Date Cannot be empty');
+				$this->response($data);
+			}
+			if($percent_off == ''){
+				$data = ERROR(0, 'Percent Off cannot be empty');
+				$this->response($data);
+			}
+
+			$post_data = array();
+
+			$post_data['celebrity_id'] = $celebrity_id;
+			$post_data['special_start_data'] = $start_data;
+			$post_data['special_end_data'] = $end_data;
+			$post_data['total_off'] = $percent_off;
+
+			$res = $this->celebrityModel->set_celebrity_as_special($post_data);
+
+			if($res){
+				$res_data = SUCCESS(1, 'Celebrity Added as Special Successfully', $res);
+				$this->response($res_data);
+			}
+
+
+		} catch(Exception $e){
+			$data = ERROR(0, $e->getMessage());
+			$this->response($data);
+		}
+		
+	}
+
 
 }
