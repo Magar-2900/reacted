@@ -4038,4 +4038,75 @@ class Wscontroller extends REST_Controller
 	}
 
 
+		/**
+	 * Register User
+	 */
+	public function add_user_admin_post()
+	{
+		try{
+			$first_name = $this->input->post('first_name');
+			$last_name = $this->input->post('last_name');
+			$email = $this->input->post('email');
+			$password = $this->input->post('password');
+			$role_id = $this->input->post('role_id');
+
+			// validation
+			if(empty($first_name)){
+				$data = ERROR( 0, 'Please enter the first_name');
+
+				$this->response($data);
+			}
+			if(empty($last_name)){
+				$data = ERROR( 0, 'Please enter the last_name');
+
+				$this->response($data);
+			}
+
+			if(empty($email)){
+				$data = ERROR( 0, 'Please enter the email');
+				$this->response($data);
+			}
+
+			if (!filter_var($email, FILTER_VALIDATE_EMAIL)){
+				$data = ERROR( 0, 'Please enter valid email');
+			  	$this->response($data);
+			}
+
+			$is_exist = $this->UserModel->email_exist($email);
+
+			if(!empty($is_exist)){
+				$data = ERROR( 0, 'User already exist this email');
+				$this->response($data);
+			}
+
+			if(empty($role_id)){
+				$data = ERROR( 0, 'Please enter the role_id');
+				$this->response($data);
+			}
+
+			$user_data['vFirstName'] = $first_name;
+			$user_data['vLastName'] = $last_name;
+			$user_data['vEmail'] = $email;
+			$user_data['iRoleId'] = $role_id;
+
+			$user_data['vPassword'] = password_hash($password, PASSWORD_DEFAULT);
+			$result = $this->UserModel->register_user($user_data);
+
+			if(!empty($result))
+			{
+				$data = SUCCESS(1, 'User Added successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0,  'Something went wrong...please try again.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+
 }
