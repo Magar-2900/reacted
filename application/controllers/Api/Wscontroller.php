@@ -4018,8 +4018,8 @@ class Wscontroller extends REST_Controller
 			$post_data = array();
 
 			$post_data['celebrity_id'] = $celebrity_id;
-			$post_data['special_start_data'] = $start_data;
-			$post_data['special_end_data'] = $end_data;
+			$post_data['special_start_date'] = $start_data;
+			$post_data['special_end_date'] = $end_data;
 			$post_data['total_off'] = $percent_off;
 
 			$res = $this->celebrityModel->set_celebrity_as_special($post_data);
