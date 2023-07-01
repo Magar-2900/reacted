@@ -4135,16 +4135,11 @@ class Wscontroller extends REST_Controller
 					}
 					$result[$i]['images'] = $img1;
 				}
-				if(!empty($result[$i]['w9form']))
-				{
-					//$result[$i]['w9form'] = "https://".$AWS_BUCKET_NAME.".s3.".$AWS_END_POINT.".amazonaws.com/w9_form/".$result[$i]['w9form'];
-					$result[$i]['w9form'] = $this->general->getImageUrl('w9_form', $result[$i]['w9form']);
-				}
 			}
 
 
-			if(!empty($res)) {
-				$data = SUCCESS( 1, 'Celebrities Fetched Successfully', $res );
+			if(!empty($result)) {
+				$data = SUCCESS( 1, 'Celebrities Fetched Successfully', $result );
 				$this->response($data);
 			} else {
 				$data = ERROR( 0, 'No Celebrities Found', $res );
