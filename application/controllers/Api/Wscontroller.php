@@ -4022,7 +4022,7 @@ class Wscontroller extends REST_Controller
 			$post_data['special_end_date'] = $end_data;
 			$post_data['total_off'] = $percent_off;
 
-			$res = $this->celebrityModel->set_celebrity_as_special($post_data);
+			$res = $this->CelebrityModel->set_celebrity_as_special($post_data);
 
 			if($res){
 				$res_data = SUCCESS(1, 'Celebrity Added as Special Successfully', $res);
