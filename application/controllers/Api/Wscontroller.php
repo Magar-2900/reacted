@@ -4152,4 +4152,65 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
+	public function upload_profile_picture_post(){
+		
+		try{
+		$profile_pic = $_FILES['profile_picture'];
+		$user_id = $this->input->post('user_id');
+
+		if(!empty($profile_pic)){
+			$data = ERROR( 0, 'Profile Picture Not Found');
+			$this->response($data);
+		}
+
+			$imgData = [];
+			$errors = [];
+			$files = $_FILES;
+			$upload_count = count($_FILES['profile_picture']['name']);
+
+			for( $i = 0; $i < $upload_count; $i++ )
+			{
+				$imgData[] = str_replace(' ', '_', pathinfo($files["profile_picture"]["name"][$i].'_'.time(), PATHINFO_FILENAME).pathinfo($files["profile_picture"]["name"][$i], PATHINFO_EXTENSION));
+
+			    $_FILES['profile_picture'] = [
+			        'name'     => $files['profile_picture']['name'][$i],
+			        'type'     => $files['profile_picture']['type'][$i],
+			        'tmp_name' => $files['profile_picture']['tmp_name'][$i],
+			        'error'    => $files['profile_picture']['error'][$i],
+			        'size'     => $files['profile_picture']['size'][$i]
+			    ];
+			    
+			   	if (!empty($files["profile_picture"]["name"]))
+            	{
+	                $file_path = "profile_image";
+	                $file_name = str_replace(' ', '_', pathinfo($files["profile_picture"]["name"][$i].'_'.time(), PATHINFO_FILENAME).pathinfo($files["profile_picture"]["name"][$i], PATHINFO_EXTENSION));
+	                $file_tmp_path = $_FILES["profile_picture"]["tmp_name"];
+	                
+	                $response = $this->general->uploadAWSData($file_tmp_path, $file_path, $file_name);
+	                if (!$response)
+	                {
+	                    $data = ERROR(0, 'Profile Pic Failed to Upload TO AWS', $response);
+	                }
+	            }
+			}
+
+			$user_data['vImage'] 	= json_encode($imgData);
+			$user_data['vImage'] 		= json_encode($imgData);
+			$user_data['dtUpdatedDate'] = date('Y-m-d H:i:s');
+
+			$res = $this->UserModel->update_user_data($user_data,$user_id);
+			if ($res)
+			{
+				$data = SUCCESS(1, 'Profile Pic Uploaded Successfully', $response);
+			} else {
+				$data = ERROR( 0, 'Profile Pic Uploaded Failed', $response);
+			}
+
+		} catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+
 }
