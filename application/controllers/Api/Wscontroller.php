@@ -4212,5 +4212,89 @@ class Wscontroller extends REST_Controller
 		}
 	}
 
+	/**
+	 * Highest performing category 
+	 */
+	public function highest_performing_category_post()
+	{
+		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);			
+			$from_date = $this->input->post('from_date');
+			$to_date = $this->input->post('to_date');
+			$category = $this->CategoryModel->get_categorywise_count($from_date,$to_date);
 
+			if(!empty($category))
+			{
+				$data = SUCCESS( 1, 'Category data found successfully.',$category);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Category data not found.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	/**
+	 * Highest performing category 
+	 */
+	public function status_wise_amount_in_escrow_post()
+	{
+		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);			
+			$from_date = $this->input->post('from_date');
+			$to_date = $this->input->post('to_date');
+			$status = $this->input->post('status');
+			$category = $this->CategoryModel->status_wise_amount_in_escrow($from_date,$to_date,$status);
+
+			if(!empty($category))
+			{
+				$data = SUCCESS( 1, 'Data found successfully.',$category);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Data not found.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
+
+	/**
+	 * Update payment status 
+	 */
+	public function update_payment_status_post()
+	{
+		try{
+			$headers = $this->input->request_headers(); 
+			$token = $this->validate_access_token($headers);
+
+			$order_item_id = $this->input->post('order_item_id');
+			$status = $this->input->post('status');
+			$res = $this->CategoryModel->update_payment_status($order_item_id,$status);
+
+			if(!empty($res))
+			{
+				$data = SUCCESS( 1, 'Payment status updated successfully.',[]);
+				$this->response($data);
+			}
+			else
+			{
+				$data = ERROR( 0, 'Data not found.');
+				$this->response($data);
+			}
+		}catch(Exception $e){
+			$data = ERROR( 0, $e->getMessage());
+			$this->response($data);
+		}
+	}
 }

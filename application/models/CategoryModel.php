@@ -54,7 +54,6 @@ class CategoryModel extends CI_Model
     	return $result;
   	}
 
-
   	public function get_category_id($slug = '')
 	{
 		$this->db->select('iCategoryMasterId');
@@ -63,6 +62,39 @@ class CategoryModel extends CI_Model
 	    $this->db->where('iIsDeleted ','0');
 	    $dataArr = $this->db->get();
 	    $result = is_object($dataArr) ? $dataArr->result_array() : array();
+		return $result;
+	}
+
+	public function get_categorywise_count($from_date,$to_date)
+	{
+		$this->db->select('CASE WHEN SUM(`oi`.`vItemPrice`) IS NULL THEN "0" ELSE SUM(`oi`.`vItemPrice`) END as category_count,`cm`.`vCategoryName` as category_name');
+	    $this->db->from('category_master cm');
+	    $this->db->join('music_uploads mu','cm.iCategoryMasterId = mu.iCategoryId','left');
+	    $this->db->join('order_items oi','mu.iMusicUploadId = oi.iMusicUploadKey AND oi.dtAddedDate >= "'.$from_date.'" AND oi.dtAddedDate <= "'.$to_date.'"','left');
+	    $this->db->where('cm.eStatus','Active');
+	    $this->db->group_by('cm.iCategoryMasterId');
+	    $dataArr = $this->db->get();
+	    $result = is_object($dataArr) ? $dataArr->result_array() : array();
+		return $result;
+	}
+
+	public function status_wise_amount_in_escrow($from_date,$to_date,$status)
+	{
+		$this->db->select('CASE WHEN SUM(`oi`.`vItemPrice`) IS NULL THEN "0" ELSE SUM(`oi`.`vItemPrice`) END as '.$status);
+	    $this->db->from('order_items oi');
+	    $this->db->where('oi.dtAddedDate >= ',$from_date);
+	    $this->db->where('oi.dtAddedDate <= ',$to_date);
+	    $this->db->where('oi.eStatus <= ',$status);
+	    $dataArr = $this->db->get();
+	    $result = is_object($dataArr) ? $dataArr->result_array() : array();
+		return $result;
+	}
+
+	public function update_payment_status($id,$status)
+	{
+		$data['eStatus'] = $status;
+		$this->db->where('iOrderItemId ', $id);
+		$result = $this->db->update('order_items', $data);
 		return $result;
 	}
 }
