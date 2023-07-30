@@ -4252,7 +4252,6 @@ class Wscontroller extends REST_Controller
 			$to_date = $this->input->post('to_date');
 			$status = $this->input->post('status');
 			$category = $this->CategoryModel->status_wise_amount_in_escrow($from_date,$to_date,$status);
-			#print_r($category);die;
 			if(!empty($category))
 			{
 				$data = [];
