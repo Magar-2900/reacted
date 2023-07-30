@@ -78,13 +78,13 @@ class CategoryModel extends CI_Model
 		return $result;
 	}
 
-	public function status_wise_amount_in_escrow($from_date,$to_date,$status)
+	public function status_wise_amount_in_escrow($from_date,$to_date)
 	{
-		$this->db->select('CASE WHEN SUM(`oi`.`vItemPrice`) IS NULL THEN "0" ELSE SUM(`oi`.`vItemPrice`) END as '.$status);
+		$this->db->select('CASE WHEN SUM(`oi`.`vItemPrice`) IS NULL THEN "0" ELSE SUM(`oi`.`vItemPrice`) END as category_count,OI.eStatus as status');
 	    $this->db->from('order_items oi');
 	    $this->db->where('oi.dtAddedDate >= ',$from_date);
 	    $this->db->where('oi.dtAddedDate <= ',$to_date);
-	    $this->db->where('oi.eStatus <= ',$status);
+	    $this->db->group_by('oi.eStatus');
 	    $dataArr = $this->db->get();
 	    $result = is_object($dataArr) ? $dataArr->result_array() : array();
 		return $result;

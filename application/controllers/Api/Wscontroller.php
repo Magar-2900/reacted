@@ -4252,10 +4252,27 @@ class Wscontroller extends REST_Controller
 			$to_date = $this->input->post('to_date');
 			$status = $this->input->post('status');
 			$category = $this->CategoryModel->status_wise_amount_in_escrow($from_date,$to_date,$status);
-
+			#print_r($category);die;
 			if(!empty($category))
 			{
-				$data = SUCCESS( 1, 'Data found successfully.',$category);
+				$data = [];
+				$data['paid_amout'] = 0;
+				$data['amout_in_escrow'] = 0;
+				$data['all_amout'] = 0;
+				foreach ($category as $key => $value) 
+				{
+					#print_r($value);die;
+					if($value['status'] == 'Pending')
+					{
+						$data['amout_in_escrow'] += $value['category_count'];
+					}
+					elseif ($value['status'] == 'Paid')
+					{
+						$data['paid_amout'] += $value['category_count'];
+					}
+				}
+				$data['all_amout'] = $data['amout_in_escrow'] + $data['paid_amout'];
+				$data = SUCCESS( 1, 'Data found successfully.',$data);
 				$this->response($data);
 			}
 			else
