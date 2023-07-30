@@ -4154,7 +4154,6 @@ class Wscontroller extends REST_Controller
 
 	public function upload_profile_picture_post(){
 		
-		// Test Deployment
 		try{
 		$profile_pic = $_FILES['profile_picture'];
 		$user_id = $this->input->post('user_id');
@@ -4262,7 +4261,6 @@ class Wscontroller extends REST_Controller
 				$data['all_amout'] = 0;
 				foreach ($category as $key => $value) 
 				{
-					#print_r($value);die;
 					if($value['status'] == 'Pending')
 					{
 						$data['amout_in_escrow'] += $value['category_count'];
